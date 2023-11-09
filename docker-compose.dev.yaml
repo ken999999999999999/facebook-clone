@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+
+    env_file:
+      - ./frontend/.env
+    volumes:
+      - .:/workspace:cached
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    networks:
+      - facebook_clone_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dev.Dockerfile
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env
+    volumes:
+      - .:/workspace:cached
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    networks:
+      - facebook_clone_network
+
+networks:
+  facebook_clone_network:
+    external: true
