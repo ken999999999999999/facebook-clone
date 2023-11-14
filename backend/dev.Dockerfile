@@ -10,9 +10,9 @@ RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
-EXPOSE 8000 
+EXPOSE 8000
 
-ENTRYPOINT ["python3"]
+CMD ["uvicorn","app.main:app","--port","8000"]
 
 
 
