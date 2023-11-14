@@ -1,0 +1,15 @@
+{
+  "dockerComposeFile": ["../docker-compose.dev.yaml"],
+  "service": "backend",
+  "workspaceFolder": "/workspace/backend",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "dsznajder.es7-react-js-snippets"
+      ]
+    }
+  }
+}
