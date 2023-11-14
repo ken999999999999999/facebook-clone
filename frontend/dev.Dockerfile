@@ -24,6 +24,7 @@ COPY tsconfig.json .
 # Note: Don't expose ports here, Compose will handle that for us
 
 # Start Next.js in development mode based on the preferred package manager
+EXPOSE 3000
 CMD \
   if [ -f yarn.lock ]; then yarn dev; \
   elif [ -f package-lock.json ]; then npm run dev; \
