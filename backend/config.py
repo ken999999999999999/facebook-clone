@@ -7,7 +7,7 @@ import os
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8')
     APP_NAME: str = "Facebook Clone"
-    DEBUG_MODE: bool = True
+    DEBUG_MODE: bool = False
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     DB_URL:str 

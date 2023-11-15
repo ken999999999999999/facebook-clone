@@ -8,11 +8,10 @@ from apps.internal import admin
 from apps.routers import posts, users
 
 
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Connect Mongodb
+    app.name = '123'
     app.mongodb_client = AsyncIOMotorClient(settings.DB_URL)
     app.mongodb = app.mongodb_client[settings.DB_NAME]
     yield

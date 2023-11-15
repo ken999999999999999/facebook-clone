@@ -6,7 +6,6 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "esbenp.prettier-vscode",
         "eamodio.gitlens",
         "streetsidesoftware.code-spell-checker",
         "ms-python.autopep8"

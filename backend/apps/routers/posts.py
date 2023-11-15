@@ -1,4 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, status, HTTPException, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
+
+from apps.models.posts import PostModel
 
 router = APIRouter(
     prefix="/posts",
@@ -15,20 +21,22 @@ async def read_posts():
     return fake_posts_db
 
 
-@router.get("/{post_id}")
-async def read_post(post_id: str):
-    if post_id not in fake_posts_db:
-        raise HTTPException(status_code=404, detail="Post not found")
-    return {"name": fake_posts_db[post_id]["name"], "post_id": post_id}
+@router.get("/{post_id}", response_description="Get single post")
+async def read_post(id: str, request: Request):
+    if (post := await request.app.mongodb["posts"].find_one({"_id": id})) is not None:
+        return post
+
+    raise HTTPException(status_code=404, detail=f"Task {id} not found")
 
 
-@router.put(
-    "/{post_id}",
-    responses={403: {"description": "Operation forbidden"}},
-)
-async def update_post(post_id: str):
-    if post_id != "plumbus":
-        raise HTTPException(
-            status_code=403, detail="You can only update the Post: plumbus"
-        )
-    return {"post_id": post_id, "name": "The great Plumbus"}
+@router.post("/",
+             response_description="Add new post",
+             response_model=str,
+             status_code=status.HTTP_201_CREATED,
+             response_model_by_alias=False
+             )
+async def create_task(request: Request, post: PostModel = Body(...)):
+    post = jsonable_encoder(post)
+    new_post = await request.app.mongodb["posts"].insert_one(post)
+
+    return new_post.inserted_id

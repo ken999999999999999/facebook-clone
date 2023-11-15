@@ -5,13 +5,12 @@ services:
     image: mongo:latest
     env_file:
       - .env
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
-      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
     ports:
       - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
+    networks:
+      - facebook_clone_net
 
   backend:
     depends_on:
@@ -25,6 +24,8 @@ services:
       - ./backend/.env
     volumes:
       - .:/workspace:cached
+    networks:
+      - facebook_clone_net
 
   frontend:
     build:
@@ -36,6 +37,12 @@ services:
       - ./frontend/.env
     volumes:
       - .:/workspace:cached
+    networks:
+      - facebook_clone_net
 
 volumes:
   mongodb_data_container:
+
+networks:
+  facebook_clone_net:
+    name: facebook_clone_network
