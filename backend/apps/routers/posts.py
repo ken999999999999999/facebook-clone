@@ -1,11 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..dependencies import get_token_header
-
 router = APIRouter(
     prefix="/posts",
     tags=["posts"],
-    dependencies=[Depends(get_token_header)],
     responses={404: {"description": "Not found"}},
 )
 
@@ -27,7 +24,6 @@ async def read_post(post_id: str):
 
 @router.put(
     "/{post_id}",
-    tags=["custom"],
     responses={403: {"description": "Operation forbidden"}},
 )
 async def update_post(post_id: str):

@@ -1,0 +1,17 @@
+from typing import Union
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from functools import lru_cache
+import os
+
+@lru_cache
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8')
+    APP_NAME: str = "Facebook Clone"
+    DEBUG_MODE: bool = True
+    HOST: str = "0.0.0.0"
+    PORT: int = 8000
+    DB_URL:str 
+    DB_NAME:str
+
+
+settings = Settings()
