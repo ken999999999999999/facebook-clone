@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Body, status, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
+
 
 from apps.models.posts import PostModel
 
@@ -37,6 +35,6 @@ async def read_post(id: str, request: Request):
              )
 async def create_task(request: Request, post: PostModel = Body(...)):
     post = jsonable_encoder(post)
-    new_post = await request.app.mongodb["posts"].insert_one(post)
+    new_post = await request.app.db["posts"].insert_one(post)
 
     return new_post.inserted_id

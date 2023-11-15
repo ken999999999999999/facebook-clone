@@ -11,12 +11,11 @@ from apps.routers import posts, users
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Connect Mongodb
-    app.name = '123'
-    app.mongodb_client = AsyncIOMotorClient(settings.DB_URL)
-    app.mongodb = app.mongodb_client[settings.DB_NAME]
+    app.db_client = AsyncIOMotorClient(settings.DB_URL)
+    app.db = app.db_client[settings.DB_NAME]
     yield
     # Close connection
-    app.mongodb_client.close()
+    app.db_client.close()
 
 app = FastAPI(lifespan=lifespan)
 
