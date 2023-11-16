@@ -1,9 +1,7 @@
 from contextlib import asynccontextmanager
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 import uvicorn
-from apps.dependencies.auth import get_current_user
 from config import settings
-from motor.motor_asyncio import AsyncIOMotorClient
 from apps.routers import posts, users
 import firebase_admin
 from firebase_admin import credentials
@@ -13,13 +11,12 @@ from firebase_admin import credentials
 async def lifespan(app: FastAPI):
     # Connect Firebase
     cred = credentials.Certificate("serviceAccountKey.json")
-    firebase_admin.initialize_app(cred)
+    app = firebase_admin.initialize_app(cred)
     yield
+    firebase_admin.delete_app(app)
 
 
 app = FastAPI(lifespan=lifespan)
-
-
 app.include_router(users.router)
 app.include_router(posts.router)
 
