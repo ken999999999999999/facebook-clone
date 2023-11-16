@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Body, status, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, status, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
+from apps.dependencies.auth import get_current_user
 
 
 from apps.models.posts import PostModel
@@ -7,7 +8,7 @@ from apps.models.posts import PostModel
 router = APIRouter(
     prefix="/posts",
     tags=["posts"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": "Not found"}}
 )
 
 
@@ -21,7 +22,7 @@ async def read_posts():
 
 @router.get("/{post_id}", response_description="Get single post")
 async def read_post(id: str, request: Request):
-    if (post := await request.app.mongodb["posts"].find_one({"_id": id})) is not None:
+    if (post := await request.app.db["posts"].find_one({"_id": id})) is not None:
         return post
 
     raise HTTPException(status_code=404, detail=f"Task {id} not found")
