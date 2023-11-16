@@ -1,11 +1,8 @@
-from typing import Annotated
-from fastapi import APIRouter, Body, Depends,  status, HTTPException, Request
+from fastapi import APIRouter, Body, Depends,  status, HTTPException
 from fastapi.encoders import jsonable_encoder
 from apps.dependencies.auth import get_current_user
 from apps.dependencies.db import db_context
-
-
-from apps.models.posts import PostModel
+from apps.models.posts.model import Post
 
 router = APIRouter(
     prefix="/posts",
@@ -38,7 +35,7 @@ async def read_post(id: str, db_context:  db_context):
              response_model_by_alias=False,
 
              )
-async def create_task(db_context:  db_context, post: PostModel = Body(...)):
+async def create_task(db_context:  db_context, post: Post = Body(...)):
     post = jsonable_encoder(post)
     new_post = await db_context.db["posts"].insert_one(post)
 

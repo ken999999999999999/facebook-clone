@@ -4,10 +4,12 @@ from config import settings
 from motor.motor_asyncio import AsyncIOMotorClient
 
 
-class DBContext:
+class DBContextManager:
     def __init__(self):
         self.db_client = AsyncIOMotorClient(settings.DB_URL)
         self.db = self.db_client[settings.DB_NAME]
+        self.posts = self.db['posts']
+        self.users = self.db['users']
 
     def __enter__(self):
         return self
@@ -17,7 +19,7 @@ class DBContext:
 
 
 async def get_db_context():
-    with DBContext() as db_context:
+    with DBContextManager() as db_context:
         yield db_context
 
-db_context = Annotated[DBContext, Depends(get_db_context)]
+db_context = Annotated[DBContextManager, Depends(get_db_context)]

@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import uvicorn
 from config import settings
-from apps.routers import posts, users
+from apps.routers import posts, users, auth
 import firebase_admin
 from firebase_admin import credentials
 
@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(users.router)
 app.include_router(posts.router)
+app.include_router(auth.router)
 
 
 if __name__ == "__main__":

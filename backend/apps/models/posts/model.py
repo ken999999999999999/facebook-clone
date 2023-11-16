@@ -2,7 +2,7 @@ import uuid
 from pydantic import BaseModel, Field
 
 
-class PostModel(BaseModel):
+class Post(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     image: str = Field(...)
     description: str = Field(...)
