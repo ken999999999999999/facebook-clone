@@ -20,9 +20,9 @@ export default function Card({ title, content, children, footer }: CardProps) {
         <Typography variant="h5" component="div">
           {title}
         </Typography>
-        <Typography variant="body2">{children}</Typography>
+        {children}
       </CardContent>
-      <CardActions>{footer}</CardActions>
+      {footer}
     </MuiCard>
   )
 }

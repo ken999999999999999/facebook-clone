@@ -6,21 +6,21 @@ import Divider from "@mui/material/Divider"
 import Container from "@mui/material/Container"
 import Stack from "@mui/material/Stack"
 
-interface User {
+export interface User {
   lastName: string
   firstName: string
   displayName: string
   birthDate: string
 }
 
-interface Reactions {
+export interface Reactions {
   postId?: string
   commentId?: string
   createdBy: string
   emoji: string
 }
 
-interface Comment {
+export interface Comment {
   postId: string
   description: string
   createdBy: User
@@ -29,7 +29,7 @@ interface Comment {
   image: string
 }
 
-interface Post {
+export interface Post {
   id: string
   likes: number
   comments: Comment[]
@@ -41,14 +41,14 @@ interface Post {
   originalPost?: Post | null
 }
 
-interface FeedCardProps extends CardProps {
+export interface FeedCardProps extends CardProps {
   post: Post
 }
 
 const FeedCardButtons = () => {
   //create three button named likes, comments and share
   return (
-    <Container maxWidth="sm">
+    <Container>
       <Divider />
       <Stack
         direction="row"

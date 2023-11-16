@@ -4,11 +4,14 @@ import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
 import Card from "@components/Card"
 import FeedCard from "@/components/FeedCard"
+import PostFeedCard from "@/components/PostFeedCard"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
   const user = {
+    userIcon:
+      "https://lh3.googleusercontent.com/a/ACg8ocI6_pLarmA49JzoKTq2fEjuCFp7IrZsvMjGaZaBSYsV9w=s96-c",
     lastName: "Doe",
     firstName: "John",
     displayName: "JohnD",
@@ -69,6 +72,7 @@ export default function Home() {
             testing
           </Card>
           <FeedCard post={post}></FeedCard>
+          <PostFeedCard user={user}></PostFeedCard>
           <p>
             Get started by editing&nbsp;
             <code className={styles.code}>pages/index.tsx</code>
