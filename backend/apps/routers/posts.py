@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Body, Depends, status, HTTPException, Request
+from typing import Annotated
+from fastapi import APIRouter, Body, Depends,  status, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from apps.dependencies.auth import get_current_user
+from apps.dependencies.db import db_context
 
 
 from apps.models.posts import PostModel
@@ -8,7 +10,8 @@ from apps.models.posts import PostModel
 router = APIRouter(
     prefix="/posts",
     tags=["posts"],
-    responses={404: {"description": "Not found"}}
+    responses={404: {"description": "Not found"}},
+    dependencies=[Depends(get_current_user)]
 )
 
 
@@ -21,8 +24,8 @@ async def read_posts():
 
 
 @router.get("/{post_id}", response_description="Get single post")
-async def read_post(id: str, request: Request):
-    if (post := await request.app.db["posts"].find_one({"_id": id})) is not None:
+async def read_post(id: str, db_context:  db_context):
+    if (post := await db_context.db["posts"].find_one({"_id": id})) is not None:
         return post
 
     raise HTTPException(status_code=404, detail=f"Task {id} not found")
@@ -32,10 +35,11 @@ async def read_post(id: str, request: Request):
              response_description="Add new post",
              response_model=str,
              status_code=status.HTTP_201_CREATED,
-             response_model_by_alias=False
+             response_model_by_alias=False,
+
              )
-async def create_task(request: Request, post: PostModel = Body(...)):
+async def create_task(db_context:  db_context, post: PostModel = Body(...)):
     post = jsonable_encoder(post)
-    new_post = await request.app.db["posts"].insert_one(post)
+    new_post = await db_context.db["posts"].insert_one(post)
 
     return new_post.inserted_id

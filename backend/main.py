@@ -11,17 +11,10 @@ from firebase_admin import credentials
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Connect Mongodb
-    app.db_client = AsyncIOMotorClient(settings.DB_URL)
-    app.db = app.db_client[settings.DB_NAME]
-
     # Connect Firebase
     cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred)
-
     yield
-    # Close connection
-    app.db_client.close()
 
 
 app = FastAPI(lifespan=lifespan)
