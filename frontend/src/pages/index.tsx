@@ -2,10 +2,59 @@ import Head from "next/head"
 import Image from "next/image"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
+import Card from "@components/Card"
+import FeedCard from "@/components/FeedCard"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
+  const user = {
+    lastName: "Doe",
+    firstName: "John",
+    displayName: "JohnD",
+    birthDate: "1990-05-15",
+  }
+
+  const comments = [
+    {
+      postId: "123456",
+      description: "This is an amazing post!",
+      createdBy: {
+        lastName: "Smith",
+        firstName: "Alice",
+        displayName: "AliceS",
+        birthDate: "1988-04-22",
+      },
+      createdOn: "2023-11-14T08:20:00",
+      modifiedOn: "2023-11-14T09:00:00",
+      image: "https://example.com/comment-image1.jpg",
+    },
+    {
+      postId: "123456",
+      description: "Really love the content you're sharing.",
+      createdBy: {
+        lastName: "Johnson",
+        firstName: "Bob",
+        displayName: "BobbyJ",
+        birthDate: "1992-07-30",
+      },
+      createdOn: "2023-11-14T10:15:00",
+      modifiedOn: "2023-11-14T11:05:00",
+      image: "https://example.com/comment-image2.jpg",
+    },
+  ]
+
+  const post = {
+    id: "123456",
+    likes: 87,
+    comments: comments,
+    image: "https://example.com/image123.jpg",
+    description:
+      "Exploring the beautiful landscapes of the Rocky Mountains #NatureLover #HikingAdventures",
+    createdBy: user,
+    createdOn: "2023-11-10T09:00:00",
+    modifiedOn: "2023-11-12T10:15:00",
+  }
   return (
     <>
       <Head>
@@ -15,7 +64,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
-        <div className={styles.description}>
+        <div>
+          <Card title={"Username0123"} footer={"testing"}>
+            testing
+          </Card>
+          <FeedCard post={post}></FeedCard>
           <p>
             Get started by editing&nbsp;
             <code className={styles.code}>pages/index.tsx</code>
@@ -38,7 +91,7 @@ export default function Home() {
             </a>
           </div>
         </div>
-
+        {/* 
         <div className={styles.center}>
           <Image
             className={styles.logo}
@@ -48,7 +101,7 @@ export default function Home() {
             height={37}
             priority
           />
-        </div>
+        </div> */}
 
         <div className={styles.grid}>
           <a

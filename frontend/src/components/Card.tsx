@@ -6,7 +6,7 @@ import CardContent from "@mui/material/CardContent"
 import Button from "@mui/material/Button"
 import Typography from "@mui/material/Typography"
 
-interface CardProps
+export interface CardProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title" | "content"> {
   title?: React.ReactNode
   content?: React.ReactNode
