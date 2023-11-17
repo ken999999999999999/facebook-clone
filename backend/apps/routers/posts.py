@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Body, Depends,  status, HTTPException
-from fastapi.encoders import jsonable_encoder
 from apps.dependencies.auth import authorize
+from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
+from apps.models.posts.dto import CreatePostDto
 from apps.models.posts.model import Post
 
 router = APIRouter(
@@ -28,11 +29,8 @@ async def read_post(id: str, db_context:  db_context):
     raise HTTPException(status_code=404, detail=f"Task {id} not found")
 
 
-@router.post("/",
-             response_description="Add new post",
-             status_code=status.HTTP_201_CREATED,
-             response_model_by_alias=False
-             )
-async def create_task(db_context:  db_context, post: Post = Body(...)):
-    new_post = await db_context.posts.insert_one(post.model_dump())
-    return new_post.inserted_id
+@router.post("/")
+async def create_task(db_context:  db_context, current_user: current_user,  command: CreatePostDto = Body(...)):
+    post = Post(**command.model_dump(),
+                created_by=current_user.id).model_dump(exclude=["id"])
+    return str((await db_context.posts.insert_one(post)).inserted_id)
