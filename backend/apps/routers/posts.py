@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, Depends,  status, HTTPException
 from fastapi.encoders import jsonable_encoder
-from apps.dependencies.auth import get_current_user
+from apps.dependencies.auth import authorize
 from apps.dependencies.db import db_context
 from apps.models.posts.model import Post
 
@@ -8,7 +8,7 @@ router = APIRouter(
     prefix="/posts",
     tags=["posts"],
     responses={404: {"description": "Not found"}},
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(authorize)]
 )
 
 
