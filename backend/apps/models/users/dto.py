@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, Field, PastDate, validator
 import re
 
 
-class SignUpDto(BaseModel):
+class CreateUserDto(BaseModel):
     email: EmailStr = Field(max_length=100)
     password: str = Field(
         description="Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character")

@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth
-from apps.models.auth.dto import SignUpDto
 
 security = HTTPBearer()
 
