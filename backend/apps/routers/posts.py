@@ -22,7 +22,7 @@ async def read_posts():
 
 @router.get("/{post_id}", response_description="Get single post")
 async def read_post(id: str, db_context:  db_context):
-    if (post := await db_context.db["posts"].find_one({"_id": id})) is not None:
+    if (post := await db_context.posts.find_one({"_id": id})) is not None:
         return post
 
     raise HTTPException(status_code=404, detail=f"Task {id} not found")
@@ -30,13 +30,9 @@ async def read_post(id: str, db_context:  db_context):
 
 @router.post("/",
              response_description="Add new post",
-             response_model=str,
              status_code=status.HTTP_201_CREATED,
-             response_model_by_alias=False,
-
+             response_model_by_alias=False
              )
 async def create_task(db_context:  db_context, post: Post = Body(...)):
-    post = jsonable_encoder(post)
-    new_post = await db_context.db["posts"].insert_one(post)
-
+    new_post = await db_context.posts.insert_one(post.model_dump())
     return new_post.inserted_id

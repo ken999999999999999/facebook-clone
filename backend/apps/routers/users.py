@@ -14,7 +14,7 @@ router = APIRouter(
 
 
 @router.post("/sign-up/", dependencies=[Depends(createUserValidator)])
-async def create_user_command(db_context: db_context, command: CreateUserDto = Body(...)):
+async def create_user_command(db_context: db_context, command: CreateUserDto = Body(...)) -> None:
     firebase_user = await create_firebase_user(password=command.password, email=command.email, display_name=command.display_name)
     user = User(uid=firebase_user.uid, **
                 command.model_dump(exclude=["password"])).model_dump()
@@ -23,6 +23,6 @@ async def create_user_command(db_context: db_context, command: CreateUserDto = B
     return
 
 
-@router.get("/", dependencies=[Depends(authorize)], response_model=ViewUserDto)
+@router.get("/", dependencies=[Depends(authorize)])
 async def get_current_user_query(current_user: current_user):
-    return current_user
+    return ViewUserDto(**current_user)
