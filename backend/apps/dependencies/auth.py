@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth
 from apps.dependencies.db import db_context
-from apps.models.users.dto import ViewUserDto
+from apps.models.users.model import User
 
 security = HTTPBearer()
 
@@ -15,7 +15,7 @@ async def authorize(db_context: db_context, credentials: HTTPAuthorizationCreden
             id_token=credentials.credentials, check_revoked=True)
         current_user = await db_context.users.find_one({"uid": decoded_token['uid']})
         if current_user is not None:
-            return ViewUserDto(**current_user)
+            return User(**current_user)
         raise Exception()
 
     except Exception as e:

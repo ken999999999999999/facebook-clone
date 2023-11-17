@@ -4,7 +4,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class User(BaseModel):
-    uid: str = Field(default_factory=uuid.uuid4, alias="_id")
+    uid: str = Field(...)
     email: EmailStr = Field(max_length=100)
     display_name: str = Field(max_length=100)
     first_name: str = Field(max_length=100)

@@ -25,4 +25,4 @@ async def create_user_command(db_context: db_context, command: CreateUserDto = B
 
 @router.get("/", dependencies=[Depends(authorize)])
 async def get_current_user_query(current_user: current_user):
-    return ViewUserDto(**current_user)
+    return ViewUserDto(**current_user.model_dump())
