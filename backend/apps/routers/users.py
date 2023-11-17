@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends
 from apps.dependencies.auth import authorize, create_firebase_user
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
-from apps.models.users.dto import CreateUserDto
+from apps.models.users.dto import CreateUserDto, ViewUserDto
 from apps.models.users.validators import createUserValidator
 from apps.models.users.model import User
 
@@ -23,6 +23,6 @@ async def create_user_command(db_context: db_context, command: CreateUserDto = B
     return
 
 
-@router.get("/", dependencies=[Depends(authorize)])
+@router.get("/", dependencies=[Depends(authorize)], response_model=ViewUserDto)
 async def get_current_user_query(current_user: current_user):
     return current_user

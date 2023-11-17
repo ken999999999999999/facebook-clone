@@ -1,5 +1,26 @@
+from datetime import date
 from pydantic import BaseModel, EmailStr, Field, PastDate, validator
 import re
+
+
+class ViewUserDto(BaseModel):
+    email: str
+    display_name: str
+    first_name: str
+    last_name: str
+    birthdate: date
+
+    class Config:
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "email": "example@email.com",
+                "display_name": "Helle word",
+                "first_name": "Hello",
+                "last_name": "World",
+                "birthdate": "2000-01-01"
+            }
+        }
 
 
 class CreateUserDto(BaseModel):
