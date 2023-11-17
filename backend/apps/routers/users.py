@@ -3,7 +3,7 @@ from apps.dependencies.auth import authorize, create_firebase_user
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
 from apps.models.users.dto import CreateUserDto, ViewUserDto
-from apps.models.users.validators import createUserValidator
+from apps.models.users.validators import create_user_validator
 from apps.models.users.model import User
 
 router = APIRouter(
@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post("/sign-up/", dependencies=[Depends(createUserValidator)])
+@router.post("/sign-up/", dependencies=[Depends(create_user_validator)])
 async def create_user_command(db_context: db_context, command: CreateUserDto = Body(...)) -> None:
     firebase_user = await create_firebase_user(password=command.password, email=command.email, display_name=command.display_name)
     user = User(uid=firebase_user.uid, **
