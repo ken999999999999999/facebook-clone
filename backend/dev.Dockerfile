@@ -8,11 +8,10 @@ RUN apt-get update
 
 RUN pip install --upgrade pip
 
+RUN pip install debugpy
+
 RUN pip install -r requirements.txt
 
-EXPOSE 8000
-
-CMD ["python","main.py"]
-
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "main.py"]
 
 
