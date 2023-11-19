@@ -5,7 +5,7 @@ from fastapi import APIRouter, Body, Depends,   HTTPException
 from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
-from apps.models.posts.dto import CreatePostDto, UpdatePostDto
+from apps.models.posts.dto import CreatePostCommand, UpdatePostCommand
 from apps.models.posts.model import Post
 
 
@@ -13,7 +13,7 @@ router = APIRouter(
     prefix="/posts",
     tags=["posts"],
     responses={404: {"description": "Not found"}},
-    dependencies=[Depends(authorize)]
+    # dependencies=[Depends(authorize)]
 )
 
 
@@ -25,15 +25,23 @@ async def read_posts():
     return fake_posts_db
 
 
+@router.get("${id}/image")
+async def get_post_image_query(id: str, db_context:  db_context) -> str:
+    post = await db_context.posts.find_one({"_id": ObjectId(id)})
+    if (post) is None:
+        raise HTTPException(status_code=404, detail=f"Post {id} not found")
+    return Post(post).image
+
+
 @router.post("/")
-async def create_post_command(db_context:  db_context, current_user: current_user,  command: CreatePostDto = Body(...)) -> str:
+async def create_post_command(db_context:  db_context, current_user: current_user,  command: CreatePostCommand = Body(...)) -> str:
     post = Post(**command.model_dump(),
                 created_by=current_user.id).model_dump(exclude=["id"])
     return str((await db_context.posts.insert_one(post)).inserted_id)
 
 
 @router.put("/{id}")
-async def update_post_command(id: str, db_context:  db_context, current_user: current_user,  command: UpdatePostDto = Body(...)) -> None:
+async def update_post_command(id: str, db_context:  db_context, current_user: current_user,  command: UpdatePostCommand = Body(...)) -> None:
     if id != command.id:
         return BAD_REQUEST()
     updated_post = command.model_dump(exclude="id")

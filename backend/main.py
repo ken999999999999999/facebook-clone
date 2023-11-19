@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
 import uvicorn
 from config import settings
-from apps.routers import posts, users
+from apps.routers import posts, relationship, users
 import firebase_admin
 from firebase_admin import credentials
 
@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(users.router)
 app.include_router(posts.router)
+app.include_router(relationship.router)
 
 
 @app.exception_handler(RequestValidationError)

@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, Field, PastDate, validator
 import re
 
 
-class ViewUserDto(BaseModel):
+class UserDto(BaseModel):
     email: str
     display_name: str
     first_name: str
@@ -11,7 +11,7 @@ class ViewUserDto(BaseModel):
     birthdate: date
 
 
-class CreateUserDto(BaseModel):
+class CreateUserCommand(BaseModel):
     email: EmailStr = Field(..., max_length=100)
     password: str = Field(...,
                           description="Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character")
