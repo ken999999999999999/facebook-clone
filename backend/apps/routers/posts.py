@@ -1,14 +1,19 @@
-from fastapi import APIRouter, Body, Depends, status, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
-from apps.dependencies.auth import get_current_user
+from datetime import datetime
+from http.client import BAD_REQUEST
+from bson import ObjectId
+from fastapi import APIRouter, Body, Depends,   HTTPException
+from apps.dependencies.auth import authorize
+from apps.dependencies.user import current_user
+from apps.dependencies.db import db_context
+from apps.models.posts.dto import CreatePostCommand, UpdatePostCommand
+from apps.models.posts.model import Post
 
-
-from apps.models.posts import PostModel
 
 router = APIRouter(
     prefix="/posts",
     tags=["posts"],
-    responses={404: {"description": "Not found"}}
+    responses={404: {"description": "Not found"}},
+    # dependencies=[Depends(authorize)]
 )
 
 
@@ -20,22 +25,36 @@ async def read_posts():
     return fake_posts_db
 
 
-@router.get("/{post_id}", response_description="Get single post")
-async def read_post(id: str, request: Request):
-    if (post := await request.app.db["posts"].find_one({"_id": id})) is not None:
-        return post
+@router.get("${id}/image")
+async def get_post_image_query(id: str, db_context:  db_context) -> str:
+    post = await db_context.posts.find_one({"_id": ObjectId(id)})
+    if (post) is None:
+        raise HTTPException(status_code=404, detail=f"Post {id} not found")
+    return Post(post).image
 
-    raise HTTPException(status_code=404, detail=f"Task {id} not found")
+
+@router.post("/")
+async def create_post_command(db_context:  db_context, current_user: current_user,  command: CreatePostCommand = Body(...)) -> str:
+    post = Post(**command.model_dump(),
+                created_by=current_user.id).model_dump(exclude=["id"])
+    return str((await db_context.posts.insert_one(post)).inserted_id)
 
 
-@router.post("/",
-             response_description="Add new post",
-             response_model=str,
-             status_code=status.HTTP_201_CREATED,
-             response_model_by_alias=False
-             )
-async def create_task(request: Request, post: PostModel = Body(...)):
-    post = jsonable_encoder(post)
-    new_post = await request.app.db["posts"].insert_one(post)
+@router.put("/{id}")
+async def update_post_command(id: str, db_context:  db_context, current_user: current_user,  command: UpdatePostCommand = Body(...)) -> None:
+    if id != command.id:
+        return BAD_REQUEST()
+    updated_post = command.model_dump(exclude="id")
+    updated_post['modified_by'] = datetime.now()
 
-    return new_post.inserted_id
+    if (await db_context.posts.find_one_and_update({"_id": ObjectId(command.id), "created_by": current_user.id}, {"$set": updated_post})) is None:
+        raise HTTPException(status_code=404, detail=f"Post {id} not found")
+    return
+
+
+@router.delete("/{id}")
+async def delete_post_command(id: str, db_context:  db_context, current_user: current_user) -> None:
+    if (await db_context.posts.find_one_and_delete({"_id": ObjectId(id), "created_by": current_user.id})) is None:
+        raise HTTPException(status_code=404, detail=f"Post {id} not found")
+
+    return
