@@ -12,7 +12,7 @@ class Post(BaseModel):
     created_by: PyObjectId = Field(...)
     created: datetime = Field(default_factory=datetime.now)
     modified: datetime = Field(default_factory=datetime.now)
-    original_post: PyObjectId = Field(default=None)
+    original_post_id: PyObjectId = Field(default=None)
 
     class Config:
         populate_by_name = True

@@ -8,7 +8,7 @@ from apps.models.users.dto import UserBriefDto
 class CreatePostCommand(BaseModel):
     image:  Union[str, None] = None
     description: str = Field(..., max_length=2000),
-    original_post: Union[str, None] = None
+    original_post_id: Union[str, None] = None
 
 
 class UpdatePostCommand(BaseModel):
