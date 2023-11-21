@@ -6,7 +6,7 @@ from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
 from apps.models.common import PaginationDto, PaginationQuery
-from apps.models.comments.dto import CreateCommentCommand,  UpdateCommentCommand
+from apps.models.comments.dto import CommentDto, CreateCommentCommand,  UpdateCommentCommand
 from apps.models.comments.model import Comment
 from apps.models.comments.validator import create_comment_validator
 
@@ -20,8 +20,20 @@ router = APIRouter(
 
 
 @router.get("/")
-async def read_comments(db_context: db_context, current_user: current_user, pagination: PaginationQuery = Depends()):
-    return
+async def get_comments(db_context: db_context, post_id: str,  pagination: PaginationQuery = Depends()):
+    filters = {"post_id": post_id}
+    query = await db_context.comments.aggregate([
+        {"$match": filters},
+        {"$sort": {pagination.order_by: 1 if pagination.is_asc else -1}},
+        {"$skip": pagination.skip},
+        {"$limit": pagination.page_size}
+    ]).to_list(None)
+
+    return PaginationDto(
+        records=[CommentDto(**record, id=str(record["_id"]), has_image=(record["image"] != None))
+                 for record in query],
+        total=await db_context.relationships.count_documents(filters)
+    )
 
 
 @router.get("${id}/image")

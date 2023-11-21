@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.get("/")
-async def read_posts(db_context: db_context, current_user: current_user, pagination: PaginationQuery = Depends()):
+async def get_posts(db_context: db_context, current_user: current_user, pagination: PaginationQuery = Depends()):
     filters = {"$or": [
         {"created_by": current_user.id},
         {"receiver_id": current_user.id},
