@@ -12,6 +12,13 @@ class UserDto(BaseModel):
     birthdate: date
 
 
+class UserBriefDto(BaseModel):
+    id: str
+    display_name: str
+    first_name: str
+    last_name: str
+
+
 class CreateUserCommand(BaseModel):
     email: EmailStr = Field(..., max_length=100)
     password: str = Field(...,

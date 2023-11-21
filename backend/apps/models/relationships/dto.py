@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Union
 from pydantic import BaseModel,  Field
-from apps.models.users.dto import UserDto
+from apps.models.users.dto import UserBriefDto
 
 
 class CreateRelationshipCommand(BaseModel):
@@ -11,7 +11,7 @@ class CreateRelationshipCommand(BaseModel):
 
 class RelationshipDto(BaseModel):
     id: str
-    receiver: UserDto
-    creator: UserDto
+    receiver: UserBriefDto
+    creator: UserBriefDto
     accepted_on: Union[datetime, None]
     relationship: str

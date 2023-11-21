@@ -5,8 +5,10 @@ from fastapi import APIRouter, Body, Depends,   HTTPException
 from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
-from apps.models.posts.dto import CreatePostCommand, UpdatePostCommand
+from apps.models.common import PaginationDto, PaginationQuery
+from apps.models.posts.dto import CreatePostCommand, PostOriginalDto, UpdatePostCommand
 from apps.models.posts.model import Post
+from apps.models.posts.validator import create_post_validator
 
 
 router = APIRouter(
@@ -21,8 +23,49 @@ fake_posts_db = {"plumbus": {"name": "Plumbus"}, "gun": {"name": "Portal Gun"}}
 
 
 @router.get("/")
-async def read_posts():
-    return fake_posts_db
+async def read_posts(db_context: db_context, current_user: current_user, pagination: PaginationQuery = Depends()):
+    filters = {"$or": [
+        {"created_by": current_user.id},
+        {"receiver_id": current_user.id},
+    ], "accepted_on": {"$ne": None}}
+
+    friends_query = await db_context.relationships.find(filters).to_list(None)
+
+    friends = [record["receiver_id"] if record["created_by"] ==
+               current_user.id else record["created_by"] for record in friends_query]
+
+    query = await db_context.posts.aggregate([
+        {"$match": {
+            "created_by": {"$in": friends}
+        }},
+        {"$lookup": {
+            "from": "users",
+            "let": {"created_by_user_id": {"$toObjectId": "$created_by"}},
+            "pipeline": [
+                {"$match": {
+                    "$expr": {"$eq": ["$_id", "$$created_by_user_id"]}}},
+                {"$addFields": {"id": {"$toString": "$_id"}}}
+            ],
+            "as": "creators"
+        }},
+        {"$lookup": {
+            "from": "posts",
+            "localField": "original_post",
+            "foreignField": "_id",
+            "as": "original_post_detail"
+        }},
+        {"$addFields": {
+            "original_post": {"$arrayElemAt": ["$original_post_detail", 0]},
+            "creator": {"$arrayElemAt": ["$creators", 0]},
+            "has_image": {"$ne": ["$image", None]},
+            "id": {"$toString": "$_id"}
+        }},
+        {"$sort": {pagination.order_by: 1 if pagination.is_asc else -1}},
+        {"$skip": pagination.skip},
+        {"$limit": pagination.page_size}
+    ]).to_list(None)
+
+    return [PostOriginalDto(**record) for record in query]
 
 
 @router.get("${id}/image")
@@ -33,7 +76,7 @@ async def get_post_image_query(id: str, db_context:  db_context) -> str:
     return Post(post).image
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(create_post_validator)])
 async def create_post_command(db_context:  db_context, current_user: current_user,  command: CreatePostCommand = Body(...)) -> str:
     post = Post(**command.model_dump(),
                 created_by=current_user.id).model_dump(exclude=["id"])
