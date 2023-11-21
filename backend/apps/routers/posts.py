@@ -19,9 +19,6 @@ router = APIRouter(
 )
 
 
-fake_posts_db = {"plumbus": {"name": "Plumbus"}, "gun": {"name": "Portal Gun"}}
-
-
 @router.get("/")
 async def read_posts(db_context: db_context, current_user: current_user, pagination: PaginationQuery = Depends()):
     filters = {"$or": [
