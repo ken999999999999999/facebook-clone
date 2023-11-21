@@ -14,7 +14,7 @@ async def authorize(db_context: db_context, credentials: HTTPAuthorizationCreden
         #     id_token=credentials.credentials, check_revoked=True)
         # current_user = await db_context.users.find_one({"uid": decoded_token['uid']})
 
-        current_user = await db_context.users.find_one({"uid": "w0XiM8q8YeQ18Mtg7gDnn01p1qf2"})
+        current_user = await db_context.users.find_one({"uid": "22bktoL0AzUSMZkkD2lJrECxBQl2"})
         if current_user is not None:
             return User(**current_user)
         raise auth.InvalidIdTokenError(message="User is not exist in this app")

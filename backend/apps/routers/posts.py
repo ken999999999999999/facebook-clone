@@ -13,7 +13,7 @@ router = APIRouter(
     prefix="/posts",
     tags=["posts"],
     responses={404: {"description": "Not found"}},
-    # dependencies=[Depends(authorize)]
+    dependencies=[Depends(authorize)]
 )
 
 

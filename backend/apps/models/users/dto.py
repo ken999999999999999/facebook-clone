@@ -4,6 +4,7 @@ import re
 
 
 class UserDto(BaseModel):
+    id: str
     email: str
     display_name: str
     first_name: str
