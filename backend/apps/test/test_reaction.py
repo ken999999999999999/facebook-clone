@@ -1,18 +1,7 @@
-from fastapi.testclient import TestClient
-
-from apps.main import app
+from apps.test.client import facebook_clone_test_client, auth_headers
 
 
-client = TestClient(app)
-
-headers = {"X-Token": "coneofsilence"}
-
-
-def test_read_item():
-    response = client.get("/users", headers=headers)
+def test_get_reaction():
+    response = facebook_clone_test_client.get(
+        "/users", headers=auth_headers)
     assert response.status_code == 200
-    assert response.json() == {
-        "id": "foo",
-        "title": "Foo",
-        "description": "There goes my hero",
-    }

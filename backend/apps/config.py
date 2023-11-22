@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     PORT: int = 8000
     DB_URL: str
     DB_NAME: str
+    TEST_DB_NAME:str
 
 
 settings = Settings()
