@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends
-from config import settings
 from motor.motor_asyncio import AsyncIOMotorClient
+from apps.config import settings
 
 
 class DBContextManager:

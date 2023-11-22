@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
 import uvicorn
-from config import settings
+from apps.config import settings
 from apps.routers import comment, posts, reaction, relationship, users
 import firebase_admin
 from firebase_admin import credentials
