@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Union
 from pydantic import BaseModel, Field
 from apps.models.reactions.enum import EmojiEnum
@@ -19,4 +18,4 @@ class UpdateReactionCommand(BaseModel):
 class ReactionBriefDto(BaseModel):
     id: str
     emoji: EmojiEnum
-    created_by: UserBriefDto
+    creator: UserBriefDto
