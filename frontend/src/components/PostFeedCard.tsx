@@ -45,7 +45,7 @@ const PostFeedButtons = () => {
 
 const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
   return (
-    <Card footer={<PostFeedButtons />}>
+    <Card footer={<PostFeedButtons />} sx={{ width: "80%" }}>
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Avatar alt={user.displayName} src="/2.jpeg" />
         <Input
