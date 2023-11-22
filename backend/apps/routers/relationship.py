@@ -14,7 +14,6 @@ from apps.models.relationships.validatior import create_relationship_validator
 router = APIRouter(
     prefix="/relationships",
     tags=["relationships"],
-    responses={404: {"description": "Not found"}},
     dependencies=[Depends(authorize)]
 )
 

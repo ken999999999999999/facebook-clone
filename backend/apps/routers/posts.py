@@ -14,7 +14,6 @@ from apps.models.posts.validator import create_post_validator
 router = APIRouter(
     prefix="/posts",
     tags=["posts"],
-    responses={404: {"description": "Not found"}},
     dependencies=[Depends(authorize)]
 )
 

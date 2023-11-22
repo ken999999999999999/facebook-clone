@@ -14,7 +14,6 @@ from apps.models.comments.validator import create_comment_validator
 router = APIRouter(
     prefix="/comments",
     tags=["comments"],
-    responses={404: {"description": "Not found"}},
     dependencies=[Depends(authorize)]
 )
 
