@@ -64,7 +64,7 @@ async def get_posts(db_context: db_context, current_user: current_user, paginati
     return [PostOriginalDto(**record) for record in query]
 
 
-@router.get("${id}/image")
+@router.get("/${id}/image")
 async def get_post_image_query(id: str, db_context:  db_context) -> str:
     post = await db_context.posts.find_one({"_id": ObjectId(id)})
     if (post) is None:

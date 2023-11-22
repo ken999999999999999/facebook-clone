@@ -35,7 +35,7 @@ async def get_comments(db_context: db_context, post_id: str,  pagination: Pagina
     )
 
 
-@router.get("${id}/image")
+@router.get("/${id}/image")
 async def get_comment_image_query(id: str, db_context:  db_context) -> str:
     comment = await db_context.comments.find_one({"_id": ObjectId(id)})
     if (comment) is None:
