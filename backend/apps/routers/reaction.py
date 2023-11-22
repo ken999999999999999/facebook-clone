@@ -1,4 +1,3 @@
-from datetime import datetime
 from http.client import BAD_REQUEST
 from typing import Union
 from apps.models.reactions.dto import CreateReactionCommand, ReactionBriefDto, UpdateReactionCommand
@@ -7,8 +6,6 @@ from fastapi import APIRouter, Body, Depends,   HTTPException
 from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
-from apps.models.common import PaginationDto, PaginationQuery
-
 from apps.models.reactions.model import Reaction
 from apps.models.reactions.validator import create_reaction_validator
 
