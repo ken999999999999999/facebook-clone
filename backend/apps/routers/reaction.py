@@ -7,7 +7,7 @@ from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
 from apps.models.reactions.model import Reaction
-from apps.models.reactions.validator import create_reaction_validator
+from apps.models.reactions.validator import create_reaction_validator, get_reactions_validator
 
 
 router = APIRouter(
@@ -17,8 +17,8 @@ router = APIRouter(
 )
 
 
-@router.get("/")
-async def get_reactions(db_context: db_context, post_id: Union[str, None], comment_id: Union[str, None]):
+@router.get("/", dependencies=[Depends(get_reactions_validator)])
+async def get_reactions(db_context: db_context, post_id: Union[str, None] = None, comment_id: Union[str, None] = None):
     filters = {"$or": [{"post_id": post_id}, {"comment_id": comment_id}]}
     query = await db_context.reactions.aggregate([
         {"$match": filters},
