@@ -7,5 +7,5 @@ from apps.models.comments.dto import CreateCommentCommand
 
 async def create_comment_validator(db_context: db_context,  command: CreateCommentCommand = Body(...), ):
     if await db_context.posts.find_one({"_id": ObjectId(command.post_id)}) == None:
-        raise RequestValidationError(body="Post is not exist")
+        raise RequestValidationError(errors=["Post is not exist"])
     return

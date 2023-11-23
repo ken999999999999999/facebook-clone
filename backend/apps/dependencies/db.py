@@ -1,13 +1,13 @@
 from typing import Annotated
 from fastapi import Depends
-from config import settings
 from motor.motor_asyncio import AsyncIOMotorClient
+from apps.config import settings
 
 
 class DBContextManager:
-    def __init__(self):
+    def __init__(self,db_name):
         self.db_client = AsyncIOMotorClient(settings.DB_URL)
-        self.db = self.db_client[settings.DB_NAME]
+        self.db = self.db_client[db_name]
         self.posts = self.db['posts']
         self.users = self.db['users']
         self.relationships = self.db['relationships']
@@ -22,7 +22,7 @@ class DBContextManager:
 
 
 async def get_db_context():
-    with DBContextManager() as db_context:
+    with DBContextManager(settings.DB_NAME) as db_context:
         yield db_context
 
 db_context = Annotated[DBContextManager, Depends(get_db_context)]

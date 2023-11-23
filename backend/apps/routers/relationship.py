@@ -8,7 +8,7 @@ from apps.models.common import PaginationDto, PaginationQuery
 from apps.models.relationships.dto import CreateRelationshipCommand, RelationshipDto
 from apps.models.relationships.enum import RelationshipEnum
 from apps.models.relationships.model import Relationship
-from apps.models.relationships.validatior import create_relationship_validator
+from apps.models.relationships.validator import create_relationship_validator
 
 
 router = APIRouter(
