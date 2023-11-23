@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status, Security
+from fastapi import Depends, HTTPException, Request, status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth
 from apps.dependencies.db import db_context
@@ -7,7 +7,7 @@ from apps.models.users.model import User
 security = HTTPBearer()
 
 
-async def authorize(db_context: db_context, credentials: HTTPAuthorizationCredentials = Security(security)):
+async def authorize(db_context: db_context, request: Request, credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
         # Verify the token using Firebase Admin SDK
         decoded_token = auth.verify_id_token(
