@@ -22,9 +22,6 @@ async def get_mock_user(db_context: db_context, command: User = Body(...)) -> st
         id = (await db_context.users.insert_one(command.model_dump(exclude=["id"]))).inserted_id
     return str(id)
 
-facebook_clone_test_client = TestClient(app)
-
-
 settings.DB_NAME = "testFbClone"
 
 
@@ -40,3 +37,5 @@ async def test_authorize(db_context: db_context, credentials: HTTPAuthorizationC
 
 
 app.dependency_overrides[authorize] = test_authorize
+
+facebook_clone_test_client = TestClient(app)

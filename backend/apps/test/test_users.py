@@ -12,7 +12,7 @@ def get_user1_header():
             "display_name": "user1",
             "last_name": "user",
             "first_name": "1",
-            "birthdate": "2000-01-01T18:25:43.511Z"
+            "birthdate": "2000-01-01T00:00:00.000Z"
         })
     return {"Authorization": f"Bearer {response.json()}"}
 
@@ -27,12 +27,18 @@ def get_user2_header():
             "display_name": "user2",
             "last_name": "user2",
             "first_name": "2",
-            "birthdate": "2000-01-01T18:25:43.511Z"
+            "birthdate": "2000-01-01T00:00:00.000Z"
         })
     return {"Authorization": f"Bearer {response.json()}"}
 
 
 def test_auth(get_user1_header):
     response = facebook_clone_test_client.get(
-        "/user", headers=get_user1_header)
-    assert response.status_code != 400
+        "/users/", headers=get_user1_header)
+
+    response2 = facebook_clone_test_client.get(
+        "/users/")
+
+    assert response.status_code == 200
+
+    assert response2.status_code == 403
