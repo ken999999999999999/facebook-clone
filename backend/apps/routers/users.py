@@ -8,8 +8,7 @@ from apps.models.users.model import User
 
 router = APIRouter(
     prefix="/users",
-    tags=["users"],
-    responses={404: {"description": "Not found"}},
+    tags=["users"]
 )
 
 
