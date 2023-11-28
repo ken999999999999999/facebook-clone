@@ -12,7 +12,7 @@ from firebase_admin import credentials
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Connect Firebase
-    cred = credentials.Certificate("serviceAccountKey.json")
+    cred = credentials.Certificate(settings.SERVICE_ACCOUNT_KEY)
     app = firebase_admin.initialize_app(cred)
     yield
     firebase_admin.delete_app(app)
