@@ -1,16 +1,14 @@
 FROM python:3.9
 
-WORKDIR /workspace/backend
+WORKDIR /code
 
-COPY . .
+COPY ./requirements.txt /code/requirements.txt
 
-RUN apt-get update 
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-RUN pip install --upgrade pip
+COPY ./apps /code/apps
 
-RUN pip install -r requirements.txt
-
-EXPOSE 8000
+ENV PYTHONPATH "${PYTHONPATH}:/code"
 
 CMD ["python","apps/main.py"]
 
