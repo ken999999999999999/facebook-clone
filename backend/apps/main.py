@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import json
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
@@ -12,7 +13,8 @@ from firebase_admin import credentials
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Connect Firebase
-    cred = credentials.Certificate(settings.SERVICE_ACCOUNT_KEY)
+    cred = credentials.Certificate(
+        settings.SERVICE_ACCOUNT_KEY if settings.DEBUG_MODE else json.loads(settings.SERVICE_ACCOUNT_KEY))
     app = firebase_admin.initialize_app(cred)
     yield
     firebase_admin.delete_app(app)
