@@ -8,6 +8,8 @@ import {
   AuthError,
   signOut as fbSignOut,
 } from "firebase/auth"
+import { userSignUp, IUser } from "../services/users"
+export type { IUser } from "../services/users"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -26,6 +28,7 @@ interface IUseAuth {
   error: AuthError | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
+  signUp: (user: IUser) => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -64,6 +67,20 @@ const useAuth = (): IUseAuth => {
     }
   }
 
+  const signUp = async (user: IUser) => {
+    try {
+      setLoading(true)
+      const res = await userSignUp(user)
+      console.log(res)
+      setUser(res)
+    } catch (error) {
+      setError(error as AuthError)
+      window.alert(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const signOut = async (): Promise<void> => {
     setLoading(true)
     try {
@@ -80,7 +97,7 @@ const useAuth = (): IUseAuth => {
     }
   }
 
-  return { user, error, loading, signIn, signOut }
+  return { user, error, loading, signIn, signUp, signOut }
 }
 
 export default useAuth

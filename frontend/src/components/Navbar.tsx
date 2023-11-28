@@ -20,6 +20,7 @@ import Add from "@mui/icons-material/Add"
 import MoreIcon from "@mui/icons-material/MoreVert"
 import Menu from "./Menu"
 import CreateMenu from "./CreateMenu"
+import useAuth from "@/hooks/useAuth"
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -112,11 +113,20 @@ const Navbar = ({
     setMobileMoreAnchorEl(event.currentTarget)
   }
 
+  const { signOut } = useAuth()
+
   const ItemList = [
     { label: "Profile", icon: <Avatar />, href: "/profile" },
     { label: "My Account", icon: <SettingsIcon />, href: "/settings" },
     { label: "Add another account", icon: <PersonAdd />, href: "/personadd" },
-    { label: "Logout", icon: <Logout />, href: "/logout" },
+    {
+      label: "Logout",
+      icon: <Logout />,
+      onClick: () => {
+        signOut()
+      },
+      href: "/logout",
+    },
     { label: "Settings", icon: <SettingsIcon />, href: "/settings" },
   ]
 

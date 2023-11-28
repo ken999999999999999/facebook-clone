@@ -20,15 +20,3 @@ export const userSignUp = async (user: IUser) => {
     })
   return res.json()
 }
-
-export const userSignIn = async (user: IUser) => {
-  const res = await Fetcher.POST("/sessions", user)
-    .catch((err) => {
-      throw err
-    })
-    .then((response) => {
-      console.log(response)
-      return response
-    })
-  return res.json()
-}
