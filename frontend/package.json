@@ -14,7 +14,10 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",
+    "axios": "^1.6.2",
+    "firebase": "^10.6.0",
     "next": "14.0.2",
+    "nookies": "^2.5.2",
     "react": "^18",
     "react-dom": "^18"
   },

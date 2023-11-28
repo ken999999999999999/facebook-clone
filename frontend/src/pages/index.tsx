@@ -4,16 +4,24 @@ import Image from "next/image"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
 import Card from "@components/Card"
-import FeedCard from "@/components/FeedCard"
+import FeedCard, { Post } from "@/components/FeedCard"
 import PostFeedCard from "@/components/PostFeedCard"
-import MyList from "@/components/ShortcutList"
-import { Box } from "@mui/material"
+
 import Grid from "@mui/material/Unstable_Grid2"
 import { createTheme } from "@mui/material/styles"
-import Container from "@mui/material/Container"
+import { IUser } from "@/hooks/useAuth"
 import NavigationMenu from "@/components/NavigationMenu"
 import UserList from "@/components/FriendsMenu"
+import useAuth, { auth } from "@/hooks/useAuth"
+import { useRouter } from "next/router"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
+
+import nookies from "nookies"
 const inter = Inter({ subsets: ["latin"] })
+
+type Props = {
+  user: IUser
+}
 
 export const theme = createTheme({
   breakpoints: {
@@ -27,7 +35,37 @@ export const theme = createTheme({
   },
 })
 
+export const getServerSideProps = async (context: any) => {
+  const cookies = nookies.get(context)
+  console.log("cookies", cookies)
+  return new Promise((resolve, reject) => {
+    onAuthStateChanged(
+      auth,
+      async (authUser) => {
+        console.log(authUser)
+        if (authUser) {
+          resolve({
+            props: {
+              user: authUser,
+            },
+          })
+        } else {
+          resolve({
+            props: {
+              user: null,
+            },
+          })
+        }
+      },
+      reject
+    )
+  })
+}
+
 export default function Home() {
+  const router = useRouter()
+  const { user } = useAuth()
+
   const [scroll, setScroll] = useState<number>(0)
 
   const handleScroll = () => {
@@ -42,7 +80,7 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
-  const user = {
+  const userTest = {
     userIcon:
       "https://lh3.googleusercontent.com/a/ACg8ocI6_pLarmA49JzoKTq2fEjuCFp7IrZsvMjGaZaBSYsV9w=s96-c",
     lastName: "Doe",
@@ -87,10 +125,11 @@ export default function Home() {
     image: "https://example.com/image123.jpg",
     description:
       "Exploring the beautiful landscapes of the Rocky Mountains #NatureLover #HikingAdventures",
-    createdBy: user,
+    createdBy: userTest,
     createdOn: "2023-11-10T09:00:00",
     modifiedOn: "2023-11-12T10:15:00",
-  }
+  } as Post
+
   return (
     <>
       <Head>
@@ -117,17 +156,17 @@ export default function Home() {
             direction="column"
           >
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
           </Grid>
           <Grid
             sm={false}
