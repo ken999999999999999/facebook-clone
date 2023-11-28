@@ -10,9 +10,9 @@ RUN pip install --upgrade pip
 
 RUN pip install debugpy
 
-Run pip install httpx
+RUN pip install httpx
 
-Run pip install pytest
+RUN pip install pytest
 
 RUN pip install -r requirements.txt
 
