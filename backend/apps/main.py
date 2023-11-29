@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import json
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
@@ -17,13 +18,19 @@ origins = [
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Connect Firebase
-    cred = credentials.Certificate("serviceAccountKey.json")
+    cred = credentials.Certificate(
+        settings.SERVICE_ACCOUNT_KEY if settings.DEBUG_MODE else json.loads(settings.SERVICE_ACCOUNT_KEY))
     app = firebase_admin.initialize_app(cred)
     yield
     firebase_admin.delete_app(app)
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan, 
+    openapi_url="/openapi.json" if settings.DEBUG_MODE else None,
+    docs_url= "/docs" if settings.DEBUG_MODE else None,
+    redoc_url= "/redoc" if settings.DEBUG_MODE else None
+    )
 app.include_router(users.router)
 app.include_router(posts.router)
 app.include_router(relationship.router)
