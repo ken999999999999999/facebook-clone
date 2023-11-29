@@ -23,6 +23,7 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
+import { setCookie } from "nookies"
 
 export interface IUser {
   email: string
@@ -77,6 +78,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         email,
         password
       )
+      const token = await userCredential.user.getIdToken() // Get the token
+      setCookie(null, "token", token, {
+        maxAge: 30 * 24 * 60 * 60,
+        path: "/",
+      })
       setUser(userCredential.user)
       setError(null)
     } catch (error) {

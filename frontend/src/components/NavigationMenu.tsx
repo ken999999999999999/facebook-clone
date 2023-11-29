@@ -16,12 +16,18 @@ import StorefrontIcon from "@mui/icons-material/Storefront"
 import RssFeedIcon from "@mui/icons-material/RssFeed"
 import { Box } from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
-
+import useAuth from "@/hooks/useAuth"
+import { UserDto, useUser } from "@/hooks/useUser"
 interface NavigationMenuProps {
+  currentUser: UserDto | null
   scroll: number
 }
 
-export default function NavigationMenu({ scroll }: NavigationMenuProps) {
+export default function NavigationMenu({
+  scroll,
+  currentUser,
+}: NavigationMenuProps) {
+  const { user } = useAuth()
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("lg"))
 
@@ -54,8 +60,11 @@ export default function NavigationMenu({ scroll }: NavigationMenuProps) {
         }}
       >
         <ListItem>
-          <Avatar>{/* User's avatar */}</Avatar>
-          <ListItemText primary="Username" sx={{ marginX: "2rem" }} />
+          <Avatar>{user?.photoURL}</Avatar>
+          <ListItemText
+            primary={currentUser?.first_name + " " + currentUser?.last_name}
+            sx={{ marginX: "2rem" }}
+          />
         </ListItem>
         {/* ... other list items ... */}
         <ListItem button>

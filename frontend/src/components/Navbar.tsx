@@ -21,7 +21,6 @@ import MoreIcon from "@mui/icons-material/MoreVert"
 import Menu from "./Menu"
 import CreateMenu from "./CreateMenu"
 import useAuth from "@/hooks/useAuth"
-import { Block } from "@mui/icons-material"
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -190,7 +189,7 @@ const Navbar = ({
 
   return (
     <>
-      <Box sx={{ display: user ? "block" : "hidden" }}>
+      <Box sx={{ display: user ? "block" : "none" }}>
         <AppBar position="fixed">
           <Toolbar>
             <IconButton

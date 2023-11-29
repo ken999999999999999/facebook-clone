@@ -13,6 +13,7 @@ import NavigationMenu from "@/components/NavigationMenu"
 import UserList from "@/components/FriendsMenu"
 import { useRouter } from "next/navigation"
 import useAuth from "../hooks/useAuth"
+import { useUser } from "@/hooks/useUser"
 
 import nookies from "nookies"
 const inter = Inter({ subsets: ["latin"] })
@@ -31,6 +32,7 @@ export const theme = createTheme({
 export default function Home() {
   const router = useRouter()
   const { user, loading } = useAuth()
+  const { currentUser, isLoading } = useUser()
   const [scroll, setScroll] = useState<number>(0)
 
   const handleScroll = () => {
@@ -47,14 +49,16 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (!user && !loading) {
+    console.log(user)
+    if (!user) {
       router.push("/login")
     }
   }, [user, loading, router])
 
-  if (loading) {
+  if (loading || isLoading) {
     return <>isLoading</>
   }
+
   const userTest = {
     userIcon:
       "https://lh3.googleusercontent.com/a/ACg8ocI6_pLarmA49JzoKTq2fEjuCFp7IrZsvMjGaZaBSYsV9w=s96-c",
@@ -120,28 +124,18 @@ export default function Home() {
           sx={{ overflowY: "auto" }}
         >
           <Grid sm={false} md={false} lg={3}>
-            <NavigationMenu scroll={scroll} />
+            <NavigationMenu currentUser={currentUser} scroll={scroll} />
           </Grid>
           <Grid
             container
             xs={true}
             sx={{ gap: "1rem" }}
             alignItems="center"
-            justifyContent="center"
+            justifyContent="start"
             direction="column"
           >
-            <FeedCard post={post}></FeedCard>
             <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={userTest}></PostFeedCard>
-            <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={userTest}></PostFeedCard>
-            <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={userTest}></PostFeedCard>
-            <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={userTest}></PostFeedCard>
-            <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={userTest}></PostFeedCard>
           </Grid>
           <Grid
             sm={false}
@@ -154,99 +148,6 @@ export default function Home() {
             <UserList scroll={scroll} />
           </Grid>
         </Grid>
-
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-
-        {/* 
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-        </div> */}
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
       </main>
     </>
   )
