@@ -179,8 +179,8 @@ const Navbar = ({
 
   return (
     <>
-      <Box sx={{ flexGrow: 1, position: "fixed", top: "0", width: "100%" }}>
-        <AppBar position="static">
+      <Box>
+        <AppBar position="fixed">
           <Toolbar>
             <IconButton
               size="large"

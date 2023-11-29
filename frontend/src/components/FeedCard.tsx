@@ -84,7 +84,11 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
     originalPost,
   } = post
   return (
-    <Card title={createdBy.displayName} footer={<FeedCardButtons />}>
+    <Card
+      title={createdBy.displayName}
+      footer={<FeedCardButtons />}
+      sx={{ width: "80%" }}
+    >
       {description}
     </Card>
   )

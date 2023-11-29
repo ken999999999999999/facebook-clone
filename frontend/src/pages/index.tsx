@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import Head from "next/head"
 import Image from "next/image"
 import { Inter } from "next/font/google"
@@ -5,10 +6,42 @@ import styles from "@/styles/Home.module.css"
 import Card from "@components/Card"
 import FeedCard from "@/components/FeedCard"
 import PostFeedCard from "@/components/PostFeedCard"
-
+import MyList from "@/components/ShortcutList"
+import { Box } from "@mui/material"
+import Grid from "@mui/material/Unstable_Grid2"
+import { createTheme } from "@mui/material/styles"
+import Container from "@mui/material/Container"
+import NavigationMenu from "@/components/NavigationMenu"
+import UserList from "@/components/FriendsMenu"
 const inter = Inter({ subsets: ["latin"] })
 
+export const theme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+})
+
 export default function Home() {
+  const [scroll, setScroll] = useState<number>(0)
+
+  const handleScroll = () => {
+    const scrollTop = window.scrollY
+    setScroll(scrollTop)
+  }
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
   const user = {
     userIcon:
       "https://lh3.googleusercontent.com/a/ACg8ocI6_pLarmA49JzoKTq2fEjuCFp7IrZsvMjGaZaBSYsV9w=s96-c",
@@ -67,34 +100,69 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
+        <Grid
+          container
+          columns={{ sm: 6, md: 9, lg: 12 }}
+          sx={{ overflowY: "auto" }}
+        >
+          <Grid sm={false} md={false} lg={3}>
+            <NavigationMenu scroll={scroll} />
+          </Grid>
+          <Grid
+            container
+            xs={true}
+            sx={{ gap: "1rem" }}
+            alignItems="center"
+            justifyContent="center"
+            direction="column"
+          >
+            <FeedCard post={post}></FeedCard>
+            <PostFeedCard user={user}></PostFeedCard>
+            <FeedCard post={post}></FeedCard>
+            <PostFeedCard user={user}></PostFeedCard>
+            <FeedCard post={post}></FeedCard>
+            <PostFeedCard user={user}></PostFeedCard>
+            <FeedCard post={post}></FeedCard>
+            <PostFeedCard user={user}></PostFeedCard>
+            <FeedCard post={post}></FeedCard>
+            <PostFeedCard user={user}></PostFeedCard>
+            <FeedCard post={post}></FeedCard>
+            <PostFeedCard user={user}></PostFeedCard>
+          </Grid>
+          <Grid
+            sm={false}
+            md={3}
+            lg={3}
+            alignItems="flex-end"
+            justifyContent="flex-end"
+            direction="row"
+          >
+            <UserList scroll={scroll} />
+          </Grid>
+        </Grid>
+
+        <p>
+          Get started by editing&nbsp;
+          <code className={styles.code}>pages/index.tsx</code>
+        </p>
         <div>
-          <Card title={"Username0123"} footer={"testing"}>
-            testing
-          </Card>
-          <FeedCard post={post}></FeedCard>
-          <PostFeedCard user={user}></PostFeedCard>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{" "}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
+          <a
+            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            By{" "}
+            <Image
+              src="/vercel.svg"
+              alt="Vercel Logo"
+              className={styles.vercelLogo}
+              width={100}
+              height={24}
+              priority
+            />
+          </a>
         </div>
+
         {/* 
         <div className={styles.center}>
           <Image
