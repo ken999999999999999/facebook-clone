@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Fetcher } from "../services/fetcher"
 import { AxiosError } from "axios"
+import useAuth from "./useAuth"
 
 export interface UserDto {
   id: string
@@ -30,6 +31,7 @@ interface UseUserHook {
 }
 
 export const useUser = (): UseUserHook => {
+  const { user } = useAuth()
   const [currentUser, setCurrentUser] = useState<UserDto | null>(null)
   const [usersList, setUsersList] = useState<UserDto[] | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -62,8 +64,8 @@ export const useUser = (): UseUserHook => {
   }
 
   useEffect(() => {
-    getCurrentUser()
-  }, [])
+    if (user) getCurrentUser()
+  }, [user])
 
   return {
     currentUser,

@@ -99,7 +99,7 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
       >
-        Log in
+        Post
       </Button>
     </Card>
   )

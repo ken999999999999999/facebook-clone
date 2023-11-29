@@ -4,7 +4,8 @@ import Image from "next/image"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
 import Card from "@components/Card"
-import FeedCard, { Post } from "@/components/FeedCard"
+import FeedCard from "@/components/FeedCard"
+import { Post } from "@/hooks/usePost"
 import PostFeedCard from "@/components/PostFeedCard"
 
 import Grid from "@mui/material/Unstable_Grid2"
@@ -16,6 +17,7 @@ import useAuth from "../hooks/useAuth"
 import { useUser } from "@/hooks/useUser"
 
 import nookies from "nookies"
+import { usePost } from "@/hooks/usePost"
 const inter = Inter({ subsets: ["latin"] })
 export const theme = createTheme({
   breakpoints: {
@@ -34,6 +36,7 @@ export default function Home() {
   const { user, loading } = useAuth()
   const { currentUser, isLoading } = useUser()
   const [scroll, setScroll] = useState<number>(0)
+  const { getPosts, posts } = usePost()
 
   const handleScroll = () => {
     const scrollTop = window.scrollY
@@ -54,6 +57,12 @@ export default function Home() {
       router.push("/login")
     }
   }, [user, loading, router])
+
+  useEffect(() => {
+    if (!user) {
+      getPosts()
+    }
+  }, [getPosts, user, router])
 
   if (loading || isLoading) {
     return <>isLoading</>
@@ -135,6 +144,12 @@ export default function Home() {
             direction="column"
           >
             <PostFeedCard user={userTest}></PostFeedCard>
+            {posts?.map((post, index) => (
+              <FeedCard
+                post={post}
+                key={post.original_post_id + "-" + index}
+              ></FeedCard>
+            ))}
             <FeedCard post={post}></FeedCard>
           </Grid>
           <Grid
