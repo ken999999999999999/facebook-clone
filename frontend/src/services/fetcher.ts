@@ -1,10 +1,25 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
+import { useContext } from "react"
+import { AuthContext } from "../context/AuthContext"
 
 export const FetcherInstance = axios.create({
   baseURL: "http://localhost:8000",
   withCredentials: true,
   timeout: 10000,
 })
+
+FetcherInstance.interceptors.request.use(
+  async (config) => {
+    const { token } = useContext(AuthContext)
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
 
 export const CommonRequest = async (
   method: "GET" | "POST" | "PATCH" | "DELETE",

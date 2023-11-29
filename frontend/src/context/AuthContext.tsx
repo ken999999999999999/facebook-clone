@@ -1,15 +1,19 @@
-import { initializeApp } from "firebase/app"
-import { useState, useEffect } from "react"
+import React, {
+  useState,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react"
 import {
   getAuth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   User,
   AuthError,
   signOut as fbSignOut,
 } from "firebase/auth"
-import { userSignUp, IUser } from "../services/users"
-export type { IUser } from "../services/users"
+import { initializeApp } from "firebase/app"
+import { userSignUp } from "../services/users"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,20 +24,34 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-const app = initializeApp(firebaseConfig)
-export const auth = getAuth(app)
+export interface IUser {
+  email: string
+  password: string
+  display_name: string
+  first_name: string
+  last_name: string
+  birthdate: string
+}
 
-interface IUseAuth {
-  user: User | null
-  error: AuthError | null
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+type AuthContextType = {
   loading: boolean
+  error: unknown
+  user: User | null
+  token: string
+  setToken: (token: string) => void
   signIn: (email: string, password: string) => Promise<void>
   signUp: (user: IUser) => Promise<void>
   signOut: () => Promise<void>
 }
 
-const useAuth = (): IUseAuth => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
+  const [token, setToken] = useState<string>("")
   const [error, setError] = useState<AuthError | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -42,6 +60,8 @@ const useAuth = (): IUseAuth => {
       setLoading(false)
       if (user) {
         setUser(user)
+        console.log(user)
+        console.log(user.getIdTokenResult())
       } else {
         setUser(null)
       }
@@ -97,7 +117,18 @@ const useAuth = (): IUseAuth => {
     }
   }
 
-  return { user, error, loading, signIn, signUp, signOut }
-}
+  const contextValue = {
+    loading,
+    error,
+    user,
+    token,
+    setToken,
+    signIn,
+    signUp,
+    signOut,
+  }
 
-export default useAuth
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  )
+}

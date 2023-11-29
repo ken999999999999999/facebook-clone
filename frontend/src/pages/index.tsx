@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import Head from "next/head"
 import Image from "next/image"
 import { Inter } from "next/font/google"
@@ -9,20 +9,13 @@ import PostFeedCard from "@/components/PostFeedCard"
 
 import Grid from "@mui/material/Unstable_Grid2"
 import { createTheme } from "@mui/material/styles"
-import { IUser } from "@/hooks/useAuth"
 import NavigationMenu from "@/components/NavigationMenu"
 import UserList from "@/components/FriendsMenu"
-import useAuth, { auth } from "@/hooks/useAuth"
-import { useRouter } from "next/router"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { useRouter } from "next/navigation"
+import useAuth from "../hooks/useAuth"
 
 import nookies from "nookies"
 const inter = Inter({ subsets: ["latin"] })
-
-type Props = {
-  user: IUser
-}
-
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -35,37 +28,9 @@ export const theme = createTheme({
   },
 })
 
-export const getServerSideProps = async (context: any) => {
-  const cookies = nookies.get(context)
-  console.log("cookies", cookies)
-  return new Promise((resolve, reject) => {
-    onAuthStateChanged(
-      auth,
-      async (authUser) => {
-        console.log(authUser)
-        if (authUser) {
-          resolve({
-            props: {
-              user: authUser,
-            },
-          })
-        } else {
-          resolve({
-            props: {
-              user: null,
-            },
-          })
-        }
-      },
-      reject
-    )
-  })
-}
-
 export default function Home() {
   const router = useRouter()
-  const { user } = useAuth()
-
+  const { user, loading } = useAuth()
   const [scroll, setScroll] = useState<number>(0)
 
   const handleScroll = () => {
@@ -80,6 +45,16 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
+
+  useEffect(() => {
+    if (!user && !loading) {
+      router.push("/login")
+    }
+  }, [user, loading, router])
+
+  if (loading) {
+    return <>isLoading</>
+  }
   const userTest = {
     userIcon:
       "https://lh3.googleusercontent.com/a/ACg8ocI6_pLarmA49JzoKTq2fEjuCFp7IrZsvMjGaZaBSYsV9w=s96-c",

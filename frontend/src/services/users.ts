@@ -18,5 +18,6 @@ export const userSignUp = async (user: IUser) => {
       console.log(response)
       return response
     })
-  return res.json()
+  console.log(res)
+  return res
 }

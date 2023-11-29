@@ -21,6 +21,7 @@ import MoreIcon from "@mui/icons-material/MoreVert"
 import Menu from "./Menu"
 import CreateMenu from "./CreateMenu"
 import useAuth from "@/hooks/useAuth"
+import { Block } from "@mui/icons-material"
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -113,7 +114,7 @@ const Navbar = ({
     setMobileMoreAnchorEl(event.currentTarget)
   }
 
-  const { signOut } = useAuth()
+  const { user, signOut } = useAuth()
 
   const ItemList = [
     { label: "Profile", icon: <Avatar />, href: "/profile" },
@@ -189,7 +190,7 @@ const Navbar = ({
 
   return (
     <>
-      <Box>
+      <Box sx={{ display: user ? "block" : "hidden" }}>
         <AppBar position="fixed">
           <Toolbar>
             <IconButton

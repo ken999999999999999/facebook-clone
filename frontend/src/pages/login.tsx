@@ -31,7 +31,6 @@ const LoginPage: React.FC = () => {
   const handleSignIn = async () => {
     try {
       const res = await signIn(email, password)
-      console.log(res)
       router.replace("/")
     } catch (err) {
       console.log(err)
