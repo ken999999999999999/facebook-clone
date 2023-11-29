@@ -1,20 +1,21 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import Head from "next/head"
 import Image from "next/image"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
 import Card from "@components/Card"
-import FeedCard from "@/components/FeedCard"
+import FeedCard, { Post } from "@/components/FeedCard"
 import PostFeedCard from "@/components/PostFeedCard"
-import MyList from "@/components/ShortcutList"
-import { Box } from "@mui/material"
+
 import Grid from "@mui/material/Unstable_Grid2"
 import { createTheme } from "@mui/material/styles"
-import Container from "@mui/material/Container"
 import NavigationMenu from "@/components/NavigationMenu"
 import UserList from "@/components/FriendsMenu"
-const inter = Inter({ subsets: ["latin"] })
+import { useRouter } from "next/navigation"
+import useAuth from "../hooks/useAuth"
 
+import nookies from "nookies"
+const inter = Inter({ subsets: ["latin"] })
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -28,6 +29,8 @@ export const theme = createTheme({
 })
 
 export default function Home() {
+  const router = useRouter()
+  const { user, loading } = useAuth()
   const [scroll, setScroll] = useState<number>(0)
 
   const handleScroll = () => {
@@ -42,7 +45,17 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
-  const user = {
+
+  useEffect(() => {
+    if (!user && !loading) {
+      router.push("/login")
+    }
+  }, [user, loading, router])
+
+  if (loading) {
+    return <>isLoading</>
+  }
+  const userTest = {
     userIcon:
       "https://lh3.googleusercontent.com/a/ACg8ocI6_pLarmA49JzoKTq2fEjuCFp7IrZsvMjGaZaBSYsV9w=s96-c",
     lastName: "Doe",
@@ -87,10 +100,11 @@ export default function Home() {
     image: "https://example.com/image123.jpg",
     description:
       "Exploring the beautiful landscapes of the Rocky Mountains #NatureLover #HikingAdventures",
-    createdBy: user,
+    createdBy: userTest,
     createdOn: "2023-11-10T09:00:00",
     modifiedOn: "2023-11-12T10:15:00",
-  }
+  } as Post
+
   return (
     <>
       <Head>
@@ -117,17 +131,17 @@ export default function Home() {
             direction="column"
           >
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
             <FeedCard post={post}></FeedCard>
-            <PostFeedCard user={user}></PostFeedCard>
+            <PostFeedCard user={userTest}></PostFeedCard>
           </Grid>
           <Grid
             sm={false}

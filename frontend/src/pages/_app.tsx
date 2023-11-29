@@ -1,12 +1,15 @@
 import "@/styles/globals.css"
 import type { AppProps } from "next/app"
 import Navbar from "@/components/Navbar"
-import { Html, Head, Main, NextScript } from "next/document"
+import useAuth from "@/hooks/useAuth"
+import { AuthProvider } from "../context/AuthContext"
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Navbar logo="/2.jpeg">
-      <Component {...pageProps} />
-    </Navbar>
+    <AuthProvider>
+      <Navbar logo="/2.jpeg">
+        <Component {...pageProps} />
+      </Navbar>
+    </AuthProvider>
   )
 }
