@@ -14,7 +14,8 @@ import { IUser } from "../services/users"
 const theme = createTheme()
 import { useRouter } from "next/router"
 import Backdrop from "@/components/Backdrop"
-import { redirect } from "next/navigation"
+import { IUser } from "@/context/AuthContext"
+
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
