@@ -22,6 +22,7 @@ import Menu from "./Menu"
 import CreateMenu from "./CreateMenu"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/router"
+import { usePathname } from "next/navigation"
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -124,12 +125,13 @@ const Navbar = ({
   )
   const router = useRouter()
   const { user, loading, signOut } = useAuth()
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (!user) {
+    if (!user && pathname === "/") {
       router.push("/login")
     }
-  }, [user, loading, router])
+  }, [user, loading, router, pathname])
 
   if (loading) {
     return <div>Loading...</div>
@@ -142,9 +144,7 @@ const Navbar = ({
     {
       label: "Logout",
       icon: <Logout />,
-      onClick: () => {
-        signOut()
-      },
+      onClick: signOut,
       href: "/logout",
     },
     { label: "Settings", icon: <SettingsIcon />, href: "/settings" },
@@ -208,99 +208,96 @@ const Navbar = ({
   )
 
   return (
-    <>
-      <Box sx={{ display: !user ? "none" : "block" }}>
-        <AppBar position="fixed">
-          <Toolbar>
+    <Box sx={{ display: !user ? "none" : "block" }}>
+      <AppBar position="fixed">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ display: { xs: "none", sm: "block" } }}
+          >
+            MUI
+          </Typography>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search…"
+              inputProps={{ "aria-label": "search" }}
+            />
+          </Search>
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
               edge="start"
               color="inherit"
               aria-label="open drawer"
-              sx={{ mr: 2 }}
+              onClick={handleCreateMenuOpen}
+              aria-controls={createMenuId}
+              aria-haspopup="true"
             >
-              <MenuIcon />
+              <Add />
             </IconButton>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ display: { xs: "none", sm: "block" } }}
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="inherit"
             >
-              MUI
-            </Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleCreateMenuOpen}
-                aria-controls={createMenuId}
-                aria-haspopup="true"
-              >
-                <Add />
-              </IconButton>
-              <IconButton
-                size="large"
-                aria-label="show 4 new mails"
-                color="inherit"
-              >
-                <Badge badgeContent={4} color="error">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                aria-label="show 17 new notifications"
-                color="inherit"
-              >
-                <Badge badgeContent={17} color="error">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </Box>
-            <Box sx={{ display: { xs: "flex", md: "none" } }}>
-              <IconButton
-                size="large"
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        {renderMobileMenu}
-        {renderMenu}
-        {renderCreateMenu}
-      </Box>
-      {rest.children}
-    </>
+              <Badge badgeContent={4} color="error">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <Badge badgeContent={17} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </Box>
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
+            <IconButton
+              size="large"
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      {renderMobileMenu}
+      {renderMenu}
+      {renderCreateMenu}
+    </Box>
   )
 }
 

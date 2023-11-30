@@ -1,21 +1,14 @@
 import React from "react"
 import { Backdrop as MuiBackdrop, BackdropProps } from "@mui/material"
 import CircularProgress from "@mui/material/CircularProgress"
-import Button from "@mui/material/Button"
 
 interface IBackdropProps extends BackdropProps {
   open: boolean
   onClose?: () => void
-  onOpen?: () => void
   children?: React.ReactNode
 }
 
-const Backdrop: React.FC<IBackdropProps> = ({
-  open,
-  onClose,
-  onOpen,
-  children,
-}) => {
+const Backdrop: React.FC<IBackdropProps> = ({ open, onClose, children }) => {
   return (
     <>
       {children}

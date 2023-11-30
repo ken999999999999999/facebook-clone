@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { AuthContext, AuthProvider } from "../context/AuthContext"
+import { AuthContext } from "../context/AuthContext"
 import { User } from "firebase/auth"
 import { IUser } from "../services/users"
 

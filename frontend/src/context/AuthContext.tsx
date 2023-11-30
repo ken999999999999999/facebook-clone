@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-} from "react"
+import React, { useState, createContext, ReactNode, useEffect } from "react"
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -14,6 +8,7 @@ import {
 } from "firebase/auth"
 import { initializeApp } from "firebase/app"
 import { userSignUp } from "../services/users"
+import { setCookie } from "nookies"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,7 +18,6 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
-import { setCookie } from "nookies"
 
 export interface IUser {
   email: string
@@ -46,6 +40,7 @@ export const AuthContext = createContext<AuthContextType>({
   signIn: (email: string, password: string) => Promise.resolve(),
   signUp: (user: IUser) => Promise.resolve(),
   signOut: () => Promise.resolve(),
+  setLoading: (loading: boolean) => null,
 })
 
 type AuthContextType = {
@@ -86,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged((user) => {
       setLoading(true)
       let newUser = null
       if (getUserFromLocal()) {
@@ -103,7 +98,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(newUser)
       setLoading(false)
     })
-    return () => unsubscribe()
   }, [])
 
   const signIn = async (email: string, password: string): Promise<void> => {
@@ -159,12 +153,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false)
     }
   }
-
-  // useEffect(() => {
-  //   setLoading(true)
-  //   setUser(getUserFromLocal())
-  //   setLoading(false)
-  // }, [])
 
   const contextValue = {
     loading,
