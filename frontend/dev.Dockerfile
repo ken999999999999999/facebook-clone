@@ -1,5 +1,7 @@
 FROM node:20
 
+RUN npm install -g firebase-tools
+
 COPY package*.json ./
 
 RUN npm install
