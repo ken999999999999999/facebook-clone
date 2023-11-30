@@ -12,6 +12,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (user: IUser) => Promise<void>
   signOut: () => Promise<void>
+  setLoading: (loading: boolean) => void
 }
 
 const useAuth = (): AuthContextType => {

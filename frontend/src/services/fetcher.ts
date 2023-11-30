@@ -1,25 +1,13 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
 import { useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
+import { parseCookies } from "nookies"
 
 export const FetcherInstance = axios.create({
   baseURL: "http://localhost:8000",
   withCredentials: true,
   timeout: 10000,
 })
-
-FetcherInstance.interceptors.request.use(
-  async (config) => {
-    const { token } = useContext(AuthContext)
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
 
 export const CommonRequest = async (
   method: "GET" | "POST" | "PATCH" | "DELETE",
@@ -35,7 +23,18 @@ export const CommonRequest = async (
     params,
     ...customConfig,
   }
-  return await FetcherInstance(config).then((res) => res.data)
+  const cookies = parseCookies()
+  const token = cookies.token // Get the token from cookies
+  const newHeaders = {
+    ...customConfig?.headers,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`, // Add the token in the Authorization header
+  }
+  return await FetcherInstance({ ...config, headers: newHeaders })
+    .then((res) => res.data)
+    .catch((err: AxiosError) => {
+      console.log(err)
+    })
 }
 
 export const Fetcher = {

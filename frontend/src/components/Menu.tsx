@@ -6,7 +6,7 @@ import { MenuProps as MuiMenuProps } from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import Typography from "@mui/material/Typography"
-
+import { useUser } from "@/hooks/useUser"
 interface MenuItem {
   label: string
   icon: React.ReactNode
@@ -23,6 +23,7 @@ export interface MenuProps extends MuiMenuProps {
 
 const Menu: React.FC<MenuProps> = (props: MenuProps) => {
   const { anchorEl, onClose, menuItems } = props
+  const { currentUser } = useUser()
 
   return (
     <MuiMenu
