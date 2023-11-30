@@ -34,7 +34,10 @@ const Menu: React.FC<MenuProps> = (props: MenuProps) => {
       {...props}
     >
       {menuItems.map((item) => (
-        <MenuItem onClick={item.onClick ? item.onClick : onClose}>
+        <MenuItem
+          key={item.label}
+          onClick={item.onClick ? item.onClick : onClose}
+        >
           {item?.icon ? <ListItemIcon>{item.icon}</ListItemIcon> : null}
           {item.description ? (
             <Box sx={{ flexDirection: "column" }}>
