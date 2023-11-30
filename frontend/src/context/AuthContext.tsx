@@ -36,7 +36,16 @@ export interface IUser {
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export const AuthContext = createContext<AuthContextType>({
+  loading: true,
+  error: null,
+  user: null,
+  token: "",
+  setToken: (token: string) => null,
+  signIn: (email: string, password: string) => Promise.resolve(),
+  signUp: (user: IUser) => Promise.resolve(),
+  signOut: () => Promise.resolve(),
+})
 
 type AuthContextType = {
   loading: boolean
