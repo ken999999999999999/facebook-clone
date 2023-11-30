@@ -12,7 +12,7 @@ import {
   Typography,
   Button,
 } from "@mui/material"
-import { Videocam, PhotoLibrary, Mood } from "@mui/icons-material"
+import { Videocam, PhotoLibrary, Mood, CloudUpload } from "@mui/icons-material"
 import { Post, usePost } from "@/hooks/usePost"
 interface PostFeedCardProps extends HtmlHTMLAttributes<HTMLDivElement> {
   user: User
@@ -91,6 +91,14 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
             fontSize: "0.8rem",
           }}
         />
+        <Button
+          component="label"
+          variant="contained"
+          startIcon={<CloudUpload />}
+        >
+          Upload file
+          <Input type="file" hidden />
+        </Button>
       </Box>
       <Button
         disabled={isLoading}

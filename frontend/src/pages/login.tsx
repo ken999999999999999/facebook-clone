@@ -9,7 +9,8 @@ import {
   CssBaseline,
 } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
-import useAuth, { IUser } from "@/hooks/useAuth"
+import useAuth from "@/hooks/useAuth"
+import { IUser } from "../services/users"
 const theme = createTheme()
 import { useRouter } from "next/router"
 import Backdrop from "@/components/Backdrop"
@@ -25,10 +26,11 @@ const LoginPage: React.FC = () => {
     last_name: "",
     birthdate: "",
   })
-  const { signIn, signUp, loading } = useAuth()
+  const { signIn, signUp, loading, setLoading } = useAuth()
   const router = useRouter()
 
   const handleSignIn = async () => {
+    setLoading(true)
     try {
       const res = await signIn(email, password)
       router.replace("/")
@@ -36,6 +38,7 @@ const LoginPage: React.FC = () => {
       console.log(err)
       window.alert(err)
     } finally {
+      setLoading(false)
     }
   }
 
@@ -46,6 +49,10 @@ const LoginPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  if (loading) {
+    return <div>Loading...</div>
   }
 
   return (

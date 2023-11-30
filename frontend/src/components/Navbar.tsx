@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useCallback, useEffect } from "react"
 import { styled, alpha } from "@mui/material/styles"
 import AppBar from "@mui/material/AppBar"
 import Avatar from "@mui/material/Avatar"
@@ -21,6 +21,7 @@ import MoreIcon from "@mui/icons-material/MoreVert"
 import Menu from "./Menu"
 import CreateMenu from "./CreateMenu"
 import useAuth from "@/hooks/useAuth"
+import { useRouter } from "next/router"
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -88,32 +89,51 @@ const Navbar = ({
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
   const isCreateMenuOpen = Boolean(createAnchorEl)
 
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+  const handleProfileMenuOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget)
+    },
+    []
+  )
 
-  const handleMobileMenuClose = () => {
+  const handleMobileMenuClose = useCallback(() => {
     setMobileMoreAnchorEl(null)
-  }
+  }, [])
 
-  const handleMenuClose = () => {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null)
     handleMobileMenuClose()
-  }
+  }, [handleMobileMenuClose])
 
-  const handleCreateMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setCreateAnchorEl(event.currentTarget)
-  }
+  const handleCreateMenuOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setCreateAnchorEl(event.currentTarget)
+    },
+    []
+  )
 
-  const handleCreateMenuClose = () => {
+  const handleCreateMenuClose = useCallback(() => {
     setCreateAnchorEl(null)
-  }
+  }, [])
 
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget)
-  }
+  const handleMobileMenuOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setMobileMoreAnchorEl(event.currentTarget)
+    },
+    []
+  )
+  const router = useRouter()
+  const { user, loading, signOut } = useAuth()
 
-  const { user, signOut } = useAuth()
+  useEffect(() => {
+    if (!user) {
+      router.push("/login")
+    }
+  }, [user, loading, router])
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   const ItemList = [
     { label: "Profile", icon: <Avatar />, href: "/profile" },
@@ -189,7 +209,7 @@ const Navbar = ({
 
   return (
     <>
-      <Box sx={{ display: user ? "block" : "none" }}>
+      <Box sx={{ display: !user ? "none" : "block" }}>
         <AppBar position="fixed">
           <Toolbar>
             <IconButton

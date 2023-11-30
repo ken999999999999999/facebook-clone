@@ -52,21 +52,10 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    console.log(user)
-    if (!user) {
-      router.push("/login")
-    }
-  }, [user, loading, router])
-
-  useEffect(() => {
     if (!user) {
       getPosts()
     }
-  }, [getPosts, user, router])
-
-  if (loading || isLoading) {
-    return <>isLoading</>
-  }
+  }, [getPosts, user])
 
   const userTest = {
     userIcon:
