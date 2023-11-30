@@ -9,11 +9,12 @@ import {
   CssBaseline,
 } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
-import useAuth, { IUser } from "@/hooks/useAuth"
+import useAuth from "@/hooks/useAuth"
 const theme = createTheme()
 import { useRouter } from "next/router"
 import Backdrop from "@/components/Backdrop"
-import { redirect } from "next/navigation"
+import { IUser } from "@/context/AuthContext"
+
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
