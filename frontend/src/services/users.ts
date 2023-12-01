@@ -1,6 +1,6 @@
 import { Fetcher } from "./fetcher"
 
-export interface IUser {
+export interface ICreateUserCommand {
   email: string
   password: string
   display_name: string
@@ -9,7 +9,7 @@ export interface IUser {
   birthdate: string
 }
 
-export const userSignUp = async (user: IUser) => {
+export const userSignUp = async (user: ICreateUserCommand) => {
   const res = await Fetcher.POST("/users/sign-up", user)
     .catch((err) => {
       throw err

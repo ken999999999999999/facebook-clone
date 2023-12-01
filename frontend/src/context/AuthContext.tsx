@@ -9,6 +9,7 @@ import {
 import { initializeApp } from "firebase/app"
 import { userSignUp } from "../services/users"
 import { setCookie } from "nookies"
+import { useRouter } from "next/router"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -79,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string>("")
   const [error, setError] = useState<AuthError | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -144,7 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       removeUserFromLocal()
       setUser(null)
       setError(null)
-      window.alert("Signed out")
+      router.push("/login")
     } catch (error) {
       setError(error as AuthError)
       console.log(error)

@@ -2,12 +2,12 @@
 import React, { useState } from "react"
 import { Container, Box, Typography, TextField, Button } from "@mui/material"
 import useAuth from "@/hooks/useAuth"
-import { IUser } from "../services/users"
+import { ICreateUserCommand } from "../services/users"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
 
 const SignUpPage: React.FC = () => {
-  const [formData, setFormData] = useState<IUser>({
+  const [formData, setFormData] = useState<ICreateUserCommand>({
     email: "",
     password: "",
     display_name: "",

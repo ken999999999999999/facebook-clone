@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
 import { User } from "firebase/auth"
-import { IUser } from "../services/users"
+import { ICreateUserCommand } from "../services/users"
 
 type AuthContextType = {
   loading: boolean
@@ -10,7 +10,7 @@ type AuthContextType = {
   token: string
   setToken: (token: string) => void
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (user: IUser) => Promise<void>
+  signUp: (user: ICreateUserCommand) => Promise<void>
   signOut: () => Promise<void>
   setLoading: (loading: boolean) => void
 }

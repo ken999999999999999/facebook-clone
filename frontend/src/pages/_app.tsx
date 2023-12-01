@@ -20,7 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Navbar logo="/2.jpeg" />
+          <Navbar />
           <Component {...pageProps} />
         </ThemeProvider>
       </AuthProvider>
