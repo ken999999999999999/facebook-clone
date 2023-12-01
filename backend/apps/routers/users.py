@@ -44,7 +44,7 @@ async def get_users_query(current_user: current_user,db_context:db_context, pagi
     friends.append(current_user.id)
 
     friends =[ObjectId(friend) for friend in friends]
-    print(friends)
+
     query = await db_context.users.aggregate([
         {"$match": { "_id": {"$nin": friends}}},
         {"$addFields": {"id": {"$toString": "$_id"} }},
