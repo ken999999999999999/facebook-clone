@@ -1,5 +1,12 @@
 import List from "@mui/material/List"
-import { Box, Card, CardContent, CardHeader, IconButton } from "@mui/material"
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+} from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
 import { useEffect, useState } from "react"
 import UserListItem from "./UserListItem"
@@ -16,12 +23,16 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
   const [users, setUsers] = useState<any[]>([])
   const [pageIndex, setPageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const [isAddingUsers, setIsAddingUsers] = useState<string[]>([])
+  const [isAddingUsers, setIsAddingUsers] = useState<{
+    [userId: string]: string
+  }>({})
 
   const addFriend = async (userId: string) => {
     try {
-      setIsAddingUsers((prev) => [...prev, userId])
-      await Fetcher.POST("relationships", { receiver_id: userId })
+      const response: string = await Fetcher.POST("relationships", {
+        receiver_id: userId,
+      })
+      setIsAddingUsers((prev) => ({ ...prev, [userId]: response }))
     } catch (err) {
     } finally {
     }
@@ -60,12 +71,12 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
               firstName={user.first_name}
               lastName={user.last_name}
               secondaryAction={
-                !isAddingUsers.includes(user.id) ? (
+                !isAddingUsers[user.id] ? (
                   <IconButton onClick={() => addFriend(user.id)}>
                     <AddCircleIcon />
                   </IconButton>
                 ) : (
-                  <>Sent Invitation</>
+                  <Button color="error">Cancel Invitation</Button>
                 )
               }
             />

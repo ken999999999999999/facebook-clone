@@ -25,6 +25,7 @@ export default function FriendsMenu({ scroll }: FriendsMenuProps) {
         const response = await Fetcher.GET(
           `/relationships/?page_index=${pageIndex}&page_size=50&order_by=_id&is_asc=true`
         )
+        setRelationships((prev) => [...prev, ...response.records])
       } catch (err) {
       } finally {
         setIsLoading(false)
@@ -48,14 +49,17 @@ export default function FriendsMenu({ scroll }: FriendsMenuProps) {
             overflowX: "hidden",
           }}
         >
-          {/* {relationships?.map((relationship) => (
-            <UserListItem
-              key={user.id}
-              displayName={user.display_name}
-              firstName={user.first_name}
-              lastName={user.last_name}
-            />
-          ))} */}
+          {relationships?.map(({ id, receiver, creator }) => {
+            let currentUser = receiver.id === user?.id ? receiver : creator
+            return (
+              <UserListItem
+                key={id}
+                displayName={currentUser.display_name}
+                firstName={currentUser.first_name}
+                lastName={currentUser.last_name}
+              />
+            )
+          })}
         </List>
       </CardContent>
     </Card>
