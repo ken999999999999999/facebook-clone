@@ -1,12 +1,10 @@
 import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-
-import ListItemText from "@mui/material/ListItemText"
-import { Box, Card, CardContent, CardHeader } from "@mui/material"
+import { Box, Card, CardContent, CardHeader, IconButton } from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
 import { useEffect, useState } from "react"
 import UserListItem from "./UserListItem"
 import { Fetcher } from "@/services/fetcher"
+import AddCircleIcon from "@mui/icons-material/AddCircle"
 
 interface AddFriendListProps {
   scroll: number
@@ -16,16 +14,25 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("lg"))
   const [users, setUsers] = useState<any[]>([])
-  const [params, setParams] = useState({ pageIndex: 0, pageSize: 50 })
+  const [pageIndex, setPageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [isAddingUsers, setIsAddingUsers] = useState<string[]>([])
+
+  const addFriend = async (userId: string) => {
+    try {
+      setIsAddingUsers((prev) => [...prev, userId])
+      await Fetcher.POST("relationships", { receiver_id: userId })
+    } catch (err) {
+    } finally {
+    }
+  }
 
   useEffect(() => {
     const getFriends = async () => {
       try {
         setIsLoading(true)
-
         const response = await await Fetcher.GET(
-          `/users/list/?page_index=${params.pageIndex}&page_size=${params.pageSize}&order_by=_id&is_asc=true`
+          `/users/list/?page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
         )
         setUsers((prev) => [...prev, ...response])
       } catch (err) {
@@ -35,7 +42,7 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
       }
     }
     getFriends()
-  }, [params])
+  }, [pageIndex])
 
   return !matches ? (
     <Card>
@@ -52,6 +59,15 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
               displayName={user.display_name}
               firstName={user.first_name}
               lastName={user.last_name}
+              secondaryAction={
+                !isAddingUsers.includes(user.id) ? (
+                  <IconButton onClick={() => addFriend(user.id)}>
+                    <AddCircleIcon />
+                  </IconButton>
+                ) : (
+                  <>Sent Invitation</>
+                )
+              }
             />
           ))}
         </List>

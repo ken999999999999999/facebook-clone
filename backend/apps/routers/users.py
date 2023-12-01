@@ -34,7 +34,7 @@ async def get_users_query(current_user: current_user,db_context:db_context, pagi
     filters = {"$or": [
         {"created_by": current_user.id},
         {"receiver_id": current_user.id},
-    ], "accepted_on": {"$ne": None}}
+    ]}
 
     friends_query = await db_context.relationships.find(filters).to_list(None)
 
