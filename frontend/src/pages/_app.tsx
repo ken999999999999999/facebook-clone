@@ -1,6 +1,5 @@
 import "@/styles/globals.css"
 import type { AppProps } from "next/app"
-import Navbar from "@/components/Navbar"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { AuthProvider } from "../context/AuthContext"
 import { Container, CssBaseline } from "@mui/material"
@@ -20,7 +19,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Navbar />
           <Container
             maxWidth="xl"
             style={{ marginTop: "64px" }}

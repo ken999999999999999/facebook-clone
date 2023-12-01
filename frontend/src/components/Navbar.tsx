@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect } from "react"
+import React, { useEffect } from "react"
 import AppBar from "@mui/material/AppBar"
 import Avatar from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 import Toolbar from "@mui/material/Toolbar"
-
 import Typography from "@mui/material/Typography"
 import Logout from "@mui/icons-material/Logout"
 import FacebookIcon from "@mui/icons-material/Facebook"
@@ -15,16 +14,16 @@ import { IconButton, Stack } from "@mui/material"
 
 const Navbar = (): JSX.Element => {
   const router = useRouter()
-  const { user, loading, signOut } = useAuth()
+  const { user, signOut } = useAuth()
   const pathname = usePathname()
 
   useEffect(() => {
     if (!user && pathname === "/") {
       router.push("/login")
     }
-  }, [user, loading, router, pathname])
+  }, [user, router, pathname])
 
-  return user ? (
+  return (
     <AppBar position="fixed">
       <Toolbar>
         <FacebookIcon fontSize="large" style={{ marginRight: "10px" }} />
@@ -39,8 +38,12 @@ const Navbar = (): JSX.Element => {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: "none", md: "flex" } }}>
           <Stack spacing={1} direction="row" alignItems="center">
-            <Avatar {...stringAvatar(`${user.first_name} ${user.last_name}`)} />
-            <Typography>{user?.display_name}</Typography>
+            <Avatar
+              {...stringAvatar(
+                `${user?.first_name ?? ""} ${user?.last_name ?? ""}`
+              )}
+            />
+            <Typography>{user?.display_name ?? ""}</Typography>
           </Stack>
           <IconButton
             onClick={signOut}
@@ -51,8 +54,6 @@ const Navbar = (): JSX.Element => {
         </Box>
       </Toolbar>
     </AppBar>
-  ) : (
-    <></>
   )
 }
 

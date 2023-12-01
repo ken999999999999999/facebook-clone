@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { Inter } from "next/font/google"
 import FeedCard from "@/components/FeedCard"
 import { Post } from "@/hooks/usePost"
 import PostFeedCard from "@/components/PostFeedCard"
@@ -8,6 +7,9 @@ import UserList from "@/components/FriendsMenu"
 import useAuth from "../hooks/useAuth"
 import { usePost } from "@/hooks/usePost"
 import { Grid } from "@mui/material"
+import dynamic from "next/dynamic"
+
+const Header = dynamic(() => import("@/components/Navbar"), { ssr: false })
 
 export default function Home() {
   const { user } = useAuth()
@@ -84,23 +86,26 @@ export default function Home() {
   } as Post
 
   return (
-    <Grid container sx={{ overflowY: "auto" }} spacing={2}>
-      <Grid item xs={3}>
-        <AddFriendList scroll={scroll} />
+    <>
+      <Header />
+      <Grid container sx={{ overflowY: "auto" }} spacing={2}>
+        <Grid item xs={3}>
+          <AddFriendList scroll={scroll} />
+        </Grid>
+        <Grid item xs={6}>
+          <PostFeedCard user={userTest}></PostFeedCard>
+          {posts?.map((post, index) => (
+            <FeedCard
+              post={post}
+              key={post.original_post_id + "-" + index}
+            ></FeedCard>
+          ))}
+          <FeedCard post={post}></FeedCard>
+        </Grid>
+        <Grid xs={3} item>
+          <UserList scroll={scroll} />
+        </Grid>
       </Grid>
-      <Grid item xs={6}>
-        <PostFeedCard user={userTest}></PostFeedCard>
-        {posts?.map((post, index) => (
-          <FeedCard
-            post={post}
-            key={post.original_post_id + "-" + index}
-          ></FeedCard>
-        ))}
-        <FeedCard post={post}></FeedCard>
-      </Grid>
-      <Grid xs={3} item>
-        <UserList scroll={scroll} />
-      </Grid>
-    </Grid>
+    </>
   )
 }
