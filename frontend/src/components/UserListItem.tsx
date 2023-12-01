@@ -1,4 +1,10 @@
-import { Avatar, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
+import {
+  Avatar,
+  Badge,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+} from "@mui/material"
 import { ReactNode } from "react"
 
 interface IUserListItem {
@@ -6,6 +12,7 @@ interface IUserListItem {
   firstName: string
   lastName: string
   secondaryAction?: ReactNode
+  badgeContent?: ReactNode
 }
 
 const stringToColor = (string: string) => {
@@ -42,11 +49,18 @@ const UserListItem = ({
   firstName,
   lastName,
   secondaryAction,
+  badgeContent,
 }: IUserListItem): JSX.Element => {
   return (
     <ListItem secondaryAction={secondaryAction}>
       <ListItemAvatar>
-        <Avatar {...stringAvatar(`${firstName} ${lastName}`)} />
+        <Badge
+          color="primary"
+          badgeContent={badgeContent}
+          invisible={!badgeContent}
+        >
+          <Avatar {...stringAvatar(`${firstName} ${lastName}`)} />
+        </Badge>
       </ListItemAvatar>
       <ListItemText primary={displayName} />
     </ListItem>

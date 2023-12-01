@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import UserListItem from "./UserListItem"
 import { Fetcher } from "@/services/fetcher"
 import AddCircleIcon from "@mui/icons-material/AddCircle"
@@ -27,6 +27,10 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
     [userId: string]: string
   }>({})
 
+  const [cancelledList, setCancelledList] = useState<{
+    [relationshipId: string]: boolean
+  }>({})
+
   const addFriend = async (userId: string) => {
     try {
       const response: string = await Fetcher.POST("relationships", {
@@ -35,6 +39,15 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
       setIsAddingUsers((prev) => ({ ...prev, [userId]: response }))
     } catch (err) {
     } finally {
+    }
+  }
+
+  const cancel = async (relationshipId: string) => {
+    try {
+      setCancelledList((prev) => ({ ...prev, [relationshipId]: true }))
+      await Fetcher.DELETE(`/relationships/${relationshipId}`)
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -76,7 +89,15 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
                     <AddCircleIcon />
                   </IconButton>
                 ) : (
-                  <Button color="error">Cancel Invitation</Button>
+                  <Button
+                    color="error"
+                    onClick={() => cancel(isAddingUsers[user.id])}
+                    disabled={cancelledList[isAddingUsers[user.id]]}
+                  >
+                    {!cancelledList[isAddingUsers[user.id]]
+                      ? "Cancel Invitation"
+                      : "Cancelled"}
+                  </Button>
                 )
               }
             />
