@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import FeedCard from "@/components/FeedCard"
 import { Post } from "@/hooks/usePost"
-import PostFeedCard from "@/components/PostFeedCard"
 import AddFriendList from "@/components/AddFriendList"
 import UserList from "@/components/FriendsMenu"
 import useAuth from "../hooks/useAuth"
@@ -10,11 +9,13 @@ import { Grid } from "@mui/material"
 import dynamic from "next/dynamic"
 
 const Header = dynamic(() => import("@/components/Navbar"), { ssr: false })
-
+const PostFeedCard = dynamic(() => import("@/components/PostFeedCard"), {
+  ssr: false,
+})
 export default function Home() {
   const { user } = useAuth()
   const [scroll, setScroll] = useState<number>(0)
-  const { getPosts, posts } = usePost()
+  const { posts, getPosts } = usePost()
 
   const handleScroll = () => {
     const scrollTop = window.scrollY
@@ -28,12 +29,6 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
-
-  useEffect(() => {
-    if (!user) {
-      getPosts()
-    }
-  }, [getPosts, user])
 
   const userTest = {
     userIcon:
@@ -73,17 +68,9 @@ export default function Home() {
     },
   ]
 
-  const post = {
-    id: "123456",
-    likes: 87,
-    comments: comments,
-    image: "https://example.com/image123.jpg",
-    description:
-      "Exploring the beautiful landscapes of the Rocky Mountains #NatureLover #HikingAdventures",
-    createdBy: userTest,
-    createdOn: "2023-11-10T09:00:00",
-    modifiedOn: "2023-11-12T10:15:00",
-  } as Post
+  useEffect(() => {
+    getPosts()
+  }, [])
 
   return (
     <>
@@ -92,15 +79,14 @@ export default function Home() {
         <Grid item xs={3}>
           <AddFriendList scroll={scroll} />
         </Grid>
-        <Grid item xs={6}>
-          <PostFeedCard user={userTest}></PostFeedCard>
+        <Grid item xs={6} spacing={2}>
+          <PostFeedCard />
           {posts?.map((post, index) => (
             <FeedCard
               post={post}
               key={post.original_post_id + "-" + index}
             ></FeedCard>
           ))}
-          <FeedCard post={post}></FeedCard>
         </Grid>
         <Grid xs={3} item>
           <UserList scroll={scroll} />
