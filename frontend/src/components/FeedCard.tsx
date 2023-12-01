@@ -11,6 +11,7 @@ import { stringAvatar } from "./UserListItem"
 import PeopleIcon from "@mui/icons-material/People"
 import { useState } from "react"
 import { Fetcher } from "@/services/fetcher"
+import CommentModal from "./Comments/CommentModal"
 export interface User {
   last_name: string
   first_name: string
@@ -39,35 +40,17 @@ export interface FeedCardProps extends CardProps {
   post: Post
 }
 
-const FeedCardButtons = () => {
-  //massage the postlist to add image inside
-
-  return (
-    <>
-      <Divider />
-      <Stack
-        direction="row"
-        divider={<Divider orientation="vertical" flexItem />}
-        justifyContent="space-evenly"
-        alignItems="center"
-        spacing={0}
-      >
-        <IconButton className="feed-button">
-          <ThumbUp />
-        </IconButton>
-        <IconButton className="feed-button">
-          <Comment />
-        </IconButton>
-        <IconButton className="feed-button">
-          <Share />
-        </IconButton>
-      </Stack>
-    </>
-  )
-}
-
 const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
   const [image, setImage] = useState<string | null>(null)
+  const [showComment, setShowComment] = useState<boolean>(false)
+
+  const openCommentModal = () => {
+    setShowComment(true)
+  }
+
+  const closeCommentModal = () => {
+    setShowComment(false)
+  }
 
   useEffect(() => {
     const getImage = async (id: string) => {
@@ -79,7 +62,30 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
   }, [post])
 
   return post ? (
-    <Card footer={<FeedCardButtons />}>
+    <Card
+      footer={
+        <>
+          <Divider />
+          <Stack
+            direction="row"
+            divider={<Divider orientation="vertical" flexItem />}
+            justifyContent="space-evenly"
+            alignItems="center"
+            spacing={0}
+          >
+            <IconButton className="feed-button">
+              <ThumbUp />
+            </IconButton>
+            <IconButton className="feed-button" onClick={openCommentModal}>
+              <Comment />
+            </IconButton>
+            <IconButton className="feed-button">
+              <Share />
+            </IconButton>
+          </Stack>
+        </>
+      }
+    >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Stack spacing={1} direction="row" alignItems="center">
           <Avatar
@@ -118,9 +124,14 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
           {post.has_image && image ? <img src={image} loading="lazy" /> : null}
         </Container>
       </Box>
+      <CommentModal
+        post={post}
+        isShow={showComment}
+        onClose={closeCommentModal}
+      />
     </Card>
   ) : (
-    <Card footer={<FeedCardButtons />}></Card>
+    <></>
   )
 }
 
