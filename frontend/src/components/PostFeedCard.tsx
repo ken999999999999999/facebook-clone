@@ -1,4 +1,4 @@
-import { HtmlHTMLAttributes } from "react"
+import { HtmlHTMLAttributes, useEffect, useState } from "react"
 import Card from "./Card"
 import { User } from "./FeedCard"
 import {
@@ -10,18 +10,20 @@ import {
   Stack,
   Avatar,
   Typography,
+  Button,
+  ImageListItem,
 } from "@mui/material"
-import { Videocam, PhotoLibrary, Mood } from "@mui/icons-material"
-interface PostFeedCardProps extends HtmlHTMLAttributes<HTMLDivElement> {
-  user: User
-}
+import { Videocam, PhotoLibrary, Mood, CloudUpload } from "@mui/icons-material"
+import { Post, usePost } from "@/hooks/usePost"
+import ImageIcon from "@mui/icons-material/Image"
+import useAuth from "@/hooks/useAuth"
+import { stringAvatar } from "./UserListItem"
+interface PostFeedCardProps extends HtmlHTMLAttributes<HTMLDivElement> {}
 
 const PostFeedButtons = () => {
-  //create three button named likes, comments and share
   return (
     <Container>
       <Divider />
-
       <Stack
         direction="row"
         divider={<Divider orientation="vertical" flexItem />}
@@ -43,16 +45,61 @@ const PostFeedButtons = () => {
   )
 }
 
-const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
-  return (
-    <Card footer={<PostFeedButtons />} sx={{ width: "80%" }}>
+const PostFeedCard: React.FC<PostFeedCardProps> = ({}) => {
+  const { user } = useAuth()
+  const { createPost, getPosts, isLoading } = usePost()
+  const [post, setPost] = useState<Post | null>(null)
+  const [image, setImage] = useState<string>("")
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPost((prev: any) => ({ ...prev, description: event.target.value }))
+  }
+
+  const handleImageFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files) {
+      const file = event.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onloadend = () => {
+        const base64String = reader.result
+        if (typeof base64String === "string") {
+          setImage(base64String)
+          setPost((prev: any) => ({
+            ...prev,
+            image: base64String,
+          }))
+        }
+      }
+    }
+  }
+
+  const handleSubmit = async () => {
+    try {
+      if (post) {
+        const res = await createPost(post)
+        console.log(res)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const handleClick = () => {
+    handleSubmit()
+  }
+
+  return user ? (
+    <Card footer={<PostFeedButtons />} style={{ marginBottom: "20px" }}>
       <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Avatar alt={user.displayName} src="/2.jpeg" />
+        <Avatar {...stringAvatar(`${user?.first_name} ${user?.last_name}`)} />
         <Input
           disableUnderline={true}
           placeholder={`What's on your mind,${
-            user.firstName + " " + user.lastName
+            user?.first_name + " " + user?.last_name
           } ?`}
+          onChange={handleInputChange}
           sx={{
             width: "100%",
             borderRadius: 50,
@@ -61,8 +108,28 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
             fontSize: "0.8rem",
           }}
         />
+        <Button component="label">
+          <ImageIcon />
+          <input type="file" hidden onChange={handleImageFileChange} />
+        </Button>
       </Box>
+      <Button
+        disabled={isLoading}
+        onClick={handleClick}
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+      >
+        Post
+      </Button>
+      {image ? (
+        <ImageListItem sx={{ width: 50, height: 50 }}>
+          <img src={image}></img>
+        </ImageListItem>
+      ) : null}
     </Card>
+  ) : (
+    <></>
   )
 }
 

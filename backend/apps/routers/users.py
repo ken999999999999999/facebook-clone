@@ -30,21 +30,21 @@ async def get_current_user_query(current_user: current_user) -> UserDto:
 
 
 @router.get("/list", dependencies=[Depends(authorize)])
-async def get_users_query(current_user: current_user, pagination: PaginationQuery = Depends()):
+async def get_users_query(current_user: current_user,db_context:db_context, pagination: PaginationQuery = Depends()):
     filters = {"$or": [
         {"created_by": current_user.id},
         {"receiver_id": current_user.id},
-    ], "accepted_on": {"$ne": None}}
+    ]}
 
     friends_query = await db_context.relationships.find(filters).to_list(None)
 
     friends = [record["receiver_id"] if record["created_by"] ==
                current_user.id else record["created_by"] for record in friends_query]
     
+    friends.append(current_user.id)
+
     friends =[ObjectId(friend) for friend in friends]
 
-    friends.append(ObjectId(current_user.id))
-    
     query = await db_context.users.aggregate([
         {"$match": { "_id": {"$nin": friends}}},
         {"$addFields": {"id": {"$toString": "$_id"} }},

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     DB_URL: str
     DB_NAME: str
     SERVICE_ACCOUNT_KEY: str 
+    ALLOW_ORIGINS:str
 
 
 settings = Settings()

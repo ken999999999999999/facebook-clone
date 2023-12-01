@@ -1,28 +1,14 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios"
-import { useContext } from "react"
-import { AuthContext } from "../context/AuthContext"
+import axios, { AxiosRequestConfig } from "axios"
+import { parseCookies } from "nookies"
 
 export const FetcherInstance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
   timeout: 10000,
 })
 
-FetcherInstance.interceptors.request.use(
-  async (config) => {
-    const { token } = useContext(AuthContext)
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
-
 export const CommonRequest = async (
-  method: "GET" | "POST" | "PATCH" | "DELETE",
+  method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
   data?: any,
   params?: any,
@@ -35,7 +21,15 @@ export const CommonRequest = async (
     params,
     ...customConfig,
   }
-  return await FetcherInstance(config).then((res) => res.data)
+  const cookies = parseCookies()
+  const token = cookies.token // Get the token from cookies
+  const newHeaders = {
+    ...customConfig?.headers,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`, // Add the token in the Authorization header
+  }
+  const response = await FetcherInstance({ ...config, headers: newHeaders })
+  return response.data
 }
 
 export const Fetcher = {
@@ -45,8 +39,8 @@ export const Fetcher = {
   POST: (url: string, data?: any, customConfig?: AxiosRequestConfig) =>
     CommonRequest("POST", url, data, undefined, customConfig),
 
-  PATCH: (url: string, data?: any, customConfig?: AxiosRequestConfig) =>
-    CommonRequest("PATCH", url, data, undefined, customConfig),
+  PUT: (url: string, data?: any, customConfig?: AxiosRequestConfig) =>
+    CommonRequest("PUT", url, data, undefined, customConfig),
 
   DELETE: (url: string, customConfig?: AxiosRequestConfig) =>
     CommonRequest("DELETE", url, undefined, undefined, customConfig),

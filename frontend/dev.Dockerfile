@@ -4,6 +4,8 @@ RUN npm install -g firebase-tools
 
 COPY package*.json ./
 
+RUN npm install -g firebase-tools
+
 RUN npm install
 
 WORKDIR /workspace/frontend

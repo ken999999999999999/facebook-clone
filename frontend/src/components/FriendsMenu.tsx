@@ -1,30 +1,20 @@
-import React from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemAvatar from "@mui/material/ListItemAvatar"
-import Avatar from "@mui/material/Avatar"
-import ListItemText from "@mui/material/ListItemText"
-import { Typography } from "@mui/material"
-import { Box } from "@mui/material"
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+} from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
-const users = [
-  { name: "Xavier Chan", avatar: "path-to-xavier-avatar.jpg", online: true },
-  { name: "不愛運動", avatar: "path-to-avatar.jpg", online: true },
-  { name: "Tsz Wai Wong", avatar: "path-to-tsz-avatar.jpg", online: true },
-  { name: "Janita Leung", avatar: "path-to-janita-avatar.jpg", online: true },
-  { name: "Thebia Tang", avatar: "path-to-thebia-avatar.jpg", online: true },
-  { name: "Viola Yeung", avatar: "path-to-viola-avatar.jpg", online: true },
-  { name: "Arthur Lam", avatar: "path-to-arthur-avatar.jpg", online: true },
-  { name: "Kwong Chi Li", avatar: "path-to-kwong-avatar.jpg", online: false },
-  { name: "Pakyin Chu", avatar: "path-to-pakyin-avatar.jpg", online: false },
-  { name: "Clio Lee", avatar: "path-to-clio-avatar.jpg", online: false },
-  { name: "Frankie Wong", avatar: "path-to-frankie-avatar.jpg", online: false },
-  { name: "Anson Leung", avatar: "path-to-anson-avatar.jpg", online: false },
-  { name: "Mason Chung", avatar: "path-to-mason-avatar.jpg", online: false },
-  { name: "得係霜", avatar: "path-to-avatar.jpg", online: false },
-  { name: "Leon Li", avatar: "path-to-leon-avatar.jpg", online: false },
-  // ... add other users as needed
-]
+import { Fetcher } from "@/services/fetcher"
+import UserListItem from "./UserListItem"
+import useAuth from "@/hooks/useAuth"
+import CancelIcon from "@mui/icons-material/Cancel"
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever"
+import TimelapseIcon from "@mui/icons-material/Timelapse"
 
 interface FriendsMenuProps {
   scroll: number
@@ -33,40 +23,117 @@ interface FriendsMenuProps {
 export default function FriendsMenu({ scroll }: FriendsMenuProps) {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("md"))
+  const { user } = useAuth()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [relationships, setRelationships] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [cancelledList, setCancelledList] = useState<{
+    [relationshipId: string]: boolean
+  }>({})
+  const [acceptedList, setAcceptedList] = useState<{
+    [relationshipId: string]: boolean
+  }>({})
 
-  if (matches) {
-    // If the screen size is 'md' or smaller
-    return (
-      <Box
-        sx={{
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      ></Box>
-    ) // Do not render anything
+  const deleteRelationship = async (relationshipId: string) => {
+    try {
+      setCancelledList((prev) => ({ ...prev, [relationshipId]: true }))
+      await Fetcher.DELETE(`/relationships/${relationshipId}`)
+    } catch (err) {
+      console.log(err)
+    }
   }
-  return (
-    <List
+
+  const accept = async (relationshipId: string) => {
+    try {
+      setAcceptedList((prev) => ({ ...prev, [relationshipId]: true }))
+      await Fetcher.PUT(`/relationships/${relationshipId}/accept`)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const getRelationships = useCallback(() => {
+    const callAPI = async () => {
+      try {
+        setIsLoading(true)
+        const response = await Fetcher.GET(
+          `/relationships/?page_index=${pageIndex}&page_size=50&order_by=_id&is_asc=true`
+        )
+        setRelationships((prev) => [...prev, ...response?.records])
+      } catch (err) {
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    callAPI()
+  }, [pageIndex])
+
+  useEffect(() => {
+    getRelationships()
+  }, [getRelationships])
+
+  return !matches ? (
+    <Card>
+      <CardHeader title="Contacts" />
+      <CardContent>
+        <List
+          sx={{
+            position: scroll > 0 ? "fixed" : "relative",
+          }}
+          style={{
+            maxHeight: "100vh",
+            overflowY: "scroll",
+            overflowX: "hidden",
+          }}
+        >
+          {relationships?.map(({ id, receiver, creator, accepted_on }) => {
+            let currentUser = receiver.id !== user?.id ? receiver : creator
+            return (
+              <UserListItem
+                key={id}
+                displayName={currentUser.display_name}
+                firstName={currentUser.first_name}
+                lastName={currentUser.last_name}
+                badgeContent={
+                  !accepted_on &&
+                  !acceptedList[id] && (
+                    <TimelapseIcon style={{ fontSize: "10px" }} />
+                  )
+                }
+                secondaryAction={
+                  cancelledList[id] ? (
+                    <Button disabled>Cancelled</Button>
+                  ) : (
+                    <>
+                      {receiver.id === user?.id && !accepted_on && (
+                        <Button
+                          onClick={() => accept(id)}
+                          disabled={acceptedList[id]}
+                        >
+                          {acceptedList[id] ? "Accepted" : "Accept"}
+                        </Button>
+                      )}
+
+                      <IconButton onClick={() => deleteRelationship(id)}>
+                        {!accepted_on ? <CancelIcon /> : <DeleteForeverIcon />}
+                      </IconButton>
+                    </>
+                  )
+                }
+              />
+            )
+          })}
+        </List>
+      </CardContent>
+    </Card>
+  ) : (
+    <Box
       sx={{
-        width: "18rem",
-        position: scroll > 0 ? "fixed" : "relative",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
       }}
-      style={{
-        maxHeight: "100vh",
-        overflowY: "scroll",
-        overflowX: "hidden",
-      }}
-    >
-      Contacts
-      {users.map((user, index) => (
-        <ListItem key={index}>
-          <ListItemAvatar>
-            <Avatar src={user.avatar} />
-          </ListItemAvatar>
-          <ListItemText primary={user.name} />
-        </ListItem>
-      ))}
-    </List>
+    ></Box>
   )
 }
