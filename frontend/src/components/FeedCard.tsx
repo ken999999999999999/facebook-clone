@@ -69,11 +69,13 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
   const [image, setImage] = useState<string | null>(null)
   const { getPostImage, isLoading } = usePost()
 
-  if (post.id && post.has_image) {
-    const res = getPostImage(post.id)
-    res ?? setImage(res)
-    console.log(res)
-  }
+  useEffect(() => {
+    if (post.id && post.has_image) {
+      const res = getPostImage(post.id)
+      res ?? setImage(res)
+      console.log(res)
+    }
+  }, [post, getPostImage])
 
   return post ? (
     <Card footer={<FeedCardButtons />}>
