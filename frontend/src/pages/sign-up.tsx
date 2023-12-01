@@ -17,11 +17,15 @@ const SignUpPage: React.FC = () => {
     last_name: "",
     birthdate: "",
   })
-  const { signUp, loading } = useAuth()
+  const { signUp } = useAuth()
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleCreate = async () => {
+    setIsLoading(true)
     await signUp(formData)
     router.push("/login")
+    setIsLoading(false)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +33,7 @@ const SignUpPage: React.FC = () => {
   }
 
   return (
-    <Backdrop open={!!loading}>
+    <Backdrop open={!!isLoading}>
       <Container component="main" maxWidth="xs">
         <Box
           flexDirection={"row"}
