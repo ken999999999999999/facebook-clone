@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <CssBaseline />
           <Navbar />
           <Container
-            maxWidth={false}
+            maxWidth="xl"
             style={{ marginTop: "64px" }}
             disableGutters
             sx={{ padding: "12px 24px" }}
