@@ -5,7 +5,7 @@ import AddFriendList from "@/components/AddFriendList"
 import UserList from "@/components/FriendsMenu"
 import useAuth from "../hooks/useAuth"
 import { usePost } from "@/hooks/usePost"
-import { Grid } from "@mui/material"
+import { Grid, Stack } from "@mui/material"
 import dynamic from "next/dynamic"
 
 const Header = dynamic(() => import("@/components/Navbar"), { ssr: false })
@@ -79,14 +79,16 @@ export default function Home() {
         <Grid item xs={3}>
           <AddFriendList scroll={scroll} />
         </Grid>
-        <Grid item xs={6} spacing={2}>
-          <PostFeedCard />
-          {posts?.map((post, index) => (
-            <FeedCard
-              post={post}
-              key={post.original_post_id + "-" + index}
-            ></FeedCard>
-          ))}
+        <Grid item xs={6}>
+          <Stack spacing={1}>
+            <PostFeedCard />
+            {posts?.map((post, index) => (
+              <FeedCard
+                post={post}
+                key={post.original_post_id + "-" + index}
+              ></FeedCard>
+            ))}
+          </Stack>
         </Grid>
         <Grid xs={3} item>
           <UserList scroll={scroll} />
