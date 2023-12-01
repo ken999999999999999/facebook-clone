@@ -10,6 +10,7 @@ import { Post, usePost } from "@/hooks/usePost"
 import { stringAvatar } from "./UserListItem"
 import PeopleIcon from "@mui/icons-material/People"
 import { useState } from "react"
+import { Fetcher } from "@/services/fetcher"
 export interface User {
   last_name: string
   first_name: string
@@ -67,15 +68,15 @@ const FeedCardButtons = () => {
 
 const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
   const [image, setImage] = useState<string | null>(null)
-  const { getPostImage, isLoading } = usePost()
 
   useEffect(() => {
-    if (post.id && post.has_image) {
-      const res = getPostImage(post.id)
-      res ?? setImage(res)
-      console.log(res)
+    const getImage = async (id: string) => {
+      const res = await Fetcher.GET(`/posts/${id}/image`)
+      setImage(res)
     }
-  }, [post, getPostImage])
+
+    if (post.id && post.has_image) getImage(post.id)
+  }, [post])
 
   return post ? (
     <Card footer={<FeedCardButtons />}>

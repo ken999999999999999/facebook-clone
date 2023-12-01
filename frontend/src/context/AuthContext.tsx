@@ -10,6 +10,7 @@ import { ICreateUserCommand, userSignUp } from "../services/users"
 import { setCookie } from "nookies"
 import { useRouter } from "next/router"
 import { Fetcher } from "@/services/fetcher"
+import { usePathname } from "next/navigation"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -82,26 +83,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<AuthError | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+  const pathname = usePathname()
 
-  // useEffect(() => {
-  //   auth.onAuthStateChanged((user) => {
-  //     setLoading(true)
-  //     let newUser = null
-  //     if (getUserFromLocal()) {
-  //       newUser = getUserFromLocal()
-  //     }
-  //     if (getUserFromLocal() === null) {
-  //       if (user) {
-  //         saveUserToLocal(user)
-  //         newUser = user
-  //       } else {
-  //         newUser = null
-  //       }
-  //     }
-  //     setUser(newUser)
-  //     setLoading(false)
-  //   })
-  // }, [])
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (!user && pathname === "/") {
+        window.alert("Login Session Expired!")
+        router.push("/login")
+      }
+    })
+  }, [router, pathname])
 
   const signIn = async (email: string, password: string): Promise<void> => {
     setLoading(true)

@@ -21,7 +21,6 @@ interface UsePostHook {
   error: PostError | null
   getPosts: () => Promise<void>
   getPost: (id: string) => Promise<void>
-  getPostImage: (id: string) => Promise<void>
   createPost: (post: Post) => Promise<void>
   updatePost: (id: string, post: Post) => Promise<void>
   deletePost: (id: string) => Promise<void>
@@ -51,20 +50,6 @@ export const usePost = (): UsePostHook => {
       const response = await Fetcher.GET(`/posts/${id}`)
       // Assuming response returns a single Post object
       setPosts([response])
-      setError(null)
-    } catch (err) {
-      setError(err as PostError)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const getPostImage = async (id: string) => {
-    setIsLoading(true)
-    try {
-      const response = await Fetcher.GET(`/posts/${id}/image`)
-      // Assuming response returns a single Post object
-      return response
       setError(null)
     } catch (err) {
       setError(err as PostError)
@@ -115,7 +100,6 @@ export const usePost = (): UsePostHook => {
     error,
     getPosts,
     getPost,
-    getPostImage,
     createPost,
     updatePost,
     deletePost,

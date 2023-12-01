@@ -7,21 +7,11 @@ import Typography from "@mui/material/Typography"
 import Logout from "@mui/icons-material/Logout"
 import FacebookIcon from "@mui/icons-material/Facebook"
 import useAuth from "@/hooks/useAuth"
-import { useRouter } from "next/router"
-import { usePathname } from "next/navigation"
 import { stringAvatar } from "./UserListItem"
 import { IconButton, Stack } from "@mui/material"
 
 const Navbar = (): JSX.Element => {
-  const router = useRouter()
   const { user, signOut } = useAuth()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    if (!user && pathname === "/") {
-      router.push("/login")
-    }
-  }, [user, router, pathname])
 
   return (
     <AppBar position="fixed">

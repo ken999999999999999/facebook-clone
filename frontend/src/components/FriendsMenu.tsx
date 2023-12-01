@@ -59,7 +59,7 @@ export default function FriendsMenu({ scroll }: FriendsMenuProps) {
         const response = await Fetcher.GET(
           `/relationships/?page_index=${pageIndex}&page_size=50&order_by=_id&is_asc=true`
         )
-        setRelationships((prev) => [...prev, ...response.records])
+        setRelationships((prev) => [...prev, ...response?.records])
       } catch (err) {
       } finally {
         setIsLoading(false)

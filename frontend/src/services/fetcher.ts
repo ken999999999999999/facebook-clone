@@ -1,8 +1,8 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios"
+import axios, { AxiosRequestConfig } from "axios"
 import { parseCookies } from "nookies"
 
 export const FetcherInstance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
   timeout: 10000,
 })
@@ -28,11 +28,8 @@ export const CommonRequest = async (
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`, // Add the token in the Authorization header
   }
-  return await FetcherInstance({ ...config, headers: newHeaders })
-    .then((res) => res.data)
-    .catch((err: AxiosError) => {
-      console.log(err)
-    })
+  const response = await FetcherInstance({ ...config, headers: newHeaders })
+  return response.data
 }
 
 export const Fetcher = {
