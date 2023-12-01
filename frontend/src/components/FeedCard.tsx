@@ -5,6 +5,7 @@ import { ThumbUp, Comment, Share } from "@mui/icons-material"
 import Divider from "@mui/material/Divider"
 import Container from "@mui/material/Container"
 import Stack from "@mui/material/Stack"
+import { Post } from "@/hooks/usePost"
 
 export interface User {
   lastName: string
@@ -29,18 +30,6 @@ export interface Comment {
   image: string
 }
 
-export interface Post {
-  id: string
-  likes: number
-  comments: Comment[]
-  image: string
-  description: string
-  createdBy: User
-  createdOn: string
-  modifiedOn: string
-  originalPost?: Post | null
-}
-
 export interface FeedCardProps extends CardProps {
   post: Post
 }
@@ -48,7 +37,7 @@ export interface FeedCardProps extends CardProps {
 const FeedCardButtons = () => {
   //create three button named likes, comments and share
   return (
-    <Container>
+    <>
       <Divider />
       <Stack
         direction="row"
@@ -67,29 +56,14 @@ const FeedCardButtons = () => {
           <Share />
         </IconButton>
       </Stack>
-    </Container>
+    </>
   )
 }
 
 const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
-  const {
-    id,
-    likes,
-    comments,
-    image,
-    description,
-    createdBy,
-    createdOn,
-    modifiedOn,
-    originalPost,
-  } = post
   return (
-    <Card
-      title={createdBy.displayName}
-      footer={<FeedCardButtons />}
-      sx={{ width: "80%" }}
-    >
-      {description}
+    <Card title={"title"} footer={<FeedCardButtons />}>
+      {post.description}
     </Card>
   )
 }

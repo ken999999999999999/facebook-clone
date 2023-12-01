@@ -1,30 +1,10 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemAvatar from "@mui/material/ListItemAvatar"
-import Avatar from "@mui/material/Avatar"
-import ListItemText from "@mui/material/ListItemText"
-import { Typography } from "@mui/material"
-import { Box } from "@mui/material"
+import { Box, Card, CardContent, CardHeader } from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
-const users = [
-  { name: "Xavier Chan", avatar: "path-to-xavier-avatar.jpg", online: true },
-  { name: "不愛運動", avatar: "path-to-avatar.jpg", online: true },
-  { name: "Tsz Wai Wong", avatar: "path-to-tsz-avatar.jpg", online: true },
-  { name: "Janita Leung", avatar: "path-to-janita-avatar.jpg", online: true },
-  { name: "Thebia Tang", avatar: "path-to-thebia-avatar.jpg", online: true },
-  { name: "Viola Yeung", avatar: "path-to-viola-avatar.jpg", online: true },
-  { name: "Arthur Lam", avatar: "path-to-arthur-avatar.jpg", online: true },
-  { name: "Kwong Chi Li", avatar: "path-to-kwong-avatar.jpg", online: false },
-  { name: "Pakyin Chu", avatar: "path-to-pakyin-avatar.jpg", online: false },
-  { name: "Clio Lee", avatar: "path-to-clio-avatar.jpg", online: false },
-  { name: "Frankie Wong", avatar: "path-to-frankie-avatar.jpg", online: false },
-  { name: "Anson Leung", avatar: "path-to-anson-avatar.jpg", online: false },
-  { name: "Mason Chung", avatar: "path-to-mason-avatar.jpg", online: false },
-  { name: "得係霜", avatar: "path-to-avatar.jpg", online: false },
-  { name: "Leon Li", avatar: "path-to-leon-avatar.jpg", online: false },
-  // ... add other users as needed
-]
+import { Fetcher } from "@/services/fetcher"
+import UserListItem from "./UserListItem"
+import useAuth from "@/hooks/useAuth"
 
 interface FriendsMenuProps {
   scroll: number
@@ -33,40 +13,59 @@ interface FriendsMenuProps {
 export default function FriendsMenu({ scroll }: FriendsMenuProps) {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("md"))
+  const { user } = useAuth()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [relationships, setRelationships] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  if (matches) {
-    // If the screen size is 'md' or smaller
-    return (
-      <Box
-        sx={{
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      ></Box>
-    ) // Do not render anything
-  }
-  return (
-    <List
+  useEffect(() => {
+    const getRelationships = async () => {
+      try {
+        setIsLoading(true)
+        const response = await Fetcher.GET(
+          `/relationships/?page_index=${pageIndex}&page_size=50&order_by=_id&is_asc=true`
+        )
+      } catch (err) {
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    getRelationships()
+  }, [pageIndex])
+
+  return !matches ? (
+    <Card>
+      <CardHeader title="Contacts" />
+      <CardContent>
+        <List
+          sx={{
+            position: scroll > 0 ? "fixed" : "relative",
+          }}
+          style={{
+            maxHeight: "100vh",
+            overflowY: "scroll",
+            overflowX: "hidden",
+          }}
+        >
+          {/* {relationships?.map((relationship) => (
+            <UserListItem
+              key={user.id}
+              displayName={user.display_name}
+              firstName={user.first_name}
+              lastName={user.last_name}
+            />
+          ))} */}
+        </List>
+      </CardContent>
+    </Card>
+  ) : (
+    <Box
       sx={{
-        width: "18rem",
-        position: scroll > 0 ? "fixed" : "relative",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
       }}
-      style={{
-        maxHeight: "100vh",
-        overflowY: "scroll",
-        overflowX: "hidden",
-      }}
-    >
-      Contacts
-      {users.map((user, index) => (
-        <ListItem key={index}>
-          <ListItemAvatar>
-            <Avatar src={user.avatar} />
-          </ListItemAvatar>
-          <ListItemText primary={user.name} />
-        </ListItem>
-      ))}
-    </List>
+    ></Box>
   )
 }
