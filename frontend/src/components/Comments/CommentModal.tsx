@@ -12,11 +12,9 @@ import {
   Container,
   DialogContent,
   DialogTitle,
-  Divider,
   DialogContentText,
 } from "@mui/material"
 import { stringAvatar } from "../UserListItem"
-import Card from "../Card"
 import CommentInput from "./CommentInput"
 
 interface CommentModalProps {
@@ -112,12 +110,23 @@ const CommentModal: FC<CommentModalProps> = ({
     if (isShow && post) getComments(post)
   }, [post, isShow, pageIndex])
 
+  const refresh = async () => {
+    try {
+      const response = await Fetcher.GET(
+        `/comments?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
+      )
+      setComments(response.records ?? [])
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <Dialog open={isShow} onClose={onClose} scroll="paper">
       <DialogTitle id="scroll-dialog-title">Comments</DialogTitle>
       <DialogContent dividers sx={{ width: "34rem" }}>
         <DialogContentText>
-          <Stack spacing={2} direction="column" alignItems="start">
+          <Stack spacing={2} direction="column-reverse" alignItems="start">
             {comments.map((comment, index) => (
               <>
                 <CommentCard comment={comment} key={index} />
@@ -134,7 +143,7 @@ const CommentModal: FC<CommentModalProps> = ({
           margin: "1rem",
         }}
       >
-        <CommentInput post={post} />
+        <CommentInput post={post} refresh={refresh} />
       </Box>
     </Dialog>
   )
