@@ -3,7 +3,7 @@ import type { AppProps } from "next/app"
 import Navbar from "@/components/Navbar"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { AuthProvider } from "../context/AuthContext"
-import { CssBaseline } from "@mui/material"
+import { Container, CssBaseline } from "@mui/material"
 import Head from "next/head"
 
 const theme = createTheme()
@@ -21,7 +21,14 @@ export default function App({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Navbar />
-          <Component {...pageProps} />
+          <Container
+            maxWidth={false}
+            style={{ marginTop: "64px" }}
+            disableGutters
+            sx={{ padding: "12px 24px" }}
+          >
+            <Component {...pageProps} />
+          </Container>
         </ThemeProvider>
       </AuthProvider>
     </>

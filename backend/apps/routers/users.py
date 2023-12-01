@@ -30,7 +30,7 @@ async def get_current_user_query(current_user: current_user) -> UserDto:
 
 
 @router.get("/list", dependencies=[Depends(authorize)])
-async def get_users_query(current_user: current_user, pagination: PaginationQuery = Depends()):
+async def get_users_query(current_user: current_user,db_context:db_context, pagination: PaginationQuery = Depends()):
     filters = {"$or": [
         {"created_by": current_user.id},
         {"receiver_id": current_user.id},

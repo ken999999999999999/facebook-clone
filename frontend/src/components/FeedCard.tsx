@@ -37,7 +37,7 @@ export interface FeedCardProps extends CardProps {
 const FeedCardButtons = () => {
   //create three button named likes, comments and share
   return (
-    <Container>
+    <>
       <Divider />
       <Stack
         direction="row"
@@ -56,13 +56,13 @@ const FeedCardButtons = () => {
           <Share />
         </IconButton>
       </Stack>
-    </Container>
+    </>
   )
 }
 
 const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
   return (
-    <Card title={"title"} footer={<FeedCardButtons />} sx={{ width: "80%" }}>
+    <Card title={"title"} footer={<FeedCardButtons />}>
       {post.description}
     </Card>
   )

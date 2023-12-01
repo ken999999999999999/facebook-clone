@@ -22,7 +22,6 @@ const PostFeedButtons = () => {
   return (
     <Container>
       <Divider />
-
       <Stack
         direction="row"
         divider={<Divider orientation="vertical" flexItem />}
@@ -74,7 +73,7 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
   }, [post])
 
   return (
-    <Card footer={<PostFeedButtons />} sx={{ width: "80%" }}>
+    <Card footer={<PostFeedButtons />} style={{ marginBottom: "20px" }}>
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Avatar alt={user.displayName} src="/2.jpeg" />
         <Input

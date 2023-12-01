@@ -1,36 +1,18 @@
 import { useState, useEffect } from "react"
-
 import { Inter } from "next/font/google"
-import styles from "@/styles/Home.module.css"
-import Card from "@components/Card"
 import FeedCard from "@/components/FeedCard"
 import { Post } from "@/hooks/usePost"
 import PostFeedCard from "@/components/PostFeedCard"
-
-import Grid from "@mui/material/Unstable_Grid2"
-import { createTheme } from "@mui/material/styles"
-import NavigationMenu from "@/components/NavigationMenu"
+import AddFriendList from "@/components/AddFriendList"
 import UserList from "@/components/FriendsMenu"
 import useAuth from "../hooks/useAuth"
-import { useUser } from "@/hooks/useUser"
-
 import { usePost } from "@/hooks/usePost"
+import { Grid } from "@mui/material"
+
 const inter = Inter({ subsets: ["latin"] })
-export const theme = createTheme({
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 900,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-})
 
 export default function Home() {
-  const { user, loading } = useAuth()
-  const { currentUser, isLoading } = useUser()
+  const { user } = useAuth()
   const [scroll, setScroll] = useState<number>(0)
   const { getPosts, posts } = usePost()
 
@@ -104,45 +86,23 @@ export default function Home() {
   } as Post
 
   return (
-    <>
-      <main className={`${styles.main} ${inter.className}`}>
-        <Grid
-          container
-          columns={{ sm: 6, md: 9, lg: 12 }}
-          sx={{ overflowY: "auto" }}
-        >
-          <Grid sm={false} md={false} lg={3}>
-            <NavigationMenu currentUser={currentUser} scroll={scroll} />
-          </Grid>
-          <Grid
-            container
-            xs={true}
-            sx={{ gap: "1rem" }}
-            alignItems="center"
-            justifyContent="start"
-            direction="column"
-          >
-            <PostFeedCard user={userTest}></PostFeedCard>
-            {posts?.map((post, index) => (
-              <FeedCard
-                post={post}
-                key={post.original_post_id + "-" + index}
-              ></FeedCard>
-            ))}
-            <FeedCard post={post}></FeedCard>
-          </Grid>
-          <Grid
-            sm={false}
-            md={3}
-            lg={3}
-            alignItems="flex-end"
-            justifyContent="flex-end"
-            direction="row"
-          >
-            <UserList scroll={scroll} />
-          </Grid>
-        </Grid>
-      </main>
-    </>
+    <Grid container sx={{ overflowY: "auto" }} spacing={2}>
+      <Grid item xs={3}>
+        <AddFriendList scroll={scroll} />
+      </Grid>
+      <Grid item xs={6}>
+        <PostFeedCard user={userTest}></PostFeedCard>
+        {posts?.map((post, index) => (
+          <FeedCard
+            post={post}
+            key={post.original_post_id + "-" + index}
+          ></FeedCard>
+        ))}
+        <FeedCard post={post}></FeedCard>
+      </Grid>
+      <Grid xs={3} item>
+        <UserList scroll={scroll} />
+      </Grid>
+    </Grid>
   )
 }
