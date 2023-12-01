@@ -10,15 +10,17 @@ import {
 } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import useAuth from "@/hooks/useAuth"
-import { IUser } from "../services/users"
 const theme = createTheme()
-import { useRouter } from "next/router"
+import { redirect } from "next/navigation"
 import Backdrop from "@/components/Backdrop"
 import { IUser } from "@/context/AuthContext"
 
 const LoginPage: React.FC = () => {
+  // const router = useRouter()
+  const { signIn, signUp, loading, user } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(loading)
   const [formData, setFormData] = useState<IUser>({
     email: "",
     password: "",
@@ -27,19 +29,17 @@ const LoginPage: React.FC = () => {
     last_name: "",
     birthdate: "",
   })
-  const { signIn, signUp, loading, setLoading } = useAuth()
-  const router = useRouter()
 
   const handleSignIn = async () => {
-    setLoading(true)
     try {
+      setIsLoading(true)
       const res = await signIn(email, password)
-      router.replace("/")
+      window.location.replace("/")
     } catch (err) {
       console.log(err)
       window.alert(err)
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
@@ -52,12 +52,8 @@ const LoginPage: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
   return (
-    <Backdrop open={!!loading}>
+    <Backdrop open={!!isLoading}>
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />

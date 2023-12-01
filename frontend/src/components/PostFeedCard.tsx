@@ -11,8 +11,11 @@ import {
   Avatar,
   Typography,
   Button,
+  ImageList,
+  ImageListItem,
 } from "@mui/material"
 import { Videocam, PhotoLibrary, Mood, CloudUpload } from "@mui/icons-material"
+import ImageIcon from "@mui/icons-material/Image"
 import { Post, usePost } from "@/hooks/usePost"
 interface PostFeedCardProps extends HtmlHTMLAttributes<HTMLDivElement> {
   user: User
@@ -46,6 +49,7 @@ const PostFeedButtons = () => {
 
 const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
   const { createPost, isLoading } = usePost()
+  const [image, setImage] = useState<string>("")
   const [post, setPost] = useState<Post>({
     image: null,
     description: "",
@@ -54,6 +58,26 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPost((prev) => ({ ...prev, description: event.target.value }))
+  }
+
+  const handleImageFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files) {
+      const file = event.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onloadend = () => {
+        const base64String = reader.result
+        if (typeof base64String === "string") {
+          setImage(base64String)
+          setPost((prev) => ({
+            ...prev,
+            image: base64String,
+          }))
+        }
+      }
+    }
   }
 
   const handleSubmit = async () => {
@@ -91,13 +115,9 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
             fontSize: "0.8rem",
           }}
         />
-        <Button
-          component="label"
-          variant="contained"
-          startIcon={<CloudUpload />}
-        >
-          Upload file
-          <Input type="file" hidden />
+        <Button component="label">
+          <ImageIcon />
+          <input type="file" hidden onChange={handleImageFileChange} />
         </Button>
       </Box>
       <Button
@@ -109,6 +129,12 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({ user }) => {
       >
         Post
       </Button>
+
+      {image ? (
+        <ImageListItem sx={{ width: 50, height: 50 }}>
+          <img src={image}></img>
+        </ImageListItem>
+      ) : null}
     </Card>
   )
 }

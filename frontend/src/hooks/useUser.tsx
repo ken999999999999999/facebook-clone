@@ -64,8 +64,8 @@ export const useUser = (): UseUserHook => {
   }
 
   useEffect(() => {
-    getCurrentUser()
-  }, [])
+    if (user) getCurrentUser()
+  }, [user])
 
   return {
     currentUser,

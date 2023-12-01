@@ -21,7 +21,6 @@ import MoreIcon from "@mui/icons-material/MoreVert"
 import Menu from "./Menu"
 import CreateMenu from "./CreateMenu"
 import useAuth from "@/hooks/useAuth"
-import { useRouter } from "next/router"
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -122,18 +121,7 @@ const Navbar = ({
     },
     []
   )
-  const router = useRouter()
-  const { user, loading, signOut } = useAuth()
-
-  useEffect(() => {
-    if (!user) {
-      router.push("/login")
-    }
-  }, [user, loading, router])
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
+  const { user, signOut } = useAuth()
 
   const ItemList = [
     { label: "Profile", icon: <Avatar />, href: "/profile" },
@@ -144,6 +132,7 @@ const Navbar = ({
       icon: <Logout />,
       onClick: () => {
         signOut()
+        window.location.replace("/login")
       },
       href: "/logout",
     },
@@ -209,7 +198,7 @@ const Navbar = ({
 
   return (
     <>
-      <Box sx={{ display: !user ? "none" : "block" }}>
+      <Box>
         <AppBar position="fixed">
           <Toolbar>
             <IconButton
@@ -227,7 +216,7 @@ const Navbar = ({
               component="div"
               sx={{ display: { xs: "none", sm: "block" } }}
             >
-              MUI
+              Facebook
             </Typography>
             <Search>
               <SearchIconWrapper>

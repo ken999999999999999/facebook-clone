@@ -50,7 +50,7 @@ export default function FriendsMenu({ scroll }: FriendsMenuProps) {
     <List
       sx={{
         width: "18rem",
-        position: scroll > 0 ? "fixed" : "relative",
+        position: scroll > 0 ? "relative" : "relative",
       }}
       style={{
         maxHeight: "100vh",

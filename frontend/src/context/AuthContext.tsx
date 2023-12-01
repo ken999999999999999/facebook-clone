@@ -37,17 +37,6 @@ export interface IUser {
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
-export const AuthContext = createContext<AuthContextType>({
-  loading: true,
-  error: null,
-  user: null,
-  token: "",
-  setToken: (token: string) => null,
-  signIn: (email: string, password: string) => Promise.resolve(),
-  signUp: (user: IUser) => Promise.resolve(),
-  signOut: () => Promise.resolve(),
-})
-
 type AuthContextType = {
   loading: boolean
   error: unknown
@@ -57,7 +46,6 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (user: IUser) => Promise<void>
   signOut: () => Promise<void>
-  setLoading: (loading: boolean) => void
 }
 
 const saveUserToLocal = (user: User) => {
@@ -83,11 +71,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(getUserFromLocal())
   const [token, setToken] = useState<string>("")
   const [error, setError] = useState<AuthError | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const setLoadingTest = (e: boolean) => {
+    console.log("setLoadingTest", e)
+    setLoading(e)
+  }
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setLoading(true)
       let newUser = null
       if (getUserFromLocal()) {
         newUser = getUserFromLocal()
@@ -101,32 +93,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       }
       setUser(newUser)
-      setLoading(false)
     })
     return () => unsubscribe()
   }, [])
 
   const signIn = async (email: string, password: string): Promise<void> => {
-    setLoading(true)
+    setLoadingTest(true)
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       )
-      const token = await userCredential.user.getIdToken() // Get the token
+      const token = await userCredential.user.getIdToken()
       setCookie(null, "token", token, {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
       })
-      saveUserToLocal(userCredential.user) // Save the user object to local storage
+      saveUserToLocal(userCredential.user)
       setUser(userCredential.user)
       setError(null)
     } catch (error) {
       setError(error as AuthError)
       window.alert(error)
     } finally {
-      setLoading(false)
+      setLoadingTest(false)
     }
   }
 
@@ -134,6 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true)
       const res = await userSignUp(user)
+      console.log(res)
       setUser(res)
     } catch (error) {
       setError(error as AuthError)
@@ -144,7 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signOut = async (): Promise<void> => {
-    setLoading(true)
+    setLoadingTest(true)
     try {
       await fbSignOut(auth)
       removeUserFromLocal()
@@ -156,16 +148,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log(error)
       window.alert(error)
     } finally {
-      setLoading(false)
+      setLoadingTest(false)
     }
   }
-
-  // useEffect(() => {
-  //   setLoading(true)
-  //   setUser(getUserFromLocal())
-  //   setLoading(false)
-  // }, [])
-
   const contextValue = {
     loading,
     error,
@@ -175,10 +160,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signIn,
     signUp,
     signOut,
-    setLoading,
   }
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   )
 }
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)

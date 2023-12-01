@@ -31,9 +31,7 @@ export const theme = createTheme({
 })
 
 export default function Home() {
-  const router = useRouter()
-  const { user, loading } = useAuth()
-  const { currentUser, isLoading } = useUser()
+  const { currentUser, isLoading: loading } = useUser()
   const [scroll, setScroll] = useState<number>(0)
   const { getPosts, posts } = usePost()
 
@@ -44,17 +42,10 @@ export default function Home() {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll)
-
     return () => {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
-
-  useEffect(() => {
-    if (!user) {
-      getPosts()
-    }
-  }, [getPosts, user])
 
   const userTest = {
     userIcon:
@@ -106,6 +97,13 @@ export default function Home() {
     modifiedOn: "2023-11-12T10:15:00",
   } as Post
 
+  useEffect(() => {
+    getPosts()
+  }, [])
+
+  if (loading) {
+    return <div>Loading</div>
+  }
   return (
     <>
       <Head>
