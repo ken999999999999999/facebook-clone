@@ -41,10 +41,10 @@ async def get_users_query(current_user: current_user,db_context:db_context, pagi
     friends = [record["receiver_id"] if record["created_by"] ==
                current_user.id else record["created_by"] for record in friends_query]
     
-    friends =[ObjectId(friend) for friend in friends]
+    friends.append(current_user.id)
 
-    friends.append(ObjectId(current_user.id))
-    
+    friends =[ObjectId(friend) for friend in friends]
+    print(friends)
     query = await db_context.users.aggregate([
         {"$match": { "_id": {"$nin": friends}}},
         {"$addFields": {"id": {"$toString": "$_id"} }},

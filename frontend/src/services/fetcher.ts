@@ -1,6 +1,4 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
-import { useContext } from "react"
-import { AuthContext } from "../context/AuthContext"
 import { parseCookies } from "nookies"
 
 export const FetcherInstance = axios.create({
@@ -10,7 +8,7 @@ export const FetcherInstance = axios.create({
 })
 
 export const CommonRequest = async (
-  method: "GET" | "POST" | "PATCH" | "DELETE",
+  method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
   data?: any,
   params?: any,
@@ -44,8 +42,8 @@ export const Fetcher = {
   POST: (url: string, data?: any, customConfig?: AxiosRequestConfig) =>
     CommonRequest("POST", url, data, undefined, customConfig),
 
-  PATCH: (url: string, data?: any, customConfig?: AxiosRequestConfig) =>
-    CommonRequest("PATCH", url, data, undefined, customConfig),
+  PUT: (url: string, data?: any, customConfig?: AxiosRequestConfig) =>
+    CommonRequest("PUT", url, data, undefined, customConfig),
 
   DELETE: (url: string, customConfig?: AxiosRequestConfig) =>
     CommonRequest("DELETE", url, undefined, undefined, customConfig),

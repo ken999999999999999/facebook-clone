@@ -6,7 +6,7 @@ import {
   signOut as fbSignOut,
 } from "firebase/auth"
 import { initializeApp } from "firebase/app"
-import { userSignUp } from "../services/users"
+import { ICreateUserCommand, userSignUp } from "../services/users"
 import { setCookie } from "nookies"
 import { useRouter } from "next/router"
 import { Fetcher } from "@/services/fetcher"
@@ -40,7 +40,7 @@ export const AuthContext = createContext<AuthContextType>({
   token: "",
   setToken: (token: string) => null,
   signIn: (email: string, password: string) => Promise.resolve(),
-  signUp: (user: IUser) => Promise.resolve(),
+  signUp: (user: ICreateUserCommand) => Promise.resolve(),
   signOut: () => Promise.resolve(),
   setLoading: (loading: boolean) => null,
 })
@@ -52,7 +52,7 @@ export type AuthContextType = {
   token: string
   setToken: (token: string) => void
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (user: IUser) => Promise<void>
+  signUp: (user: ICreateUserCommand) => Promise<void>
   signOut: () => Promise<void>
   setLoading: (loading: boolean) => void
 }
@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const signUp = async (user: IUser) => {
+  const signUp = async (user: ICreateUserCommand) => {
     try {
       setLoading(true)
       const res = await userSignUp(user)

@@ -5,8 +5,10 @@ import useAuth from "@/hooks/useAuth"
 import { ICreateUserCommand } from "../services/users"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
+import { useRouter } from "next/router"
 
 const SignUpPage: React.FC = () => {
+  const router = useRouter()
   const [formData, setFormData] = useState<ICreateUserCommand>({
     email: "",
     password: "",
@@ -19,6 +21,7 @@ const SignUpPage: React.FC = () => {
 
   const handleCreate = async () => {
     await signUp(formData)
+    router.push("/login")
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
