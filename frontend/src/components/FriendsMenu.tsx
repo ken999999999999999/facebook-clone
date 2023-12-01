@@ -14,8 +14,7 @@ import UserListItem from "./UserListItem"
 import useAuth from "@/hooks/useAuth"
 import CancelIcon from "@mui/icons-material/Cancel"
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever"
-import HourglassTopIcon from "@mui/icons-material/HourglassTop"
-import CachedIcon from "@mui/icons-material/Cached"
+import TimelapseIcon from "@mui/icons-material/Timelapse"
 
 interface FriendsMenuProps {
   scroll: number
@@ -99,7 +98,7 @@ export default function FriendsMenu({ scroll }: FriendsMenuProps) {
                 badgeContent={
                   !accepted_on &&
                   !acceptedList[id] && (
-                    <HourglassTopIcon style={{ fontSize: "10px" }} />
+                    <TimelapseIcon style={{ fontSize: "10px" }} />
                   )
                 }
                 secondaryAction={

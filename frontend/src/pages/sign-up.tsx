@@ -22,10 +22,15 @@ const SignUpPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleCreate = async () => {
-    setIsLoading(true)
-    await signUp(formData)
-    router.push("/login")
-    setIsLoading(false)
+    try {
+      setIsLoading(true)
+      await signUp(formData)
+      router.push("/login")
+    } catch (err) {
+      window.alert(err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +118,7 @@ const SignUpPage: React.FC = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 2, bgcolor: "green" }}
+              disabled={isLoading}
             >
               Create new account
             </Button>
