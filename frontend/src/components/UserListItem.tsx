@@ -28,7 +28,7 @@ const stringToColor = (string: string) => {
   return color
 }
 
-const stringAvatar = (name: string) => {
+export const stringAvatar = (name: string) => {
   return {
     sx: {
       bgcolor: stringToColor(name),
