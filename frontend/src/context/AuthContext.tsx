@@ -2,7 +2,6 @@ import React, { useState, createContext, ReactNode, useEffect } from "react"
 import {
   getAuth,
   signInWithEmailAndPassword,
-  User,
   AuthError,
   signOut as fbSignOut,
 } from "firebase/auth"
@@ -10,6 +9,7 @@ import { initializeApp } from "firebase/app"
 import { userSignUp } from "../services/users"
 import { setCookie } from "nookies"
 import { useRouter } from "next/router"
+import { Fetcher } from "@/services/fetcher"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,6 +21,7 @@ const firebaseConfig = {
 }
 
 export interface IUser {
+  id: string
   email: string
   password: string
   display_name: string
@@ -33,7 +34,7 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
 export const AuthContext = createContext<AuthContextType>({
-  loading: true,
+  loading: false,
   error: null,
   user: null,
   token: "",
@@ -44,10 +45,10 @@ export const AuthContext = createContext<AuthContextType>({
   setLoading: (loading: boolean) => null,
 })
 
-type AuthContextType = {
+export type AuthContextType = {
   loading: boolean
   error: unknown
-  user: User | null
+  user: IUser | null
   token: string
   setToken: (token: string) => void
   signIn: (email: string, password: string) => Promise<void>
@@ -56,12 +57,12 @@ type AuthContextType = {
   setLoading: (loading: boolean) => void
 }
 
-const saveUserToLocal = (user: User) => {
+const saveUserToLocal = (user: IUser) => {
   if (typeof window !== "undefined")
     localStorage.setItem("user", JSON.stringify(user))
 }
 
-const getUserFromLocal = (): User | null => {
+const getUserFromLocal = (): IUser | null => {
   if (typeof window !== "undefined") {
     const userJson = localStorage.getItem("user")
     return userJson ? JSON.parse(userJson) : null
@@ -76,31 +77,31 @@ const removeUserFromLocal = () => {
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(getUserFromLocal())
+  const [user, setUser] = useState<IUser | null>(getUserFromLocal())
   const [token, setToken] = useState<string>("")
   const [error, setError] = useState<AuthError | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
 
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setLoading(true)
-      let newUser = null
-      if (getUserFromLocal()) {
-        newUser = getUserFromLocal()
-      }
-      if (getUserFromLocal() === null) {
-        if (user) {
-          saveUserToLocal(user)
-          newUser = user
-        } else {
-          newUser = null
-        }
-      }
-      setUser(newUser)
-      setLoading(false)
-    })
-  }, [])
+  // useEffect(() => {
+  //   auth.onAuthStateChanged((user) => {
+  //     setLoading(true)
+  //     let newUser = null
+  //     if (getUserFromLocal()) {
+  //       newUser = getUserFromLocal()
+  //     }
+  //     if (getUserFromLocal() === null) {
+  //       if (user) {
+  //         saveUserToLocal(user)
+  //         newUser = user
+  //       } else {
+  //         newUser = null
+  //       }
+  //     }
+  //     setUser(newUser)
+  //     setLoading(false)
+  //   })
+  // }, [])
 
   const signIn = async (email: string, password: string): Promise<void> => {
     setLoading(true)
@@ -115,8 +116,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
       })
-      saveUserToLocal(userCredential.user) // Save the user object to local storage
-      setUser(userCredential.user)
+
+      const currentUser = await Fetcher.GET("/users/")
+      saveUserToLocal(currentUser) // Save the user object to local storage
+      setUser(currentUser)
       setError(null)
     } catch (error) {
       setError(error as AuthError)

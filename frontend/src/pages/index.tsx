@@ -9,8 +9,6 @@ import useAuth from "../hooks/useAuth"
 import { usePost } from "@/hooks/usePost"
 import { Grid } from "@mui/material"
 
-const inter = Inter({ subsets: ["latin"] })
-
 export default function Home() {
   const { user } = useAuth()
   const [scroll, setScroll] = useState<number>(0)

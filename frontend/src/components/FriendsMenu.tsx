@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react"
 import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemAvatar from "@mui/material/ListItemAvatar"
-import Avatar from "@mui/material/Avatar"
-import ListItemText from "@mui/material/ListItemText"
-import { Box } from "@mui/material"
+import { Box, Card, CardContent, CardHeader } from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
 import { Fetcher } from "@/services/fetcher"
+import UserListItem from "./UserListItem"
+import useAuth from "@/hooks/useAuth"
 
 interface FriendsMenuProps {
   scroll: number
@@ -15,7 +13,8 @@ interface FriendsMenuProps {
 export default function FriendsMenu({ scroll }: FriendsMenuProps) {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("md"))
-  const [params, setParams] = useState({ pageIndex: 0, pageSize: 10 })
+  const { user } = useAuth()
+  const [pageIndex, setPageIndex] = useState(0)
   const [relationships, setRelationships] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -24,7 +23,7 @@ export default function FriendsMenu({ scroll }: FriendsMenuProps) {
       try {
         setIsLoading(true)
         const response = await Fetcher.GET(
-          `/relationships/?page_index=${params.pageIndex}&page_size=${params.pageSize}&order_by=_id&is_asc=true`
+          `/relationships/?page_index=${pageIndex}&page_size=50&order_by=_id&is_asc=true`
         )
       } catch (err) {
       } finally {
@@ -33,21 +32,33 @@ export default function FriendsMenu({ scroll }: FriendsMenuProps) {
     }
 
     getRelationships()
-  }, [params])
+  }, [pageIndex])
 
   return !matches ? (
-    <List
-      sx={{
-        position: scroll > 0 ? "fixed" : "relative",
-      }}
-      style={{
-        maxHeight: "100vh",
-        overflowY: "scroll",
-        overflowX: "hidden",
-      }}
-    >
-      Contacts
-    </List>
+    <Card>
+      <CardHeader title="Contacts" />
+      <CardContent>
+        <List
+          sx={{
+            position: scroll > 0 ? "fixed" : "relative",
+          }}
+          style={{
+            maxHeight: "100vh",
+            overflowY: "scroll",
+            overflowX: "hidden",
+          }}
+        >
+          {/* {relationships?.map((relationship) => (
+            <UserListItem
+              key={user.id}
+              displayName={user.display_name}
+              firstName={user.first_name}
+              lastName={user.last_name}
+            />
+          ))} */}
+        </List>
+      </CardContent>
+    </Card>
   ) : (
     <Box
       sx={{

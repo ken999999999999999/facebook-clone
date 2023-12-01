@@ -9,25 +9,25 @@ import Link from "next/link"
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
-  const { signIn, loading, setLoading } = useAuth()
+  const { signIn } = useAuth()
   const router = useRouter()
 
   const handleSignIn = async () => {
-    setLoading(true)
+    setIsLoading(true)
     try {
       await signIn(email, password)
       router.replace("/")
     } catch (err) {
-      console.log(err)
       window.alert(err)
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
   return (
-    <Backdrop open={!!loading}>
+    <Backdrop open={!!isLoading}>
       <Box
         flexDirection={"row"}
         sx={{
