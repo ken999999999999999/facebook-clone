@@ -90,7 +90,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       maxAge: 30 * 24 * 60 * 60,
       path: "/",
       sameSite: "Strict",
-      httpOnly: process.env.NEXT_PUBLIC_HTTPONLY,
       secure: true,
     })
 
