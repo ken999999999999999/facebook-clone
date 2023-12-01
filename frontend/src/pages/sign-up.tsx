@@ -1,11 +1,19 @@
 // pages/login.tsx
 import React, { useState } from "react"
 import { Container, Box, Typography, TextField, Button } from "@mui/material"
-import useAuth from "@/hooks/useAuth"
-import { ICreateUserCommand } from "../services/users"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { Fetcher } from "@/services/fetcher"
+
+export interface ICreateUserCommand {
+  email: string
+  password: string
+  display_name: string
+  first_name: string
+  last_name: string
+  birthdate: string
+}
 
 const SignUpPage: React.FC = () => {
   const router = useRouter()
@@ -17,14 +25,12 @@ const SignUpPage: React.FC = () => {
     last_name: "",
     birthdate: "",
   })
-  const { signUp } = useAuth()
-
   const [isLoading, setIsLoading] = useState(false)
 
   const handleCreate = async () => {
     try {
       setIsLoading(true)
-      await signUp(formData)
+      await Fetcher.POST("/users/sign-up", formData)
       router.push("/login")
     } catch (err) {
       window.alert(err)
