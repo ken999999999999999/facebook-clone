@@ -1,17 +1,21 @@
+import { useEffect } from "react"
 import Card from "./Card"
 import { CardProps } from "./Card"
-import { IconButton, Typography } from "@mui/material"
+import { Avatar, Box, IconButton, Typography } from "@mui/material"
 import { ThumbUp, Comment, Share } from "@mui/icons-material"
 import Divider from "@mui/material/Divider"
 import Container from "@mui/material/Container"
 import Stack from "@mui/material/Stack"
-import { Post } from "@/hooks/usePost"
-
+import { Post, usePost } from "@/hooks/usePost"
+import { stringAvatar } from "./UserListItem"
+import PeopleIcon from "@mui/icons-material/People"
+import { useState } from "react"
 export interface User {
-  lastName: string
-  firstName: string
-  displayName: string
-  birthDate: string
+  last_name: string
+  first_name: string
+  display_name: string
+  birthDate?: string
+  id?: string
 }
 
 export interface Reactions {
@@ -35,7 +39,8 @@ export interface FeedCardProps extends CardProps {
 }
 
 const FeedCardButtons = () => {
-  //create three button named likes, comments and share
+  //massage the postlist to add image inside
+
   return (
     <>
       <Divider />
@@ -61,10 +66,58 @@ const FeedCardButtons = () => {
 }
 
 const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
-  return (
-    <Card title={"title"} footer={<FeedCardButtons />}>
-      {post.description}
+  const [image, setImage] = useState<string | null>(null)
+  const { getPostImage, isLoading } = usePost()
+
+  if (post.id && post.has_image) {
+    const res = getPostImage(post.id)
+    res ?? setImage(res)
+    console.log(res)
+  }
+
+  return post ? (
+    <Card footer={<FeedCardButtons />}>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <Stack spacing={1} direction="row" alignItems="center">
+          <Avatar
+            {...stringAvatar(
+              `${post.creator?.first_name ?? ""} ${
+                post.creator?.last_name ?? ""
+              }`
+            )}
+            sx={{ width: 32, height: 32 }}
+          />
+
+          <Stack direction="column" alignItems="start">
+            {post.creator?.display_name + " " + post.creator?.last_name}
+            <Stack direction="row" alignItems="start">
+              <Typography
+                variant="caption"
+                sx={{ display: { xs: "none", sm: "block" } }}
+              >
+                {"just now"}
+              </Typography>
+              <span aria-hidden="true">· </span>
+              <PeopleIcon sx={{ width: 18, height: 18 }} />
+            </Stack>
+          </Stack>
+        </Stack>
+        <Typography component="p" sx={{ display: { xs: "none", sm: "block" } }}>
+          {post.description}
+        </Typography>
+        <Container
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {post.has_image && image ? <img src={image} loading="lazy" /> : null}
+        </Container>
+      </Box>
     </Card>
+  ) : (
+    <Card footer={<FeedCardButtons />}></Card>
   )
 }
 
