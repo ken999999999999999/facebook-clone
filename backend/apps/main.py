@@ -27,9 +27,9 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan, 
-    openapi_url="/openapi.json" if settings.DEBUG_MODE else None,
-    docs_url= "/docs",
-    redoc_url= "/redoc" if settings.DEBUG_MODE else None
+    openapi_url="/openapi.json",
+    docs_url= "/docs" ,
+    redoc_url= "/redoc",
     )
 app.include_router(users.router)
 app.include_router(posts.router)
@@ -39,7 +39,8 @@ app.include_router(reaction.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows specific origins (use ["*"] for all origins)
+    allow_origins=["http://localhost:3000","https://facebook-clone-8a81c.web.app"],  # Allows specific origins (use ["*"] for all origins)
+    allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
