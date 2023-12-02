@@ -10,10 +10,6 @@ from apps.routers import comment, posts, reaction, relationship, users
 import firebase_admin
 from firebase_admin import credentials
 
-origins = [
-    "http://localhost:3000",  
-    "http://localhost:8000",  
-]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,7 +35,7 @@ app.include_router(reaction.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","https://facebook-clone-8a81c.web.app"],  # Allows specific origins (use ["*"] for all origins)
+    allow_origins=settings.ALLOW_ORIGINS.split(","),  # Allows specific origins (use ["*"] for all origins)
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
