@@ -1,39 +1,48 @@
 // pages/login.tsx
 import React, { useState } from "react"
-import { Box, Typography, TextField, Button } from "@mui/material"
+import { Box, Typography, TextField, Button, Alert } from "@mui/material"
+import { useForm, SubmitHandler } from "react-hook-form"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/router"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
+import { FormatColorReset } from "@mui/icons-material"
+
+interface ILogin {
+  email: string
+  password: string
+}
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-
   const { signIn } = useAuth()
   const router = useRouter()
+  const [error, setError] = useState(false)
 
-  const handleSignIn = async () => {
+  const onSubmit: SubmitHandler<ILogin> = async ({ email, password }) => {
     setIsLoading(true)
     try {
       await signIn(email, password)
       router.replace("/")
     } catch (err) {
-      window.alert(err)
+      setError(true)
     } finally {
       setIsLoading(false)
     }
   }
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ILogin>()
+
   return (
     <Backdrop open={!!isLoading}>
       <Box
-        flexDirection={"row"}
+        flexDirection="column"
         sx={{
-          marginTop: 8,
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
         }}
       >
@@ -44,37 +53,44 @@ const LoginPage: React.FC = () => {
           Connect with friends and the world around you on Facebook.
         </Typography>
 
-        <Box component="form" onSubmit={handleSignIn} noValidate sx={{ mt: 1 }}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          {error && (
+            <Alert
+              severity="warning"
+              variant="filled"
+              style={{ width: "100%" }}
+            >
+              Email or Password is invalid!
+            </Alert>
+          )}
           <TextField
             margin="normal"
-            required
+            {...register("email", {
+              required: { value: true, message: "Email is required" },
+              maxLength: { value: 200, message: "Max Length is 200" },
+            })}
+            error={!!errors?.email}
+            helperText={errors?.email?.message ?? ""}
             fullWidth
-            id="email"
             label="Email"
-            name="email"
-            autoComplete="email"
+            required
             autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             margin="normal"
-            required
             fullWidth
-            name="password"
+            {...register("password", {
+              required: { value: true, message: "Email is required" },
+              maxLength: { value: 200, message: "Max Length is 200" },
+            })}
+            error={!!errors?.password}
+            helperText={errors?.password?.message ?? ""}
             label="Password"
             type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          <Button
-            onClick={handleSignIn}
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3 }}
-          >
+
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
             Log in
           </Button>
           <Link href="/sign-up">
@@ -82,7 +98,7 @@ const LoginPage: React.FC = () => {
               Sign Up
             </Button>
           </Link>
-        </Box>
+        </form>
       </Box>
     </Backdrop>
   )
