@@ -5,7 +5,7 @@ from fastapi import APIRouter, Body, Depends,   HTTPException
 from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
-from apps.models.common import  PaginationQuery
+from apps.models.common import PaginationQuery
 from apps.models.posts.dto import CreatePostCommand, PostOriginalDto, UpdatePostCommand
 from apps.models.posts.model import Post
 from apps.models.posts.validator import create_post_validator
@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_posts(db_context: db_context, current_user: current_user, pagination: PaginationQuery = Depends())-> List[PostOriginalDto]:
+async def get_posts_query(db_context: db_context, current_user: current_user, pagination: PaginationQuery = Depends()) -> List[PostOriginalDto]:
     filters = {"$or": [
         {"created_by": current_user.id},
         {"receiver_id": current_user.id},
@@ -30,7 +30,6 @@ async def get_posts(db_context: db_context, current_user: current_user, paginati
 
     friends = [record["receiver_id"] if record["created_by"] ==
                current_user.id else record["created_by"] for record in friends_query]
-
 
     friends.append(current_user.id)
 
