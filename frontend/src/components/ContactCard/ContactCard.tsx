@@ -14,6 +14,10 @@ const ContactCard = ({ scroll }: IContactCard): JSX.Element => {
 
   const [activeTab, setActiveTab] = useState<"contact" | "chatroom">("contact")
 
+  const handleCreateChatroom = (chatroomId: string) => {
+    setActiveTab("chatroom")
+  }
+
   return !matches ? (
     <Card
       sx={{
@@ -37,7 +41,9 @@ const ContactCard = ({ scroll }: IContactCard): JSX.Element => {
         }
       />
       <CardContent>
-        {activeTab === "contact" && <Contact />}
+        {activeTab === "contact" && (
+          <Contact handleCreateChatroom={handleCreateChatroom} />
+        )}
         {activeTab === "chatroom" && "chatroom"}
       </CardContent>
     </Card>

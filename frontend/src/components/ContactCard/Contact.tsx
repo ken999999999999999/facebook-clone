@@ -1,14 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react"
 import List from "@mui/material/List"
-import { Button, IconButton, Stack } from "@mui/material"
+import { Alert, Button, IconButton, Snackbar, Stack } from "@mui/material"
 import { Fetcher } from "@/services/fetcher"
 import useAuth from "@/hooks/useAuth"
 import CancelIcon from "@mui/icons-material/Cancel"
 
 import UserListItem from "../UserListItem"
 import UserListItemSkeleton from "../UserListItemSkeleton"
+import moment from "moment"
 
-const Contact = (): JSX.Element => {
+interface IContact {
+  handleCreateChatroom: (chatroomId: string) => void
+}
+
+const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
   const { user } = useAuth()
   const [pageIndex, setPageIndex] = useState(0)
   const [relationships, setRelationships] = useState<any[]>([])
@@ -19,8 +24,9 @@ const Contact = (): JSX.Element => {
   const [acceptedList, setAcceptedList] = useState<{
     [relationshipId: string]: boolean
   }>({})
-
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+  const [isCreating, setIsCreating] = useState(false)
+  const [isError, setIsError] = useState(false)
 
   const deleteRelationship = async (relationshipId: string) => {
     try {
@@ -39,6 +45,25 @@ const Contact = (): JSX.Element => {
       console.log(err)
     }
   }
+
+  const createChatroom = useCallback(() => {
+    const callAPI = async (userIds: string[]) => {
+      try {
+        setIsCreating(true)
+        const response = await Fetcher.POST("/chatrooms/", {
+          title: moment().toDate(),
+          users: userIds,
+        })
+        handleCreateChatroom(response)
+      } catch (err) {
+        setIsError(true)
+      } finally {
+        setIsCreating(false)
+      }
+    }
+
+    callAPI(selectedUserIds)
+  }, [selectedUserIds, handleCreateChatroom])
 
   const handleOnClick = (userId: string) => {
     setSelectedUserIds((prev) => {
@@ -74,8 +99,9 @@ const Contact = (): JSX.Element => {
       <Button
         fullWidth
         variant="outlined"
-        disabled={!selectedUserIds.length}
+        disabled={!selectedUserIds.length || isCreating}
         style={{ marginBottom: "5px" }}
+        onClick={createChatroom}
       >
         Chat with friends
       </Button>
@@ -120,6 +146,15 @@ const Contact = (): JSX.Element => {
           />
         )
       })}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={isError}
+        onClose={() => setIsError(false)}
+      >
+        <Alert severity="error" style={{ width: "100%" }}>
+          Something goes wrong!
+        </Alert>
+      </Snackbar>
     </List>
   ) : (
     <UserListItemSkeleton />

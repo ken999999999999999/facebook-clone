@@ -17,9 +17,9 @@ router = APIRouter(
 
 @router.post("/", dependencies=[Depends(create_chatroom_validator)])
 async def create_chatroom_command(db_context:  db_context, current_user: current_user,  command: CreateChatroomCommand = Body(...)) -> str:
-    users = command.users.append(current_user.id)
+    command.users.append(current_user.id)
     chatroom = Chatroom(title=command.title,
-                        users=users).model_dump(exclude=["id"])
+                        users=command.users).model_dump(exclude=["id"])
     return str((await db_context.chatrooms.insert_one(chatroom)).inserted_id)
 
 
