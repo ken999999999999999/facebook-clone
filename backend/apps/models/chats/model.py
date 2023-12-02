@@ -10,7 +10,7 @@ class Chat(BaseModel):
     message: str = Field(..., max_length=2000)
     created_by: PyObjectId = Field(...)
     created: datetime = Field(default_factory=datetime.now)
-    chatroomId: PyObjectId = Field(...)
+    chatroom_id: PyObjectId = Field(...)
 
     class Config:
         populate_by_name = True

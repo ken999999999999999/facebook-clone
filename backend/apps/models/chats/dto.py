@@ -10,8 +10,7 @@ class CreateChatCommand(BaseModel):
 
 
 class ChatDto(BaseModel):
-    id: str
     message: str
     creator: UserDto
     created: datetime
-    chatroomId: str
+    chatroom_id: str
