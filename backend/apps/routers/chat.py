@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, Depends
 from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
-from apps.models.chatrooms.dto import ChatroomDto, CreateChatroomCommand
+from apps.models.chatrooms.dto import CreateChatroomCommand
 from apps.models.chatrooms.model import Chatroom
 from apps.models.chatrooms.validator import create_chatroom_validator
 from apps.models.chats.dto import ChatDto
@@ -16,14 +16,6 @@ router = APIRouter(
     tags=["chats"],
     dependencies=[Depends(authorize)]
 )
-
-
-@router.post("/", dependencies=[Depends(create_chatroom_validator)])
-async def create_chatroom_command(db_context:  db_context, current_user: current_user,  command: CreateChatroomCommand = Body(...)) -> str:
-    users = command.users.append(current_user.id)
-    chatroom = Chatroom(title=command.title,
-                        users=users).model_dump(exclude=["id"])
-    return str((await db_context.chatrooms.insert_one(chatroom)).inserted_id)
 
 
 @router.get("/")
