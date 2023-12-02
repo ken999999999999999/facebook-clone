@@ -25,6 +25,7 @@ async def create_reaction_validator(db_context: db_context,  command: CreateReac
     if command.comment_id != None and await db_context.comments.find_one({"_id": ObjectId(command.comment_id)}) == None:
         raise RequestValidationError(errors=["Comment is not exist"])
 
-    if await db_context.reactions.find_one({"$or": [{"post_id": command.post_id}, {"comment_id": command.comment_id}]}) != None:
-        raise RequestValidationError(errors=["Reaction is exist"])
+    if reaction := await db_context.reactions.find_one({"$or": [{"post_id": command.post_id}, {"comment_id": command.comment_id}]}) != None:
+        if ((reaction["post_id"] != None and command.post_id != None) or (reaction["comment_id"] != None and command.comment_id != None)):
+            raise RequestValidationError(errors=["Reaction is exist"])
     return
