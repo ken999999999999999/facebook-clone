@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.post("/sign-up/", dependencies=[Depends(create_user_validator)])
+@router.post("/sign-up", dependencies=[Depends(create_user_validator)])
 async def create_user_command(db_context: db_context, command: CreateUserCommand = Body(...)) -> None:
     firebase_user = await create_firebase_user(password=command.password, email=command.email, display_name=command.display_name)
     user = User(uid=firebase_user.uid, **

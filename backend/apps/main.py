@@ -10,10 +10,6 @@ from apps.routers import comment, posts, reaction, relationship, users
 import firebase_admin
 from firebase_admin import credentials
 
-origins = [
-    "http://localhost:3000",  
-    "http://localhost:8000",  
-]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,9 +23,9 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan, 
-    openapi_url="/openapi.json" if settings.DEBUG_MODE else None,
-    docs_url= "/docs" if settings.DEBUG_MODE else None,
-    redoc_url= "/redoc" if settings.DEBUG_MODE else None
+    openapi_url="/openapi.json",
+    docs_url= "/docs" ,
+    redoc_url= "/redoc",
     )
 app.include_router(users.router)
 app.include_router(posts.router)

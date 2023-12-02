@@ -33,7 +33,7 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
 
   const addFriend = async (userId: string) => {
     try {
-      const response: string = await Fetcher.POST("relationships", {
+      const response: string = await Fetcher.POST("/relationships/", {
         receiver_id: userId,
       })
       setIsAddingUsers((prev) => ({ ...prev, [userId]: response }))
@@ -55,8 +55,8 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
     const getFriends = async () => {
       try {
         setIsLoading(true)
-        const response = await await Fetcher.GET(
-          `/users/list/?page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
+        const response = await Fetcher.GET(
+          `/users/list?page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
         )
         setUsers((prev) => [...prev, ...response])
       } catch (err) {
