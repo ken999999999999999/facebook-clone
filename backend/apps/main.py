@@ -6,9 +6,11 @@ from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from apps.config import settings
-from apps.routers import comment, posts, reaction, relationship, users
+from apps.routers import chat, chatroom, comment, posts, reaction, relationship, users
 import firebase_admin
 from firebase_admin import credentials
+
+from apps.webSocket.chat import chat_endpoint
 
 
 @asynccontextmanager
@@ -22,24 +24,29 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    lifespan=lifespan, 
+    lifespan=lifespan,
     openapi_url="/openapi.json",
-    docs_url= "/docs" ,
-    redoc_url= "/redoc",
-    )
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
 app.include_router(users.router)
 app.include_router(posts.router)
 app.include_router(relationship.router)
 app.include_router(comment.router)
 app.include_router(reaction.router)
+app.include_router(chat.router)
+app.include_router(chatroom.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOW_ORIGINS.split(","),  # Allows specific origins (use ["*"] for all origins)
+    # Allows specific origins (use ["*"] for all origins)
+    allow_origins=settings.ALLOW_ORIGINS.split(","),
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+app.add_api_websocket_route("/chatroom/{chatroom_id}", chat_endpoint)
 
 
 @app.exception_handler(RequestValidationError)

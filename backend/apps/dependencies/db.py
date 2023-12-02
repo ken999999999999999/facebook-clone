@@ -5,7 +5,7 @@ from apps.config import settings
 
 
 class DBContextManager:
-    def __init__(self,db_name):
+    def __init__(self, db_name):
         self.db_client = AsyncIOMotorClient(settings.DB_URL)
         self.db = self.db_client[db_name]
         self.posts = self.db['posts']
@@ -13,6 +13,8 @@ class DBContextManager:
         self.relationships = self.db['relationships']
         self.comments = self.db['comments']
         self.reactions = self.db['reactions']
+        self.chatrooms = self.db['chatroom']
+        self.chats = self.db['chats']
 
     def __enter__(self):
         return self

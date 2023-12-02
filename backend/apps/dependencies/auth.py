@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Request, status, Security
+from fastapi import Depends, HTTPException,  status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth
 from apps.dependencies.db import db_context
@@ -7,11 +7,11 @@ from apps.models.users.model import User
 security = HTTPBearer()
 
 
-async def authorize(db_context: db_context, credentials: HTTPAuthorizationCredentials = Security(security)):
+async def db_authorize(token: str, db_context: db_context):
     try:
-        # Verify the token using Firebase Admin SDK
         decoded_token = auth.verify_id_token(
-            id_token=credentials.credentials, check_revoked=True)
+            id_token=token, check_revoked=True)
+
         current_user = await db_context.users.find_one({"uid": decoded_token['uid']})
 
         if current_user is not None:
@@ -22,8 +22,13 @@ async def authorize(db_context: db_context, credentials: HTTPAuthorizationCreden
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
+            headers={"WWW-Authenticate": "Bearer"}
         )
+
+
+async def authorize(db_context: db_context, credentials: HTTPAuthorizationCredentials = Security(security)):
+
+    return await db_authorize(credentials.credentials, db_context)
 
 
 async def create_firebase_user(display_name: str, email: str, password: str):

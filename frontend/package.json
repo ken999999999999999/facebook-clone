@@ -14,12 +14,15 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",
+    "@mui/x-date-pickers": "^6.18.2",
     "axios": "^1.6.2",
     "firebase": "^10.6.0",
+    "moment": "^2.29.4",
     "next": "14.0.2",
     "nookies": "^2.5.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hook-form": "^7.48.2"
   },
   "devDependencies": {
     "@types/node": "^20",
