@@ -1,13 +1,13 @@
 import axios, { AxiosRequestConfig } from "axios"
 import { parseCookies } from "nookies"
 
-export const FetcherInstance = axios.create({
+const FetcherInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
   timeout: 10000,
 })
 
-export const CommonRequest = async (
+const CommonRequest = async (
   method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
   data?: any,
