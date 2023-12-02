@@ -37,7 +37,7 @@ const SignUpPage: React.FC = () => {
       delete formData["confirmedPassword"]
       await Fetcher.POST("/users/sign-up", {
         ...formData,
-        birthdate: formData.birthdate.toDate(),
+        birthdate: moment(formData.birthdate).format("YYYY-MM-DD"),
       })
       router.push("/login")
     } catch (err) {
@@ -196,6 +196,7 @@ const SignUpPage: React.FC = () => {
             margin="normal"
             label="Birthdate"
             required
+            format="YYYY-MM-DD"
             value={getValues("birthdate")}
             onChange={(newValue: moment.Moment | null) =>
               newValue && setValue("birthdate", newValue)
