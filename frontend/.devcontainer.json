@@ -9,8 +9,7 @@
         "esbenp.prettier-vscode",
         "eamodio.gitlens",
         "streetsidesoftware.code-spell-checker",
-        "dsznajder.es7-react-js-snippets",
-        "GitHub.vscode-github-actions"
+        "dsznajder.es7-react-js-snippets"
       ]
     }
   }
