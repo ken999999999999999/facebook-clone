@@ -5,6 +5,7 @@ from apps.dependencies.db import db_context
 from apps.models.chatrooms.dto import ChatroomDto, CreateChatroomCommand
 from apps.models.chatrooms.model import Chatroom
 from apps.models.chatrooms.validator import create_chatroom_validator
+from apps.models.chats.model import Chat
 from apps.models.common import PaginationQuery
 
 
@@ -20,14 +21,35 @@ async def create_chatroom_command(db_context:  db_context, current_user: current
     command.users.append(current_user.id)
     chatroom = Chatroom(title=command.title,
                         users=command.users).model_dump(exclude=["id"])
-    return str((await db_context.chatrooms.insert_one(chatroom)).inserted_id)
+    chatroomId = str((await db_context.chatrooms.insert_one(chatroom)).inserted_id)
+
+    newChat = Chat(message=command.title, created_by=current_user.id,
+                   chatroom_id=chatroomId)
+
+    await db_context.chats.insert_one(newChat.model_dump(exclude=["id"]))
+
+    return chatroomId
 
 
 @router.get("/")
-async def get_chatrooms_command(db_context:  db_context, current_user: current_user,  pagination: PaginationQuery = Depends()) -> str:
+async def get_chatrooms_command(db_context:  db_context, current_user: current_user,  pagination: PaginationQuery = Depends()):
     query = await db_context.chatrooms.aggregate([
         {"$match": {
             "users": current_user.id
+        }},
+        {"$lookup": {
+            "from": "users",
+            "let": {"users_id": {"$map": {
+                "input": "$users",
+                "as": "user_id",
+                "in": {"$toObjectId": "$$user_id"}
+            }}},
+            "pipeline": [
+                {"$match": {
+                    "$expr": {"$in": ["$_id", "$$users_id"]}}},
+                {"$addFields": {"id": {"$toString": "$_id"}}}
+            ],
+            "as": "users"
         }},
 
         {"$addFields": {
@@ -38,4 +60,4 @@ async def get_chatrooms_command(db_context:  db_context, current_user: current_u
         {"$limit": pagination.page_size}
     ]).to_list(None)
 
-    return [ChatroomDto(id=record['id'], title=record['title']) for record in query]
+    return [ChatroomDto(**record) for record in query]

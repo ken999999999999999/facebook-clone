@@ -3,6 +3,7 @@ import { Box, Card, CardContent, CardHeader, Tab, Tabs } from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
 
 import Contact from "./Contact"
+import Chatroom from "./Chatroom"
 
 interface IContactCard {
   scroll: number
@@ -44,7 +45,7 @@ const ContactCard = ({ scroll }: IContactCard): JSX.Element => {
         {activeTab === "contact" && (
           <Contact handleCreateChatroom={handleCreateChatroom} />
         )}
-        {activeTab === "chatroom" && "chatroom"}
+        {activeTab === "chatroom" && <Chatroom handleOnClick={() => null} />}
       </CardContent>
     </Card>
   ) : (

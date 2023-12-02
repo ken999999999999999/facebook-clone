@@ -1,13 +1,23 @@
 import React, { useCallback, useEffect, useState } from "react"
 import List from "@mui/material/List"
-import { Alert, Button, IconButton, Snackbar, Stack } from "@mui/material"
+import {
+  Alert,
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Snackbar,
+  Stack,
+} from "@mui/material"
 import { Fetcher } from "@/services/fetcher"
 import useAuth from "@/hooks/useAuth"
 import CancelIcon from "@mui/icons-material/Cancel"
 
 import UserListItem from "../UserListItem"
 import UserListItemSkeleton from "../UserListItemSkeleton"
-import moment from "moment"
+import SendIcon from "@mui/icons-material/Send"
 
 interface IContact {
   handleCreateChatroom: (chatroomId: string) => void
@@ -27,6 +37,7 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [isCreating, setIsCreating] = useState(false)
   const [isError, setIsError] = useState(false)
+  const [chatroomTitle, setChatroomTitle] = useState("")
 
   const deleteRelationship = async (relationshipId: string) => {
     try {
@@ -47,11 +58,11 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
   }
 
   const createChatroom = useCallback(() => {
-    const callAPI = async (userIds: string[]) => {
+    const callAPI = async (userIds: string[], title: string) => {
       try {
         setIsCreating(true)
         const response = await Fetcher.POST("/chatrooms/", {
-          title: moment().toDate(),
+          title: title,
           users: userIds,
         })
         handleCreateChatroom(response)
@@ -62,8 +73,8 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
       }
     }
 
-    callAPI(selectedUserIds)
-  }, [selectedUserIds, handleCreateChatroom])
+    callAPI(selectedUserIds, chatroomTitle)
+  }, [selectedUserIds, handleCreateChatroom, chatroomTitle])
 
   const handleOnClick = (userId: string) => {
     setSelectedUserIds((prev) => {
@@ -96,15 +107,30 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
 
   return !isLoading ? (
     <List>
-      <Button
-        fullWidth
-        variant="outlined"
-        disabled={!selectedUserIds.length || isCreating}
-        style={{ marginBottom: "5px" }}
-        onClick={createChatroom}
-      >
-        Chat with friends
-      </Button>
+      <FormControl style={{ width: "100%" }} variant="outlined">
+        <InputLabel htmlFor="create-chatroom">Chat with friends</InputLabel>
+        <OutlinedInput
+          id="create-chatroom"
+          value={chatroomTitle}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setChatroomTitle(event.target.value)
+          }}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                onClick={createChatroom}
+                color="primary"
+                disabled={
+                  !selectedUserIds.length || isCreating || !chatroomTitle.length
+                }
+              >
+                <SendIcon />
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+      </FormControl>
+
       {relationships?.map(({ id, receiver, creator, accepted_on }) => {
         let currentUser = receiver.id !== user?.id ? receiver : creator
         return (
