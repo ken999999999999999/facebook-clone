@@ -91,7 +91,7 @@ const SignUpPage: React.FC = () => {
               variant="filled"
               style={{ width: "100%" }}
             >
-              Email, Password or Display Name is invalid!
+              Email or Display Name is used!
             </Alert>
           )}
           <TextField
