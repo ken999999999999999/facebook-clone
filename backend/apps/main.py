@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     lifespan=lifespan, 
     openapi_url="/openapi.json" if settings.DEBUG_MODE else None,
-    docs_url= "/docs" if settings.DEBUG_MODE else None,
+    docs_url= "/docs",
     redoc_url= "/redoc" if settings.DEBUG_MODE else None
     )
 app.include_router(users.router)
@@ -39,7 +39,7 @@ app.include_router(reaction.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOW_ORIGINS.split(","),  # Allows specific origins (use ["*"] for all origins)
+    allow_origins=["*"],  # Allows specific origins (use ["*"] for all origins)
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
