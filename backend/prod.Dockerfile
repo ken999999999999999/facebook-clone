@@ -10,6 +10,8 @@ COPY ./apps /code/apps
 
 ENV PYTHONPATH "${PYTHONPATH}:/code"
 
+EXPOSE 8000
+
 CMD ["python","apps/main.py"]
 
 
