@@ -1,6 +1,13 @@
 // pages/login.tsx
 import React, { useState } from "react"
-import { Container, Box, Typography, TextField, Button } from "@mui/material"
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+} from "@mui/material"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -12,7 +19,7 @@ import moment from "moment"
 interface ICreateUserCommand {
   email: string
   password: string
-  confirmedPassword: string
+  confirmedPassword?: string
   display_name: string
   first_name: string
   last_name: string
@@ -27,11 +34,14 @@ const SignUpPage: React.FC = () => {
   const onSubmit: SubmitHandler<ICreateUserCommand> = async (formData) => {
     try {
       setIsLoading(true)
-      console.log(formData)
-      // await Fetcher.POST("/users/sign-up", formData)
-      // router.push("/login")
+      delete formData["confirmedPassword"]
+      await Fetcher.POST("/users/sign-up", {
+        ...formData,
+        birthdate: formData.birthdate.toDate(),
+      })
+      router.push("/login")
     } catch (err) {
-      console.log(JSON.stringify(err))
+      setError(true)
     } finally {
       setIsLoading(false)
     }
@@ -75,6 +85,15 @@ const SignUpPage: React.FC = () => {
           noValidate
           style={{ maxWidth: "800px" }}
         >
+          {error && (
+            <Alert
+              severity="warning"
+              variant="filled"
+              style={{ width: "100%" }}
+            >
+              Email, Password or Display Name is invalid!
+            </Alert>
+          )}
           <TextField
             fullWidth
             margin="normal"
@@ -98,6 +117,12 @@ const SignUpPage: React.FC = () => {
             {...register("password", {
               required: { value: true, message: "password is required" },
               maxLength: { value: 200, message: "Max Length is 200" },
+              pattern: {
+                value:
+                  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message:
+                  "Password must be at least 8 characters long, include a letter, a number, and a special character (@$!%*?&)",
+              },
             })}
             error={!!errors?.password}
             helperText={errors?.password?.message ?? ""}
@@ -114,6 +139,9 @@ const SignUpPage: React.FC = () => {
                 message: "Confirm Password is required",
               },
               maxLength: { value: 200, message: "Max Length is 200" },
+
+              validate: (value, formValue) =>
+                value === formValue.password || "It must be same as Password",
             })}
             error={!!errors?.confirmedPassword}
             helperText={errors?.confirmedPassword?.message ?? ""}
