@@ -40,3 +40,4 @@ next-env.d.ts
 #firebase
 serviceAccountKey.json
 firebaseConfig.ts
+.firebase
