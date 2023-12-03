@@ -11,6 +11,7 @@ async def authorize_ws_user(
     db_context: db_context,
 ):
     token = websocket.cookies.get("token")
+    print(token)
     if token is None:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
     return await db_authorize(token, db_context)

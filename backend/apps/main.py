@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 import json
+from apps import webSocket
 from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
@@ -9,7 +10,7 @@ from apps.config import settings
 from apps.routers import chat, chatroom, comment, posts, reaction, relationship, users
 import firebase_admin
 from firebase_admin import credentials
-from apps.webSocket.chat.endpoint import chat_endpoint
+from apps.webSocket.chat.endpoint import chat_endpoint, chat_test_endpoint
 from apps.webSocket.chat.validator import connect_chat_validator
 
 
@@ -49,6 +50,7 @@ app.add_middleware(
 app.add_api_websocket_route(
     "/chatroom/{chatroom_id}", chat_endpoint, dependencies=[Depends(connect_chat_validator)])
 
+app.add_api_websocket_route("/test/chatroom/", chat_test_endpoint)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
