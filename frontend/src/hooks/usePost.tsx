@@ -61,8 +61,7 @@ export const usePost = (): UsePostHook => {
   const createPost = async (post: Post) => {
     setIsLoading(true)
     try {
-      await Fetcher.POST("/posts/", post)
-      getPosts() // Refresh the list of posts
+      const res = await Fetcher.POST("/posts/", post)
     } catch (err) {
       setError(err as PostError)
     } finally {

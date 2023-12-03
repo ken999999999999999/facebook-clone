@@ -23,15 +23,29 @@ async def get_comments(db_context: db_context, post_id: str,  pagination: Pagina
     filters = {"post_id": post_id}
     query = await db_context.comments.aggregate([
         {"$match": filters},
+         {"$lookup": {
+            "from": "users",
+            "let": {"created_by_user_id": {"$toObjectId": "$created_by"}},
+            "pipeline": [
+                {"$match": {
+                    "$expr": {"$eq": ["$_id", "$$created_by_user_id"]}}},
+                {"$addFields": {"id": {"$toString": "$_id"}}}
+            ],
+            "as": "creators"
+        }},
+        {"$addFields": {
+        "creator": {"$arrayElemAt": ["$creators", 0]},
+        "id": {"$toString": "$_id"}
+        }},
         {"$sort": {pagination.order_by: 1 if pagination.is_asc else -1}},
         {"$skip": pagination.skip},
         {"$limit": pagination.page_size}
     ]).to_list(None)
 
     return PaginationDto(
-        records=[CommentDto(**record, id=str(record["_id"]), has_image=(record["image"] != None))
+        records=[CommentDto(**record, has_image=(record["image"] != None))
                  for record in query],
-        total=await db_context.relationships.count_documents(filters)
+        total=await db_context.comments.count_documents(filters)
     )
 
 

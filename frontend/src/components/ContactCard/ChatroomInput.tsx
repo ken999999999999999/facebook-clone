@@ -7,6 +7,7 @@ import {
 import { memo, useCallback, useEffect, useState } from "react"
 import SendIcon from "@mui/icons-material/Send"
 import { IUser } from "@/context/AuthContext"
+import { parseCookies } from "nookies"
 
 interface IChatroomInput {
   chatroomId: string | null
@@ -31,8 +32,12 @@ const ChatroomInput = ({
     let ws: any = null
 
     const connectWs = (id: string) => {
-      ws = new WebSocket(`${process.env.NEXT_PUBLIC_CHATROOM_WEBSOCKET}${id}`)
-      ws.onopen = () => {}
+      const cookies = parseCookies()
+      ws = new WebSocket(
+        `${process.env.NEXT_PUBLIC_CHATROOM_WEBSOCKET}${id}`,
+        cookies.token
+      )
+
       ws.onmessage = (e: any) => {
         setChats((prev: IChat[]) => [...prev, JSON.parse(e.data)])
       }
