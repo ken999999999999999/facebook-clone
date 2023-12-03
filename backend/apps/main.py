@@ -55,7 +55,8 @@ async def websocket_endpoint(websocket: webSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        await websocket.send_text(f"Message text was: {data}")
+        token = websocket.cookies.get("token")
+        await websocket.send_text(f"Message of {token} was: {data}")
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
