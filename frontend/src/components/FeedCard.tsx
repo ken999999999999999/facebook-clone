@@ -10,13 +10,11 @@ import {
   Typography,
   TooltipProps,
   tooltipClasses,
-  Button,
 } from "@mui/material"
 import { ThumbUp, Comment, Share } from "@mui/icons-material"
 import Divider from "@mui/material/Divider"
-import Container from "@mui/material/Container"
 import Stack from "@mui/material/Stack"
-import { Post, usePost } from "@/hooks/usePost"
+import { Post } from "@/hooks/usePost"
 import { stringAvatar } from "./UserListItem"
 import PeopleIcon from "@mui/icons-material/People"
 import { useState } from "react"
@@ -24,13 +22,7 @@ import { Fetcher } from "@/services/fetcher"
 import CommentModal from "./Comments/CommentModal"
 import ReactionPopup from "./Reactions/ReactionPopup"
 import ReactionsModal from "./Reactions/ReactionsModal"
-export interface User {
-  last_name: string
-  first_name: string
-  display_name: string
-  birthDate?: string
-  id?: string
-}
+import { IUser } from "@/context/AuthContext"
 
 export interface Reactions {
   postId?: string
@@ -43,7 +35,7 @@ export interface Comment {
   id?: string
   postId: string
   description: string
-  createdBy: User
+  createdBy: IUser
   createdOn: string
   modifiedOn: string
   image: string

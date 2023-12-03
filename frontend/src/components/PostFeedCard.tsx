@@ -1,140 +1,137 @@
-import { HtmlHTMLAttributes, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import Card from "./Card"
-import { User } from "./FeedCard"
 import {
-  Divider,
   Box,
   Input,
-  Container,
-  IconButton,
-  Stack,
   Avatar,
-  Typography,
   Button,
-  ImageListItem,
+  CardMedia,
+  IconButton,
+  Badge,
+  Snackbar,
+  Alert,
 } from "@mui/material"
-import { Videocam, PhotoLibrary, Mood, CloudUpload } from "@mui/icons-material"
-import { Post, usePost } from "@/hooks/usePost"
+import { Post } from "@/hooks/usePost"
 import ImageIcon from "@mui/icons-material/Image"
 import useAuth from "@/hooks/useAuth"
 import { stringAvatar } from "./UserListItem"
-interface PostFeedCardProps extends HtmlHTMLAttributes<HTMLDivElement> {
-  refresh: () => Promise<void>
+import { Fetcher } from "@/services/fetcher"
+
+interface IPostFeedCard {
+  afterCreate: (post: Post) => void
 }
 
-const PostFeedButtons = () => {
-  return (
-    <Container>
-      <Divider />
-      <Stack
-        direction="row"
-        divider={<Divider orientation="vertical" flexItem />}
-        justifyContent="space-evenly"
-        alignItems="center"
-        spacing={0}
-      >
-        <IconButton className="feed-button">
-          <Videocam style={{ color: "#fa3e3e" }} />
-        </IconButton>
-        <IconButton style={{ color: "#88bf4c" }}>
-          <PhotoLibrary />
-        </IconButton>
-        <IconButton style={{ color: "#f8b928" }}>
-          <Mood />
-        </IconButton>
-      </Stack>
-    </Container>
-  )
-}
-
-const PostFeedCard: React.FC<PostFeedCardProps> = ({
-  refresh,
-}: PostFeedCardProps) => {
+const PostFeedCard = ({ afterCreate }: IPostFeedCard): JSX.Element => {
   const { user } = useAuth()
-  const { createPost } = usePost()
-  const [post, setPost] = useState<Post | null>(null)
-  const [image, setImage] = useState<string>("")
+  const [message, setMessage] = useState<string>("")
+  const [image, setImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPost((prev: any) => ({ ...prev, description: event.target.value }))
-  }
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const handleImageFileChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (event.target.files) {
-      const file = event.target.files[0]
+    if (!!event?.target?.files?.length) {
+      const file = event.target.files?.[0]
       const reader = new FileReader()
       reader.readAsDataURL(file)
       reader.onloadend = () => {
         const base64String = reader.result
         if (typeof base64String === "string") {
           setImage(base64String)
-          setPost((prev: any) => ({
-            ...prev,
-            image: base64String,
-          }))
         }
       }
     }
   }
 
-  const handleSubmit = async () => {
-    setIsLoading(true)
-    try {
-      if (post) {
-        const res = await createPost(post)
-        console.log(res)
-        refresh()
+  const handleSubmit = useCallback(() => {
+    const callAPI = async () => {
+      setIsLoading(true)
+      try {
+        const res = await Fetcher.POST("/posts/", {
+          description: message,
+          image,
+        })
+        afterCreate({
+          description: message,
+          image,
+          creator: user,
+          has_image: !!image,
+          id: res,
+        })
+        setIsSuccess(true)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setMessage("")
+        setImage(null)
+        setIsLoading(false)
       }
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setIsLoading(false)
     }
-  }
 
-  return user ? (
-    <Card footer={<PostFeedButtons />} style={{ marginBottom: "20px" }}>
-      <Box sx={{ display: "flex", gap: "1rem" }}>
+    callAPI()
+  }, [message, image, afterCreate, user])
+
+  return (
+    <Card style={{ marginBottom: "20px" }}>
+      <Snackbar
+        open={isSuccess}
+        onClose={() => setIsSuccess(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success">Post Successfully!</Alert>
+      </Snackbar>
+      <Box display="flex" gap={1} mb="10px">
         <Avatar {...stringAvatar(`${user?.first_name} ${user?.last_name}`)} />
         <Input
-          disableUnderline={true}
-          placeholder={`What's on your mind,${
-            user?.first_name + " " + user?.last_name
-          } ?`}
-          onChange={handleInputChange}
-          sx={{
-            width: "100%",
+          disableUnderline
+          value={message}
+          placeholder={`What's on your mind? ${user?.display_name ?? ""}`}
+          onChange={(event) => setMessage(event.target.value)}
+          fullWidth
+          autoFocus
+          style={{
             borderRadius: 50,
             backgroundColor: "#f0f2f5",
-            paddingLeft: 2,
+            paddingLeft: "10px",
             fontSize: "0.8rem",
           }}
         />
-        <Button component="label">
+        <IconButton component="label">
           <ImageIcon />
-          <input type="file" hidden onChange={handleImageFileChange} />
-        </Button>
+          <input
+            type="file"
+            hidden
+            onChange={handleImageFileChange}
+            onClick={(event: any) => {
+              event.target.value = null
+            }}
+            accept="image/*"
+          />
+        </IconButton>
       </Box>
+      {image && <CardMedia component="img" image={image} alt="image" />}
+      {image && (
+        <Button
+          style={{ marginTop: "20px" }}
+          onClick={() => setImage(null)}
+          fullWidth
+          variant="outlined"
+          color="error"
+        >
+          Remove Image
+        </Button>
+      )}
       <Button
-        disabled={isLoading}
+        style={{ marginTop: "20px" }}
+        disabled={isLoading || !message.length}
         onClick={handleSubmit}
         fullWidth
         variant="contained"
-        sx={{ mt: 3, mb: 2 }}
       >
         Post
       </Button>
-      {image ? (
-        <ImageListItem sx={{ width: 50, height: 50 }}>
-          <img src={image}></img>
-        </ImageListItem>
-      ) : null}
     </Card>
-  ) : (
-    <></>
   )
 }
 
