@@ -16,6 +16,7 @@ import {
 } from "@mui/material"
 import { stringAvatar } from "../UserListItem"
 import CommentInput from "./CommentInput"
+import CommentSkeleton from "./CommentSkeleton"
 
 interface CommentModalProps {
   post: Post
@@ -33,10 +34,15 @@ interface Comment {
 }
 
 interface CommentCardProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
+  loading: boolean
   comment: Comment
+  refresh: () => void
 }
 
-const CommentCard: FC<CommentCardProps> = ({ comment }: CommentCardProps) => {
+const CommentCard: FC<CommentCardProps> = ({
+  loading,
+  comment,
+}: CommentCardProps) => {
   return (
     <>
       {comment ? (
@@ -96,6 +102,8 @@ const CommentModal: FC<CommentModalProps> = ({
 }: CommentModalProps) => {
   const [comments, setComments] = useState<Comment[]>([])
   const [pageIndex, setPageIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     const getComments = async (post: Post) => {
       try {
@@ -107,17 +115,21 @@ const CommentModal: FC<CommentModalProps> = ({
         console.log(err)
       }
     }
-    if (isShow && post) getComments(post)
+    if (isShow) getComments(post)
   }, [post, isShow, pageIndex])
 
   const refresh = async () => {
+    setIsLoading(true)
     try {
       const response = await Fetcher.GET(
         `/comments?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
       )
-      setComments(response.records ?? [])
+      console.log(response)
+      setComments(response.records)
     } catch (err) {
       console.log(err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -126,13 +138,19 @@ const CommentModal: FC<CommentModalProps> = ({
       <DialogTitle id="scroll-dialog-title">Comments</DialogTitle>
       <DialogContent dividers sx={{ width: "34rem" }}>
         <DialogContentText>
-          <Stack spacing={2} direction="column-reverse" alignItems="start">
-            {comments.map((comment, index) => (
-              <>
-                <CommentCard comment={comment} key={index} />
-              </>
-            ))}
-          </Stack>
+          {isLoading ? (
+            <CommentSkeleton />
+          ) : (
+            <Stack spacing={2} direction="column-reverse" alignItems="start">
+              {comments.map((comment, index) => (
+                <CommentCard
+                  comment={comment}
+                  key={index}
+                  loading={isLoading}
+                />
+              ))}
+            </Stack>
+          )}
         </DialogContentText>
       </DialogContent>
       <Box
