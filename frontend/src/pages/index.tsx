@@ -47,26 +47,30 @@ export default function Home() {
           <AddFriendList />
         </Grid>
         <Grid item xs={6}>
-          <Stack>
-            {!isLoading && (
+          {!isLoading ? (
+            <Stack>
               <PostFeedCard
                 afterCreate={(post) => setPosts((prev) => [post, ...prev])}
               />
-            )}
-            {!isLoading ? (
-              posts?.map((post) => <FeedCard post={post} key={post.id} />)
-            ) : (
-              <FeedSkeleton />
-            )}
-            {isMore && (
-              <Button
-                onClick={() => setPageIndex((prev) => prev + 1)}
-                style={{ marginBottom: "20px" }}
-              >
-                More ...
-              </Button>
-            )}
-          </Stack>
+
+              {posts?.map((post) => (
+                <FeedCard post={post} key={post.id} />
+              ))}
+
+              {isMore ? (
+                <Button
+                  onClick={() => setPageIndex((prev) => prev + 1)}
+                  style={{ marginBottom: "20px" }}
+                >
+                  More ...
+                </Button>
+              ) : (
+                "No More ..."
+              )}
+            </Stack>
+          ) : (
+            <FeedSkeleton />
+          )}
         </Grid>
         <Grid sm={3} sx={{ display: { xs: "none", sm: "block" } }} item>
           <ContactCard />
