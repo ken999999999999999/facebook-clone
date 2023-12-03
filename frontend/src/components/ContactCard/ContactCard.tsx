@@ -1,14 +1,10 @@
 import React, { useState } from "react"
-import { Box, Card, CardContent, CardHeader, Tab, Tabs } from "@mui/material"
-import { useMediaQuery, useTheme } from "@mui/material"
+import { Card, CardContent, CardHeader, Tab, Tabs } from "@mui/material"
 import Contact from "./Contact"
 import Chatroom from "./Chatroom"
 import ChatroomDialog from "./ChatroomDialog"
 
 const ContactCard = (): JSX.Element => {
-  const theme = useTheme()
-  const matches = useMediaQuery(theme.breakpoints.down("md"))
-
   const [activeTab, setActiveTab] = useState<"contact" | "chatroom">("contact")
   const [currentChatroomId, setCurrentChatroomId] = useState<string | null>(
     null
@@ -21,7 +17,12 @@ const ContactCard = (): JSX.Element => {
 
   return (
     <>
-      <Card style={{ position: "sticky", top: "75px" }}>
+      <Card
+        style={{
+          position: "sticky",
+          top: "75px",
+        }}
+      >
         <CardHeader
           title={
             <Tabs

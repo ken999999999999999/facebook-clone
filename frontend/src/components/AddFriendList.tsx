@@ -77,7 +77,7 @@ export default function AddFriendList() {
         }
       />
 
-      <CardContent>
+      <CardContent style={{ overflowY: "auto", maxHeight: "80vh" }}>
         {!isLoading ? (
           <List>
             {users.map((user) => (

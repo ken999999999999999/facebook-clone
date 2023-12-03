@@ -42,7 +42,7 @@ const Chatroom = ({ handleOnClick }: IChatroom): JSX.Element => {
   }, [getChatrooms])
 
   return !isLoading ? (
-    <List>
+    <List style={{ overflowY: "auto", maxHeight: "70vh" }}>
       {chatrooms.map((chatroom) => (
         <ListItem
           key={chatroom.id}
