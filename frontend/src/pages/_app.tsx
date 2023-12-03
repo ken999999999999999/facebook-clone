@@ -7,6 +7,7 @@ import Head from "next/head"
 import theme from "@/styles/theme"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment"
+import favicon from "@/assets/favicon.ico"
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,7 +16,12 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Facebook Clone</title>
         <meta name="description" content="Facebook Clone" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="shortcut icon"
+          type="image/x-icon"
+          sizes="16x16"
+          href={favicon.src}
+        />
       </Head>
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <AuthProvider>

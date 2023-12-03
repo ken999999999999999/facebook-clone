@@ -1,19 +1,10 @@
 import React, { useState } from "react"
-import { Box, Card, CardContent, CardHeader, Tab, Tabs } from "@mui/material"
-import { useMediaQuery, useTheme } from "@mui/material"
-
+import { Card, CardContent, CardHeader, Tab, Tabs } from "@mui/material"
 import Contact from "./Contact"
 import Chatroom from "./Chatroom"
 import ChatroomDialog from "./ChatroomDialog"
 
-interface IContactCard {
-  scroll: number
-}
-
-const ContactCard = ({ scroll }: IContactCard): JSX.Element => {
-  const theme = useTheme()
-  const matches = useMediaQuery(theme.breakpoints.down("md"))
-
+const ContactCard = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState<"contact" | "chatroom">("contact")
   const [currentChatroomId, setCurrentChatroomId] = useState<string | null>(
     null
@@ -24,16 +15,12 @@ const ContactCard = ({ scroll }: IContactCard): JSX.Element => {
     setCurrentChatroomId(chatroomId)
   }
 
-  return !matches ? (
+  return (
     <>
       <Card
-        sx={{
-          position: scroll > 0 ? "fixed" : "relative",
-        }}
         style={{
-          maxHeight: "100vh",
-          overflowY: "scroll",
-          overflowX: "hidden",
+          position: "sticky",
+          top: "75px",
         }}
       >
         <CardHeader
@@ -63,14 +50,6 @@ const ContactCard = ({ scroll }: IContactCard): JSX.Element => {
         handleClose={() => setCurrentChatroomId(null)}
       />
     </>
-  ) : (
-    <Box
-      sx={{
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        alignItems: "center",
-      }}
-    ></Box>
   )
 }
 

@@ -25,6 +25,7 @@ interface ReactionsModalProps {
   post?: Post
   comment?: Comment
   isShow: boolean
+  reactions?: Reactions[]
   onClose?: (event: Event) => void
 }
 
@@ -42,7 +43,6 @@ interface ReactionRecordCardProps
 const ReactionRecordCard: FC<ReactionRecordCardProps> = ({
   reaction,
 }: ReactionRecordCardProps) => {
-  console.log("item", reaction)
   return (
     <>
       {reaction ? (
@@ -114,8 +114,11 @@ const ReactionsModal: FC<ReactionsModalProps> = ({
   comment,
   isShow,
   onClose,
+  reactions: initialReactions,
 }: ReactionsModalProps) => {
-  const [reactions, setReactions] = useState<Reactions[]>([])
+  const [reactions, setReactions] = useState<Reactions[]>(
+    initialReactions ?? []
+  )
 
   useEffect(() => {
     const getReactions = async () => {
@@ -123,7 +126,6 @@ const ReactionsModal: FC<ReactionsModalProps> = ({
         if (post?.id) {
           const response = await Fetcher.GET(`/reactions?post_id=${post.id}`)
           setReactions(response)
-          console.log(response)
         } else if (comment?.id) {
           const response = await Fetcher.GET(
             `/reactions?comment_id=${comment.id}`

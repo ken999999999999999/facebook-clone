@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import FeedCard from "@/components/FeedCard"
 import AddFriendList from "@/components/AddFriendList"
-import { Post, usePost } from "@/hooks/usePost"
-import { Grid, Stack } from "@mui/material"
+import { Post } from "@/hooks/usePost"
+import { Button, Grid, Stack } from "@mui/material"
 import dynamic from "next/dynamic"
 import ContactCard from "@/components/ContactCard"
 import { Fetcher } from "@/services/fetcher"
@@ -13,29 +13,19 @@ const PostFeedCard = dynamic(() => import("@/components/PostFeedCard"), {
   ssr: false,
 })
 export default function Home() {
-  const [scroll, setScroll] = useState<number>(0)
-  const [posts, setPosts] = useState<Post[] | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const handleScroll = () => {
-    const scrollTop = window.scrollY
-    setScroll(scrollTop)
-  }
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll)
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+  const [posts, setPosts] = useState<Post[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [pageIndex, setPageIndex] = useState(0)
+  const [isMore, setIsMore] = useState(true)
 
   useEffect(() => {
     const fetchPosts = async () => {
-      setIsLoading(true)
       try {
-        const response = await Fetcher.GET("/posts/")
-        setPosts(response)
+        const response = await Fetcher.GET(
+          `/posts/?page_index=${pageIndex}&sort_by=created&is_asc=false`
+        )
+        setPosts((prev) => [...prev, ...response])
+        if (response.length < 1) setIsMore(false)
       } catch (err) {
         console.log(err)
       } finally {
@@ -43,44 +33,47 @@ export default function Home() {
       }
     }
     fetchPosts()
-  }, [])
-
-  const fetchPosts = async () => {
-    setIsLoading(true)
-    try {
-      const response = await Fetcher.GET("/posts/")
-      setPosts(response)
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  }, [pageIndex])
 
   return (
     <>
       <Header />
-      <Grid container sx={{ overflowY: "auto" }} spacing={2}>
-        <Grid item xs={3}>
-          <AddFriendList scroll={scroll} />
+      <Grid container spacing={2} columns={{ xs: 6, sm: 9, md: 12 }}>
+        <Grid
+          item
+          md={3}
+          sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+        >
+          <AddFriendList />
         </Grid>
         <Grid item xs={6}>
-          <Stack flexDirection={"column-reverse"}>
-            {isLoading ? (
-              <FeedSkeleton />
-            ) : (
-              posts?.map((post, index) => (
-                <FeedCard
-                  post={post}
-                  key={post.original_post_id + "-" + index}
-                />
-              ))
-            )}
-            <PostFeedCard refresh={fetchPosts} />
-          </Stack>
+          {!isLoading ? (
+            <Stack>
+              <PostFeedCard
+                afterCreate={(post) => setPosts((prev) => [post, ...prev])}
+              />
+
+              {posts?.map((post) => (
+                <FeedCard post={post} key={post.id} />
+              ))}
+
+              {isMore ? (
+                <Button
+                  onClick={() => setPageIndex((prev) => prev + 1)}
+                  style={{ marginBottom: "20px" }}
+                >
+                  More ...
+                </Button>
+              ) : (
+                "No More ..."
+              )}
+            </Stack>
+          ) : (
+            <FeedSkeleton />
+          )}
         </Grid>
-        <Grid xs={3} item>
-          <ContactCard scroll={scroll} />
+        <Grid sm={3} sx={{ display: { xs: "none", sm: "block" } }} item>
+          <ContactCard />
         </Grid>
       </Grid>
     </>
