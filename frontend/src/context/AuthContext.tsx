@@ -22,7 +22,6 @@ const firebaseConfig = {
 export interface IUser {
   id: string
   email: string
-  password: string
   display_name: string
   first_name: string
   last_name: string

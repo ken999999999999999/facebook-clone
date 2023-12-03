@@ -12,4 +12,4 @@ class CreateChatroomCommand(BaseModel):
 class ChatroomDto(BaseModel):
     id: str
     title: str = Field(..., max_length=200)
-    # users: List[UserDto] = []
+    users: List[UserDto] = []

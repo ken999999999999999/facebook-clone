@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from "react"
 import FeedCard from "@/components/FeedCard"
-import { Post } from "@/hooks/usePost"
 import AddFriendList from "@/components/AddFriendList"
-import UserList from "@/components/FriendsMenu"
 import useAuth from "../hooks/useAuth"
 import { usePost } from "@/hooks/usePost"
 import { Grid, Stack } from "@mui/material"
 import dynamic from "next/dynamic"
+import ContactCard from "@/components/ContactCard"
 
 const Header = dynamic(() => import("@/components/Navbar"), { ssr: false })
 const PostFeedCard = dynamic(() => import("@/components/PostFeedCard"), {
@@ -91,7 +90,7 @@ export default function Home() {
           </Stack>
         </Grid>
         <Grid xs={3} item>
-          <UserList scroll={scroll} />
+          <ContactCard scroll={scroll} />
         </Grid>
       </Grid>
     </>

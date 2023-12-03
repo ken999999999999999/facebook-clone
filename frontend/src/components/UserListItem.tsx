@@ -3,6 +3,7 @@ import {
   Badge,
   ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
 } from "@mui/material"
 import { ReactNode } from "react"
@@ -13,6 +14,10 @@ interface IUserListItem {
   lastName: string
   secondaryAction?: ReactNode
   badgeContent?: ReactNode
+  secondary?: string
+  selected?: boolean
+  onClick?: () => void
+  disabled?: boolean
 }
 
 const stringToColor = (string: string) => {
@@ -49,20 +54,30 @@ const UserListItem = ({
   firstName,
   lastName,
   secondaryAction,
+  secondary,
   badgeContent,
+  selected,
+  onClick,
+  disabled,
 }: IUserListItem): JSX.Element => {
   return (
-    <ListItem secondaryAction={secondaryAction}>
-      <ListItemAvatar>
-        <Badge
-          color="primary"
-          badgeContent={badgeContent}
-          invisible={!badgeContent}
-        >
-          <Avatar {...stringAvatar(`${firstName} ${lastName}`)} />
-        </Badge>
-      </ListItemAvatar>
-      <ListItemText primary={displayName} />
+    <ListItem secondaryAction={secondaryAction} disableGutters disablePadding>
+      <ListItemButton
+        selected={selected}
+        onClick={onClick && onClick}
+        disabled={disabled}
+      >
+        <ListItemAvatar>
+          <Badge
+            color="primary"
+            badgeContent={badgeContent}
+            invisible={!badgeContent}
+          >
+            <Avatar {...stringAvatar(`${firstName} ${lastName}`)} />
+          </Badge>
+        </ListItemAvatar>
+        <ListItemText primary={displayName} secondary={secondary} />
+      </ListItemButton>
     </ListItem>
   )
 }
