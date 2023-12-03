@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Fetcher } from "../services/fetcher"
 import { AxiosError } from "axios"
-import { User } from "@/components/FeedCard"
+import { IUser } from "@/context/AuthContext"
 
 export interface Post {
   original_post_id?: string | null
   description?: string
   image?: string | null
-  creator: User | undefined
+  creator: IUser | null
   created?: string | null
   has_image?: boolean
   id?: string | null
