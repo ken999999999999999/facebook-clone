@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Body, Depends
+from bson import ObjectId
+from fastapi import APIRouter, Body, Depends, HTTPException
 from apps.dependencies.auth import authorize
 from apps.dependencies.user import current_user
 from apps.dependencies.db import db_context
@@ -7,6 +8,7 @@ from apps.models.chatrooms.model import Chatroom
 from apps.models.chatrooms.validator import create_chatroom_validator
 from apps.models.chats.model import Chat
 from apps.models.common import PaginationQuery
+from apps.models.users.dto import UserDto
 
 
 router = APIRouter(
@@ -32,7 +34,7 @@ async def create_chatroom_command(db_context:  db_context, current_user: current
 
 
 @router.get("/")
-async def get_chatrooms_command(db_context:  db_context, current_user: current_user,  pagination: PaginationQuery = Depends()):
+async def get_chatrooms_query(db_context:  db_context, current_user: current_user,  pagination: PaginationQuery = Depends()):
     query = await db_context.chatrooms.aggregate([
         {"$match": {
             "users": current_user.id
@@ -61,3 +63,38 @@ async def get_chatrooms_command(db_context:  db_context, current_user: current_u
     ]).to_list(None)
 
     return [ChatroomDto(**record) for record in query]
+
+
+@router.get("/{id}")
+async def get_chatroom_query(id: str, db_context:  db_context, current_user: current_user) -> ChatroomDto:
+
+    query = await db_context.chatrooms.aggregate([
+        {"$match": {
+            "users": current_user.id,
+            "_id": ObjectId(id)
+        }},
+        {"$lookup": {
+            "from": "users",
+            "let": {"users_id": {"$map": {
+                "input": "$users",
+                "as": "user_id",
+                "in": {"$toObjectId": "$$user_id"}
+            }}},
+            "pipeline": [
+                {"$match": {
+                    "$expr": {"$in": ["$_id", "$$users_id"]}}},
+                {"$addFields": {"id": {"$toString": "$_id"}}}
+            ],
+            "as": "users"
+        }},
+
+        {"$addFields": {
+            "id": {"$toString": "$_id"}
+        }},
+        {"$limit": 1}
+    ]).to_list(None)
+
+    if len(query) < 1:
+        raise HTTPException(status_code=404, detail=f"Chatroom {id} not found")
+
+    return ChatroomDto(**query[0])
