@@ -16,11 +16,7 @@ import { Fetcher } from "@/services/fetcher"
 import AddCircleIcon from "@mui/icons-material/AddCircle"
 import ListItemSkeleton from "./ListItemSkeleton"
 
-interface AddFriendListProps {
-  scroll: number
-}
-
-export default function AddFriendList({ scroll }: AddFriendListProps) {
+export default function AddFriendList() {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("lg"))
   const [users, setUsers] = useState<any[]>([])
@@ -71,12 +67,8 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
     getFriends()
   }, [pageIndex])
 
-  return !matches ? (
-    <Card
-      sx={{
-        position: scroll > 0 ? "fixed" : "relative",
-      }}
-    >
+  return (
+    <Card style={{ position: "sticky", top: "75px" }}>
       <CardHeader
         title={
           <Tabs value="1">
@@ -119,13 +111,5 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
         )}
       </CardContent>
     </Card>
-  ) : (
-    <Box
-      sx={{
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        alignItems: "center",
-      }}
-    ></Box>
   )
 }

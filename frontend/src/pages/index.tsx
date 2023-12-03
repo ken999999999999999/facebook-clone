@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import FeedCard from "@/components/FeedCard"
 import AddFriendList from "@/components/AddFriendList"
-import { Post, usePost } from "@/hooks/usePost"
+import { Post } from "@/hooks/usePost"
 import { Grid, Stack } from "@mui/material"
 import dynamic from "next/dynamic"
 import ContactCard from "@/components/ContactCard"
@@ -13,22 +13,8 @@ const PostFeedCard = dynamic(() => import("@/components/PostFeedCard"), {
   ssr: false,
 })
 export default function Home() {
-  const [scroll, setScroll] = useState<number>(0)
   const [posts, setPosts] = useState<Post[] | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const handleScroll = () => {
-    const scrollTop = window.scrollY
-    setScroll(scrollTop)
-  }
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll)
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -60,9 +46,9 @@ export default function Home() {
   return (
     <>
       <Header />
-      <Grid container sx={{ overflowY: "auto" }} spacing={2}>
+      <Grid container spacing={2}>
         <Grid item xs={3}>
-          <AddFriendList scroll={scroll} />
+          <AddFriendList />
         </Grid>
         <Grid item xs={6}>
           <Stack flexDirection={"column-reverse"}>
@@ -80,7 +66,7 @@ export default function Home() {
           </Stack>
         </Grid>
         <Grid xs={3} item>
-          <ContactCard scroll={scroll} />
+          <ContactCard />
         </Grid>
       </Grid>
     </>
