@@ -12,8 +12,10 @@ import {
   Button,
   ImageListItem,
   Typography,
+  FormControl,
+  InputAdornment,
 } from "@mui/material"
-import { Videocam, PhotoLibrary, Mood, Cancel } from "@mui/icons-material"
+import { Videocam, PhotoLibrary, Mood, Cancel, Send } from "@mui/icons-material"
 import { Post, usePost } from "@/hooks/usePost"
 import ImageIcon from "@mui/icons-material/Image"
 import useAuth from "@/hooks/useAuth"
@@ -57,6 +59,7 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value)
     setPost((prev: any) => ({ ...prev, description: event.target.value }))
   }
 
@@ -91,10 +94,14 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
-      if (post) {
+      if (post && post?.description !== "") {
+        console.log(post)
         const res = await createPost(post)
-        console.log(res)
+
         refresh()
+      } else if (post?.description === "") {
+        window.alert("post is empty")
+        throw new Error("post is empty")
       }
     } catch (err) {
       console.log(err)
@@ -107,20 +114,27 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
     <Card style={{ marginBottom: "20px" }}>
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Avatar {...stringAvatar(`${user?.first_name} ${user?.last_name}`)} />
-        <Input
-          disableUnderline={true}
-          placeholder={`What's on your mind,${
-            user?.first_name + " " + user?.last_name
-          } ?`}
-          onChange={handleInputChange}
-          sx={{
-            width: "100%",
-            borderRadius: 50,
-            backgroundColor: "#f0f2f5",
-            paddingLeft: 2,
-            fontSize: "0.8rem",
-          }}
-        />
+        <form style={{ width: "100%" }}>
+          <FormControl fullWidth variant="outlined">
+            <Input
+              disableUnderline
+              placeholder={`What's on your mind,${
+                user?.first_name + " " + user?.last_name
+              } ?`}
+              autoFocus
+              value={post?.description}
+              onChange={handleInputChange}
+              sx={{
+                width: "100%",
+                borderRadius: 50,
+                backgroundColor: "#f0f2f5",
+                paddingLeft: 2,
+                fontSize: "0.8rem",
+              }}
+            />
+          </FormControl>
+        </form>
+
         <Button component="label">
           <ImageIcon />
           <input type="file" hidden onChange={handleImageFileChange} />
