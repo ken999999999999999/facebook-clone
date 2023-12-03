@@ -57,6 +57,7 @@ const ChatroomInput = ({
     <form style={{ width: "100%" }}>
       <FormControl fullWidth variant="outlined">
         <OutlinedInput
+          placeholder="Message.."
           autoFocus
           value={message}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

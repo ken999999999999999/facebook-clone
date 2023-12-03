@@ -21,6 +21,7 @@ import ChatroomInput, { IChat } from "./ChatroomInput"
 import ListItemSkeleton from "../ListItemSkeleton"
 import { stringAvatar } from "../UserListItem"
 import React from "react"
+import moment from "moment"
 
 interface IChatroomDialog {
   chatroomId: string | null
@@ -77,16 +78,13 @@ const ChatroomDialog = ({
     <Dialog open={!!chatroomId} onClose={handleClose} fullWidth maxWidth="md">
       {isError && <Alert severity="error">Oops, something goes wrong!</Alert>}
       <DialogTitle>
-        {chatroom?.title ?? ""}
-        <AvatarGroup max={10} total={chatroom?.users?.length}>
-          {chatroom?.users.map((user) => (
-            <Avatar
-              sizes="small"
-              key={user.id}
-              {...stringAvatar(`${user.first_name} ${user.last_name}`)}
-            />
-          ))}
-        </AvatarGroup>
+        <Typography variant="h5"> {chatroom?.title ?? ""}</Typography>
+        <Typography variant="caption" style={{ display: "inline" }}>
+          Who&apos;s in this chatroom:
+        </Typography>
+        <Typography variant="body2" style={{ display: "inline" }}>
+          {chatroom?.users.map((user) => user.display_name).join(",")}
+        </Typography>
       </DialogTitle>
       <DialogContent dividers>
         {!isLoading ? (
@@ -103,29 +101,32 @@ const ChatroomDialog = ({
                   </ListItemAvatar>
                   <ListItemText
                     primary={
-                      <React.Fragment>
-                        <Typography
-                          style={{ display: "inline" }}
-                          component="span"
-                          variant="body2"
-                          color={
-                            creator.id === user?.id ? "primary" : "text.primary"
-                          }
-                        >
-                          {`${creator.display_name}${
-                            creator.id === user?.id ? " (You)" : ""
-                          }`}
+                      <Typography
+                        color={
+                          creator.id === user?.id ? "primary" : "text.primary"
+                        }
+                      >
+                        {`${creator.display_name}${
+                          creator.id === user?.id ? " (You)" : ""
+                        }`}
+                      </Typography>
+                    }
+                    secondary={
+                      <>
+                        <Typography style={{ display: "inline" }}>
+                          {message}
                         </Typography>
                         <Typography
                           style={{ display: "inline" }}
                           component="span"
                           variant="caption"
                         >
-                          {` — ${created}`}
+                          {` — ${moment(created).format(
+                            "YYYY-MM-DD hh:mm:ss"
+                          )}`}
                         </Typography>
-                      </React.Fragment>
+                      </>
                     }
-                    secondary={<Typography>{message}</Typography>}
                   />
                 </ListItem>
                 <Divider variant="inset" component="li" />
