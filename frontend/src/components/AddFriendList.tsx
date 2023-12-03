@@ -6,12 +6,15 @@ import {
   CardContent,
   CardHeader,
   IconButton,
+  Tab,
+  Tabs,
 } from "@mui/material"
 import { useMediaQuery, useTheme } from "@mui/material"
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import UserListItem from "./UserListItem"
 import { Fetcher } from "@/services/fetcher"
 import AddCircleIcon from "@mui/icons-material/AddCircle"
+import ListItemSkeleton from "./ListItemSkeleton"
 
 interface AddFriendListProps {
   scroll: number
@@ -54,7 +57,7 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
   useEffect(() => {
     const getFriends = async () => {
       try {
-        setIsLoading(true)
+        pageIndex > 0 && setIsLoading(true)
         const response = await Fetcher.GET(
           `/users/list?page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
         )
@@ -69,40 +72,51 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
   }, [pageIndex])
 
   return !matches ? (
-    <Card>
-      <CardHeader title="Suggested Friends" />
+    <Card
+      sx={{
+        position: scroll > 0 ? "fixed" : "relative",
+      }}
+    >
+      <CardHeader
+        title={
+          <Tabs value="1">
+            <Tab value="1" label="Suggested Friends" />
+          </Tabs>
+        }
+      />
+
       <CardContent>
-        <List
-          sx={{
-            position: scroll > 0 ? "fixed" : "relative",
-          }}
-        >
-          {users.map((user) => (
-            <UserListItem
-              key={user.id}
-              displayName={user.display_name}
-              firstName={user.first_name}
-              lastName={user.last_name}
-              secondaryAction={
-                !isAddingUsers[user.id] ? (
-                  <IconButton onClick={() => addFriend(user.id)}>
-                    <AddCircleIcon />
-                  </IconButton>
-                ) : (
-                  <Button
-                    color="error"
-                    onClick={() => cancel(isAddingUsers[user.id])}
-                    disabled={cancelledList[isAddingUsers[user.id]]}
-                  >
-                    {!cancelledList[isAddingUsers[user.id]]
-                      ? "Cancel Invitation"
-                      : "Cancelled"}
-                  </Button>
-                )
-              }
-            />
-          ))}
-        </List>
+        {!isLoading ? (
+          <List>
+            {users.map((user) => (
+              <UserListItem
+                key={user.id}
+                displayName={user.display_name}
+                firstName={user.first_name}
+                lastName={user.last_name}
+                secondaryAction={
+                  !isAddingUsers[user.id] ? (
+                    <IconButton onClick={() => addFriend(user.id)}>
+                      <AddCircleIcon />
+                    </IconButton>
+                  ) : (
+                    <Button
+                      color="error"
+                      onClick={() => cancel(isAddingUsers[user.id])}
+                      disabled={cancelledList[isAddingUsers[user.id]]}
+                    >
+                      {!cancelledList[isAddingUsers[user.id]]
+                        ? "Cancel"
+                        : "Cancelled"}
+                    </Button>
+                  )
+                }
+              />
+            ))}
+          </List>
+        ) : (
+          <ListItemSkeleton />
+        )}
       </CardContent>
     </Card>
   ) : (

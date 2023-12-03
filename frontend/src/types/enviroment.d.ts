@@ -8,5 +8,6 @@ namespace NodeJS {
     NEXT_PUBLIC_FIREBASE_APP_ID: string
     NEXT_PUBLIC_API_URL: string
     NEXT_PUBLIC_HTTPONLY: boolean
+    NEXT_PUBLIC_CHATROOM_WEBSOCKET: string
   }
 }

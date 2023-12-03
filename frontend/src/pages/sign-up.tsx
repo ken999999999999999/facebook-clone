@@ -1,141 +1,229 @@
 // pages/login.tsx
 import React, { useState } from "react"
-import { Container, Box, Typography, TextField, Button } from "@mui/material"
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+} from "@mui/material"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { Fetcher } from "@/services/fetcher"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { DateField } from "@mui/x-date-pickers"
+import moment from "moment"
 
-export interface ICreateUserCommand {
+interface ICreateUserCommand {
   email: string
   password: string
+  confirmedPassword?: string
   display_name: string
   first_name: string
   last_name: string
-  birthdate: string
+  birthdate: moment.Moment
 }
 
 const SignUpPage: React.FC = () => {
   const router = useRouter()
-  const [formData, setFormData] = useState<ICreateUserCommand>({
-    email: "",
-    password: "",
-    display_name: "",
-    first_name: "",
-    last_name: "",
-    birthdate: "",
-  })
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(false)
 
-  const handleCreate = async () => {
+  const onSubmit: SubmitHandler<ICreateUserCommand> = async (formData) => {
     try {
       setIsLoading(true)
-      await Fetcher.POST("/users/sign-up", formData)
+      delete formData["confirmedPassword"]
+      await Fetcher.POST("/users/sign-up", {
+        ...formData,
+        birthdate: moment(formData.birthdate).format("YYYY-MM-DD"),
+      })
       router.push("/login")
     } catch (err) {
-      window.alert(err)
+      setError(true)
     } finally {
       setIsLoading(false)
     }
   }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    getValues,
+  } = useForm<ICreateUserCommand>({
+    defaultValues: {
+      birthdate: moment(),
+    },
+  })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+  const birthdate = register("birthdate", {
+    required: { value: true, message: "Birthdate is required!" },
+    validate: (value) =>
+      moment(value).isBefore(moment().startOf("day")) || "Invalid Date",
+  })
 
   return (
     <Backdrop open={!!isLoading}>
-      <Container component="main" maxWidth="xs">
-        <Box
-          flexDirection={"row"}
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography component="h1" variant="h5">
-            Facebook
-          </Typography>
-          <Typography sx={{ mb: 2 }}>
-            Connect with friends and the world around you on Facebook.
-          </Typography>
+      <Box
+        flexDirection="column"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Facebook
+        </Typography>
+        <Typography sx={{ mb: 2 }}>
+          Join us to connect with friends and the world around you on Facebook.
+        </Typography>
 
-          <Box
-            component="form"
-            onSubmit={handleCreate}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Display Name"
-              name="display_name"
-              value={formData.display_name}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="First Name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Last Name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Birthdate"
-              name="birthdate"
-              type="date"
-              value={formData.birthdate}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-            />
-            <Button
-              onClick={handleCreate}
-              fullWidth
-              variant="contained"
-              sx={{ mt: 2, bgcolor: "green" }}
-              disabled={isLoading}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          style={{ maxWidth: "800px" }}
+        >
+          {error && (
+            <Alert
+              severity="warning"
+              variant="filled"
+              style={{ width: "100%" }}
             >
-              Create new account
+              Email or Display Name is used!
+            </Alert>
+          )}
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Email"
+            required
+            autoFocus
+            {...register("email", {
+              required: { value: true, message: "Email is required" },
+              maxLength: { value: 200, message: "Max Length is 200" },
+              validate: (value) => value?.includes("@") || "Invalid Email",
+            })}
+            error={!!errors?.email}
+            helperText={errors?.email?.message ?? ""}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Password"
+            type="password"
+            required
+            {...register("password", {
+              required: { value: true, message: "password is required" },
+              maxLength: { value: 200, message: "Max Length is 200" },
+              pattern: {
+                value:
+                  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message:
+                  "Password must be at least 8 characters long, include a letter, a number, and a special character (@$!%*?&)",
+              },
+            })}
+            error={!!errors?.password}
+            helperText={errors?.password?.message ?? ""}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Confirm Password"
+            type="password"
+            required
+            {...register("confirmedPassword", {
+              required: {
+                value: true,
+                message: "Confirm Password is required",
+              },
+              maxLength: { value: 200, message: "Max Length is 200" },
+
+              validate: (value, formValue) =>
+                value === formValue.password || "It must be same as Password",
+            })}
+            error={!!errors?.confirmedPassword}
+            helperText={errors?.confirmedPassword?.message ?? ""}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Display Name"
+            required
+            {...register("display_name", {
+              required: {
+                value: true,
+                message: "Display Name is required",
+              },
+              maxLength: { value: 200, message: "Max Length is 200" },
+            })}
+            error={!!errors?.display_name}
+            helperText={errors?.display_name?.message ?? ""}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="First Name"
+            required
+            {...register("first_name", {
+              required: {
+                value: true,
+                message: "First Name is required",
+              },
+              maxLength: { value: 200, message: "Max Length is 200" },
+            })}
+            error={!!errors?.first_name}
+            helperText={errors?.first_name?.message ?? ""}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Last Name"
+            required
+            {...register("last_name", {
+              required: {
+                value: true,
+                message: "Last Name is required",
+              },
+              maxLength: { value: 200, message: "Max Length is 200" },
+            })}
+            error={!!errors?.last_name}
+            helperText={errors?.last_name?.message ?? ""}
+          />
+          <DateField
+            fullWidth
+            margin="normal"
+            label="Birthdate"
+            required
+            format="YYYY-MM-DD"
+            value={getValues("birthdate")}
+            onChange={(newValue: moment.Moment | null) =>
+              newValue && setValue("birthdate", newValue)
+            }
+            slotProps={{
+              textField: {
+                error: !!errors?.birthdate,
+              },
+            }}
+            helperText={errors?.birthdate?.message ?? ""}
+          />
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, bgcolor: "green" }}
+            disabled={isLoading}
+            type="submit"
+          >
+            Create new account
+          </Button>
+          <Link href="/login">
+            <Button fullWidth variant="outlined" sx={{ mt: 3, mb: 2 }}>
+              Already have an account?
             </Button>
-            <Link href="/login">
-              <Button fullWidth variant="outlined" sx={{ mt: 2, mb: 2 }}>
-                Already have an account?
-              </Button>
-            </Link>
-          </Box>
-        </Box>
-      </Container>
+          </Link>
+        </form>
+      </Box>
     </Backdrop>
   )
 }
