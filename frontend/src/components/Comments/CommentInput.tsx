@@ -1,4 +1,3 @@
-import useAuth from "@/hooks/useAuth"
 import { Post } from "@/hooks/usePost"
 import { useState, type FC } from "react"
 import {
@@ -20,18 +19,13 @@ const CommentInput: FC<CommentInputProps> = ({
   post,
   refresh,
 }: CommentInputProps) => {
-  const { user } = useAuth()
   const [description, setDescription] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
-
-  // const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setDescription(e.target.value)
-  // }
 
   const onClick = async () => {
     setLoading(true)
     try {
-      const response = await Fetcher.POST(`/comments`, {
+      await Fetcher.POST(`/comments/`, {
         description: description,
         post_id: post.id,
       })
