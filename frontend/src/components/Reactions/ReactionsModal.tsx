@@ -124,11 +124,11 @@ const ReactionsModal: FC<ReactionsModalProps> = ({
     const getReactions = async () => {
       try {
         if (post?.id) {
-          const response = await Fetcher.GET(`/reactions?post_id=${post.id}`)
+          const response = await Fetcher.GET(`/reactions/?post_id=${post.id}`)
           setReactions(response)
         } else if (comment?.id) {
           const response = await Fetcher.GET(
-            `/reactions?comment_id=${comment.id}`
+            `/reactions/?comment_id=${comment.id}`
           )
           setReactions(response)
         } else {
