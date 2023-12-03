@@ -9,11 +9,11 @@ import {
   IconButton,
   Stack,
   Avatar,
-  Typography,
   Button,
   ImageListItem,
+  Typography,
 } from "@mui/material"
-import { Videocam, PhotoLibrary, Mood, CloudUpload } from "@mui/icons-material"
+import { Videocam, PhotoLibrary, Mood, Cancel } from "@mui/icons-material"
 import { Post, usePost } from "@/hooks/usePost"
 import ImageIcon from "@mui/icons-material/Image"
 import useAuth from "@/hooks/useAuth"
@@ -53,7 +53,7 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
   const { user } = useAuth()
   const { createPost } = usePost()
   const [post, setPost] = useState<Post | null>(null)
-  const [image, setImage] = useState<string>("")
+  const [image, setImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,6 +78,14 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
         }
       }
     }
+  }
+
+  const clearImage = () => {
+    setImage(null)
+    setPost((prev: any) => ({
+      ...prev,
+      image: null,
+    }))
   }
 
   const handleSubmit = async () => {
@@ -118,6 +126,25 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
           <input type="file" hidden onChange={handleImageFileChange} />
         </Button>
       </Box>
+      {image ? (
+        <Box sx={{ padding: "10px" }}>
+          <Stack
+            flexDirection={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Typography component={"footer"} sx={{ color: "#616161" }}>
+              Image to be uploaded:
+            </Typography>
+            <IconButton onClick={clearImage}>
+              <Cancel />
+            </IconButton>
+          </Stack>
+          <ImageListItem sx={{ width: "auto", height: "auto" }}>
+            <img src={image}></img>
+          </ImageListItem>
+        </Box>
+      ) : null}
       <Button
         disabled={isLoading}
         onClick={handleSubmit}
@@ -127,11 +154,6 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
       >
         Post
       </Button>
-      {image ? (
-        <ImageListItem sx={{ width: 50, height: 50 }}>
-          <img src={image}></img>
-        </ImageListItem>
-      ) : null}
     </Card>
   ) : (
     <></>

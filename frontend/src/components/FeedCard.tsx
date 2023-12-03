@@ -24,6 +24,8 @@ import { Fetcher } from "@/services/fetcher"
 import CommentModal from "./Comments/CommentModal"
 import ReactionPopup from "./Reactions/ReactionPopup"
 import ReactionsModal from "./Reactions/ReactionsModal"
+import useAuth from "@/hooks/useAuth"
+import theme from "@/styles/theme"
 export interface User {
   last_name: string
   first_name: string
@@ -33,9 +35,10 @@ export interface User {
 }
 
 export interface Reactions {
+  id?: string
   postId?: string
   commentId?: string
-  createdBy: string
+  creator: User
   emoji: string
 }
 
@@ -54,9 +57,29 @@ export interface FeedCardProps extends CardProps {
 }
 
 const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
+  const { user } = useAuth()
   const [image, setImage] = useState<string | null>(null)
+  const [reactions, setReactions] = useState<Reactions[]>([])
+  const [isLiked, setIsLiked] = useState<boolean>(false)
   const [showComment, setShowComment] = useState<boolean>(false)
   const [showReactions, setShowReactions] = useState<boolean>(false)
+
+  const currentReaction: Reactions = reactions.filter(
+    (r) => r.emoji !== undefined && r.creator.id === user?.id
+  )[0]
+
+  const hasLiked = currentReaction?.emoji !== undefined
+
+  const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: theme.palette.common.white,
+      color: "rgba(0, 0, 0, 0.87)",
+      boxShadow: theme.shadows[1],
+      fontSize: 11,
+    },
+  }))
 
   const openReactionModal = () => {
     setShowReactions(true)
@@ -74,25 +97,87 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
     setShowComment(false)
   }
 
+  const updateReactions = async (id: string, emoji: string) => {
+    try {
+      const res = await Fetcher.PUT(`/reactions/${id}`, {
+        id: currentReaction.id,
+        emoji: emoji,
+      })
+      await getReactions()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const postReactions = async (id: string, emoji: string) => {
+    try {
+      const res = await Fetcher.POST("/reactions/", {
+        emoji: emoji,
+        post_id: id,
+      })
+      await getReactions()
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getReactions = async () => {
+    try {
+      if (post.id) {
+        const response = await Fetcher.GET(`/reactions?post_id=${post.id}`)
+        setReactions(response)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const cancelReactions = async (id: string) => {
+    try {
+      const response = await Fetcher.DELETE(`/reactions/${id}`)
+      console.log(response)
+      await getReactions()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const toggleLikeButton = async () => {
+    setIsLiked((prev) => !prev)
+    if (currentReaction?.id && hasLiked === true) {
+      await cancelReactions(currentReaction.id)
+    } else if (
+      currentReaction?.id &&
+      hasLiked === false &&
+      hasLiked !== undefined
+    ) {
+      await updateReactions(currentReaction.id, "thumbUp")
+    } else if (post.id && hasLiked === false) {
+      await postReactions(post.id, "thumbUp")
+    }
+    console.log(hasLiked)
+  }
+
   useEffect(() => {
     const getImage = async (id: string) => {
       const res = await Fetcher.GET(`/posts/${id}/image`)
       setImage(res)
     }
 
+    const getReactions = async (id: string) => {
+      try {
+        if (id) {
+          const response = await Fetcher.GET(`/reactions?post_id=${id}`)
+          setReactions(response)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
     if (post.id && post.has_image) getImage(post.id)
+    if (post.id) getReactions(post.id)
   }, [post])
-
-  const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.common.white,
-      color: "rgba(0, 0, 0, 0.87)",
-      boxShadow: theme.shadows[1],
-      fontSize: 11,
-    },
-  }))
 
   return post ? (
     <Card
@@ -111,12 +196,22 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
               placement="top"
               title={
                 <React.Fragment>
-                  <ReactionPopup post={post} />
+                  <ReactionPopup
+                    post={post}
+                    reactions={reactions}
+                    refresh={getReactions}
+                  />
                 </React.Fragment>
               }
             >
-              <IconButton>
-                <ThumbUp />
+              <IconButton onClick={toggleLikeButton}>
+                <ThumbUp
+                  sx={{
+                    color: hasLiked
+                      ? theme.palette.primary.main
+                      : theme.palette.secondary.main,
+                  }}
+                />
               </IconButton>
             </LightTooltip>
             <IconButton className="feed-button" onClick={openCommentModal}>

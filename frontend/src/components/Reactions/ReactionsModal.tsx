@@ -25,6 +25,7 @@ interface ReactionsModalProps {
   post?: Post
   comment?: Comment
   isShow: boolean
+  reactions?: Reactions[]
   onClose?: (event: Event) => void
 }
 
@@ -114,8 +115,11 @@ const ReactionsModal: FC<ReactionsModalProps> = ({
   comment,
   isShow,
   onClose,
+  reactions: initialReactions,
 }: ReactionsModalProps) => {
-  const [reactions, setReactions] = useState<Reactions[]>([])
+  const [reactions, setReactions] = useState<Reactions[]>(
+    initialReactions ?? []
+  )
 
   useEffect(() => {
     const getReactions = async () => {
