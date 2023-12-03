@@ -38,8 +38,12 @@ export default function Home() {
   return (
     <>
       <Header />
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
+      <Grid container spacing={2} columns={{ xs: 6, sm: 9, md: 12 }}>
+        <Grid
+          item
+          md={3}
+          sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+        >
           <AddFriendList />
         </Grid>
         <Grid item xs={6}>
@@ -64,7 +68,7 @@ export default function Home() {
             )}
           </Stack>
         </Grid>
-        <Grid xs={3} item>
+        <Grid sm={3} sx={{ display: { xs: "none", sm: "block" } }} item>
           <ContactCard />
         </Grid>
       </Grid>
