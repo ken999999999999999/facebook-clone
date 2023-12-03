@@ -29,6 +29,7 @@ import { IUser } from "@/context/AuthContext"
 import useAuth from "@/hooks/useAuth"
 import theme from "@/styles/theme"
 import moment from "moment"
+import { useRouter } from "next/router"
 export interface User {
   last_name: string
   first_name: string
@@ -65,6 +66,8 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
   const [reactions, setReactions] = useState<Reactions[]>([])
   const [showComment, setShowComment] = useState<boolean>(false)
   const [showReactions, setShowReactions] = useState<boolean>(false)
+
+  const router = useRouter()
 
   const haveReactions =
     reactions.filter((r) => r.emoji !== undefined).length > 0
@@ -222,7 +225,14 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
             <IconButton className="feed-button" onClick={openCommentModal}>
               <Comment />
             </IconButton>
-            <IconButton className="feed-button">
+            <IconButton
+              className="feed-button"
+              onClick={() =>
+                router.replace(
+                  "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
+                )
+              }
+            >
               <Share />
             </IconButton>
           </Stack>
