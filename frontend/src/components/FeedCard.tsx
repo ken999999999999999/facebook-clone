@@ -266,6 +266,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
             width="18"
           />
           <Typography
+            variant="body2"
             sx={{ margin: 0, cursor: "pointer" }}
             onClick={openReactionModal}
           >
