@@ -7,7 +7,6 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
   OutlinedInput,
   Snackbar,
   Stack,
@@ -112,8 +111,8 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
         style={{ width: "100%", marginBottom: "10px" }}
         variant="outlined"
       >
-        <InputLabel htmlFor="create-chatroom">Chat with friends</InputLabel>
         <OutlinedInput
+          placeholder="Message"
           id="create-chatroom"
           value={chatroomTitle}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

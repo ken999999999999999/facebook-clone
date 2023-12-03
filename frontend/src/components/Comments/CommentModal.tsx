@@ -134,7 +134,6 @@ const CommentModal: FC<CommentModalProps> = ({
       const response = await Fetcher.GET(
         `/comments?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
       )
-      console.log(response)
       setComments(response.records)
     } catch (err) {
       console.log(err)

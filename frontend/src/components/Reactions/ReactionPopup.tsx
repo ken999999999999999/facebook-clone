@@ -99,8 +99,6 @@ const ReactionPopup: React.FC<ReactionPopupProps> = ({
     }
   }
 
-  console.log(hasReacted)
-
   return (
     post && (
       <Stack

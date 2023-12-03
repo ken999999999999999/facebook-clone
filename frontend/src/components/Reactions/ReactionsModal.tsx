@@ -43,7 +43,6 @@ interface ReactionRecordCardProps
 const ReactionRecordCard: FC<ReactionRecordCardProps> = ({
   reaction,
 }: ReactionRecordCardProps) => {
-  console.log("item", reaction)
   return (
     <>
       {reaction ? (
@@ -127,7 +126,6 @@ const ReactionsModal: FC<ReactionsModalProps> = ({
         if (post?.id) {
           const response = await Fetcher.GET(`/reactions?post_id=${post.id}`)
           setReactions(response)
-          console.log(response)
         } else if (comment?.id) {
           const response = await Fetcher.GET(
             `/reactions?comment_id=${comment.id}`
