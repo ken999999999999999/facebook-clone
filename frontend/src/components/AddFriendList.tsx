@@ -14,7 +14,7 @@ import { useEffect, useState } from "react"
 import UserListItem from "./UserListItem"
 import { Fetcher } from "@/services/fetcher"
 import AddCircleIcon from "@mui/icons-material/AddCircle"
-import UserListItemSkeleton from "./UserListItemSkeleton"
+import ListItemSkeleton from "./ListItemSkeleton"
 
 interface AddFriendListProps {
   scroll: number
@@ -115,7 +115,7 @@ export default function AddFriendList({ scroll }: AddFriendListProps) {
             ))}
           </List>
         ) : (
-          <UserListItemSkeleton />
+          <ListItemSkeleton />
         )}
       </CardContent>
     </Card>

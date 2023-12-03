@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Fetcher } from "@/services/fetcher"
-import UserListItemSkeleton from "../UserListItemSkeleton"
+import ListItemSkeleton from "../ListItemSkeleton"
 import {
   ListItem,
   List,
@@ -67,7 +67,7 @@ const Chatroom = ({ handleOnClick }: IChatroom): JSX.Element => {
       ))}
     </List>
   ) : (
-    <UserListItemSkeleton showCircle={false} />
+    <ListItemSkeleton showCircle={false} />
   )
 }
 

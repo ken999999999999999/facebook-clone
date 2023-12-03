@@ -40,7 +40,7 @@ async def get_chats_command(db_context:  db_context, current_user: current_user,
         {"$addFields": {
             "creator": {"$arrayElemAt": ["$creators", 0]},
         }},
-        {"$sort": {"created": -1}},
+        {"$sort": {"created": 1}},
 
     ]).to_list(None)
 

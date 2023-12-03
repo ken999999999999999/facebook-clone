@@ -1,14 +1,14 @@
 import { Box, Skeleton } from "@mui/material"
 
-interface IUserListItemSkeleton {
+interface IListItemSkeleton {
   showCircle?: boolean
   total?: number
 }
 
-const UserListItemSkeleton = ({
+const ListItemSkeleton = ({
   total = 5,
   showCircle = true,
-}: IUserListItemSkeleton): JSX.Element => {
+}: IListItemSkeleton): JSX.Element => {
   return (
     <>
       {[...Array(10).keys()].map((item) => (
@@ -28,4 +28,4 @@ const UserListItemSkeleton = ({
   )
 }
 
-export default UserListItemSkeleton
+export default ListItemSkeleton

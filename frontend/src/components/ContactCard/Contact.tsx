@@ -16,7 +16,7 @@ import useAuth from "@/hooks/useAuth"
 import CancelIcon from "@mui/icons-material/Cancel"
 
 import UserListItem from "../UserListItem"
-import UserListItemSkeleton from "../UserListItemSkeleton"
+import ListItemSkeleton from "../ListItemSkeleton"
 import SendIcon from "@mui/icons-material/Send"
 
 interface IContact {
@@ -183,7 +183,7 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
       </Snackbar>
     </List>
   ) : (
-    <UserListItemSkeleton />
+    <ListItemSkeleton />
   )
 }
 
