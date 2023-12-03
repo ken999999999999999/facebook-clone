@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Union
 from pydantic import BaseModel, Field
 from apps.models.common import PyObjectId
-from apps.models.users.model import User
 
 
 class Post(BaseModel):
