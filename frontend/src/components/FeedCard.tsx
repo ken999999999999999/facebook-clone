@@ -32,9 +32,7 @@ import ReactionPopup from "./Reactions/ReactionPopup"
 import ReactionsModal from "./Reactions/ReactionsModal"
 import { IUser } from "@/context/AuthContext"
 import useAuth from "@/hooks/useAuth"
-import theme from "@/styles/theme"
 import moment from "moment"
-
 export interface User {
   last_name: string
   first_name: string
@@ -226,7 +224,10 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
             <IconButton className="feed-button" onClick={openCommentModal}>
               <Comment />
             </IconButton>
-            <IconButton className="feed-button">
+            <IconButton
+              className="feed-button"
+              href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
+            >
               <Share />
             </IconButton>
           </Stack>
@@ -270,6 +271,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
             width="18"
           />
           <Typography
+            variant="body2"
             sx={{ margin: 0, cursor: "pointer" }}
             onClick={openReactionModal}
           >
