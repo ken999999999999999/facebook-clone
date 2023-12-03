@@ -22,19 +22,19 @@ const CommentInput: FC<CommentInputProps> = ({
     setDescription(e.target.value)
   }
 
-  const onClick = () => {
+  const onClick = async () => {
     setLoading(true)
     try {
-      const response = Fetcher.POST(`/comments`, {
+      const response = await Fetcher.POST(`/comments`, {
         description: description,
         post_id: post.id,
       })
       setDescription("")
-      refresh()
     } catch (e) {
       console.log(e)
     } finally {
       setLoading(false)
+      refresh()
     }
   }
 
@@ -50,8 +50,8 @@ const CommentInput: FC<CommentInputProps> = ({
               sx={{ width: 32, height: 32 }}
             />
             <Input
-              value={description}
               disabled={loading}
+              value={description}
               placeholder={"Write a comment..."}
               inputProps={{ "aria-label": "description" }}
               fullWidth
