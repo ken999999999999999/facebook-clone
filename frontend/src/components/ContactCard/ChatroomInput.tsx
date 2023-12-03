@@ -33,11 +33,12 @@ const ChatroomInput = ({
 
     const connectWs = (id: string) => {
       const cookies = parseCookies()
-      ws = new WebSocket(
-        `${process.env.NEXT_PUBLIC_CHATROOM_WEBSOCKET}${id}`,
-        cookies.token
-      )
+      const token = cookies.token
+      ws = new WebSocket(`${process.env.NEXT_PUBLIC_CHATROOM_WEBSOCKET}${id}`)
 
+      ws.onopen = () => {
+        ws?.send(token)
+      }
       ws.onmessage = (e: any) => {
         setChats((prev: IChat[]) => [...prev, JSON.parse(e.data)])
       }
