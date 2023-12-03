@@ -7,7 +7,10 @@ import {
   TextField,
   Button,
   Alert,
+  InputAdornment,
+  IconButton,
 } from "@mui/material"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -30,6 +33,13 @@ const SignUpPage: React.FC = () => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClickShowPassword = () => setShowPassword((show) => !show)
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault()
+  }
 
   const onSubmit: SubmitHandler<ICreateUserCommand> = async (formData) => {
     try {
@@ -112,7 +122,7 @@ const SignUpPage: React.FC = () => {
             fullWidth
             margin="normal"
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
             {...register("password", {
               required: { value: true, message: "password is required" },
@@ -124,6 +134,20 @@ const SignUpPage: React.FC = () => {
                   "Password must be at least 8 characters long, include a letter, a number, and a special character (@$!%*?&)",
               },
             })}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             error={!!errors?.password}
             helperText={errors?.password?.message ?? ""}
           />
@@ -131,8 +155,22 @@ const SignUpPage: React.FC = () => {
             fullWidth
             margin="normal"
             label="Confirm Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             {...register("confirmedPassword", {
               required: {
                 value: true,

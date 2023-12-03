@@ -116,7 +116,7 @@ const CommentModal: FC<CommentModalProps> = ({
       setIsInit(true)
       try {
         const response = await Fetcher.GET(
-          `/comments?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
+          `/comments/?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
         )
         setComments(response.records ?? [])
       } catch (err) {
@@ -132,7 +132,7 @@ const CommentModal: FC<CommentModalProps> = ({
     setIsLoading(true)
     try {
       const response = await Fetcher.GET(
-        `/comments?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
+        `/comments/?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
       )
       setComments(response.records)
     } catch (err) {

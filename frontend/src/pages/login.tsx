@@ -1,12 +1,20 @@
 // pages/login.tsx
 import React, { useState } from "react"
-import { Box, Typography, TextField, Button, Alert } from "@mui/material"
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  InputAdornment,
+  IconButton,
+} from "@mui/material"
 import { useForm, SubmitHandler } from "react-hook-form"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/router"
 import Backdrop from "@/components/Backdrop"
 import Link from "next/link"
-import { FormatColorReset } from "@mui/icons-material"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
 
 interface ILogin {
   email: string
@@ -15,6 +23,13 @@ interface ILogin {
 
 const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClickShowPassword = () => setShowPassword((show) => !show)
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault()
+  }
   const { signIn } = useAuth()
   const router = useRouter()
   const [error, setError] = useState(false)
@@ -86,8 +101,22 @@ const LoginPage: React.FC = () => {
             error={!!errors?.password}
             helperText={errors?.password?.message ?? ""}
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
