@@ -4,7 +4,6 @@ import { CardProps } from "./Card"
 import { styled } from "@mui/material/styles"
 import {
   Avatar,
-  Box,
   IconButton,
   Tooltip,
   Typography,
@@ -14,12 +13,18 @@ import {
   CardMedia,
   CardContent,
 } from "@mui/material"
-import { ThumbUp, Comment, Share } from "@mui/icons-material"
+import {
+  ThumbUp,
+  Comment,
+  Share,
+  Favorite,
+  Mood,
+  SentimentDissatisfied,
+} from "@mui/icons-material"
 import Divider from "@mui/material/Divider"
 import Stack from "@mui/material/Stack"
 import { Post } from "@/hooks/usePost"
 import { stringAvatar } from "./UserListItem"
-import PeopleIcon from "@mui/icons-material/People"
 import { useState } from "react"
 import { Fetcher } from "@/services/fetcher"
 import CommentModal from "./Comments/CommentModal"
@@ -29,6 +34,7 @@ import { IUser } from "@/context/AuthContext"
 import useAuth from "@/hooks/useAuth"
 import theme from "@/styles/theme"
 import moment from "moment"
+
 export interface User {
   last_name: string
   first_name: string
@@ -70,7 +76,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
     reactions.filter((r) => r.emoji !== undefined).length > 0
 
   const currentReaction: Reactions = reactions.filter(
-    (r) => r.emoji !== undefined && r.creator.id === user?.id
+    (r) => r.emoji && r.creator.id === user?.id
   )[0]
 
   const hasLiked = currentReaction?.emoji !== undefined
@@ -102,6 +108,13 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
     setShowComment(false)
   }
 
+  const Icon: { [key: string]: JSX.Element } = {
+    heart: <Favorite />,
+    haha: <Mood />,
+    sad: <SentimentDissatisfied />,
+    thumbUp: <ThumbUp />,
+  }
+
   const updateReactions = async (id: string, emoji: string) => {
     try {
       const res = await Fetcher.PUT(`/reactions/${id}`, {
@@ -121,7 +134,6 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
         post_id: id,
       })
       await getReactions()
-      console.log(res)
     } catch (error) {
       console.log(error)
     }
@@ -140,8 +152,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 
   const cancelReactions = async (id: string) => {
     try {
-      const response = await Fetcher.DELETE(`/reactions/${id}`)
-      console.log(response)
+      await Fetcher.DELETE(`/reactions/${id}`)
       await getReactions()
     } catch (err) {
       console.log(err)
@@ -149,8 +160,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
   }
 
   const toggleLikeButton = async () => {
-    console.log(currentReaction, hasLiked, post.id)
-    if (currentReaction?.id && hasLiked === true) {
+    if (currentReaction?.id && hasLiked) {
       await cancelReactions(currentReaction.id)
     } else if (
       currentReaction?.id &&
@@ -161,7 +171,6 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
     } else if (post.id && hasLiked === false) {
       await postReactions(post.id, "thumbUp")
     }
-    console.log(hasLiked)
   }
 
   useEffect(() => {
@@ -200,23 +209,18 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
             <LightTooltip
               placement="top"
               title={
-                <React.Fragment>
-                  <ReactionPopup
-                    post={post}
-                    reactions={reactions}
-                    refresh={getReactions}
-                  />
-                </React.Fragment>
+                <ReactionPopup
+                  post={post}
+                  reactions={reactions}
+                  refresh={getReactions}
+                />
               }
             >
-              <IconButton onClick={toggleLikeButton}>
-                <ThumbUp
-                  sx={{
-                    color: hasLiked
-                      ? theme.palette.primary.main
-                      : theme.palette.secondary.main,
-                  }}
-                />
+              <IconButton
+                onClick={toggleLikeButton}
+                color={hasLiked ? "primary" : "secondary"}
+              >
+                {Icon[currentReaction?.emoji ?? "thumbUp"]}
               </IconButton>
             </LightTooltip>
             <IconButton className="feed-button" onClick={openCommentModal}>
