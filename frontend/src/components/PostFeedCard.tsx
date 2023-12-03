@@ -30,10 +30,18 @@ const PostFeedCard = ({ afterCreate }: IPostFeedCard): JSX.Element => {
   const handleImageFileChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    const image = event.target.files?.[0]
+    if (!image) {
+      window.alert("image is required")
+      return false
+    }
+    if (!image.name.match(/\.(jpg|jpeg|png|gif)$/)) {
+      window.alert("select valid image.")
+      return false
+    }
     if (!!event?.target?.files?.length) {
-      const file = event.target.files?.[0]
       const reader = new FileReader()
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(image)
       reader.onloadend = () => {
         const base64String = reader.result
         if (typeof base64String === "string") {
@@ -96,15 +104,17 @@ const PostFeedCard = ({ afterCreate }: IPostFeedCard): JSX.Element => {
             fontSize: "0.8rem",
           }}
         />
-        <IconButton component="label">
+        <IconButton
+          component="label"
+          onClick={(event: any) => {
+            event.target.value = null
+          }}
+        >
           <ImageIcon />
           <input
             type="file"
             hidden
             onChange={handleImageFileChange}
-            onClick={(event: any) => {
-              event.target.value = null
-            }}
             accept="image/*"
           />
         </IconButton>
