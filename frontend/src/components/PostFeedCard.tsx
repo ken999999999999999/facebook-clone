@@ -18,7 +18,9 @@ import { Post, usePost } from "@/hooks/usePost"
 import ImageIcon from "@mui/icons-material/Image"
 import useAuth from "@/hooks/useAuth"
 import { stringAvatar } from "./UserListItem"
-interface PostFeedCardProps extends HtmlHTMLAttributes<HTMLDivElement> {}
+interface PostFeedCardProps extends HtmlHTMLAttributes<HTMLDivElement> {
+  refresh: () => Promise<void>
+}
 
 const PostFeedButtons = () => {
   return (
@@ -45,11 +47,14 @@ const PostFeedButtons = () => {
   )
 }
 
-const PostFeedCard: React.FC<PostFeedCardProps> = ({}) => {
+const PostFeedCard: React.FC<PostFeedCardProps> = ({
+  refresh,
+}: PostFeedCardProps) => {
   const { user } = useAuth()
-  const { createPost, getPosts, isLoading } = usePost()
+  const { createPost } = usePost()
   const [post, setPost] = useState<Post | null>(null)
   const [image, setImage] = useState<string>("")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPost((prev: any) => ({ ...prev, description: event.target.value }))
@@ -76,18 +81,18 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({}) => {
   }
 
   const handleSubmit = async () => {
+    setIsLoading(true)
     try {
       if (post) {
         const res = await createPost(post)
         console.log(res)
+        refresh()
       }
     } catch (err) {
       console.log(err)
+    } finally {
+      setIsLoading(false)
     }
-  }
-
-  const handleClick = () => {
-    handleSubmit()
   }
 
   return user ? (
@@ -115,7 +120,7 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({}) => {
       </Box>
       <Button
         disabled={isLoading}
-        onClick={handleClick}
+        onClick={handleSubmit}
         fullWidth
         variant="contained"
         sx={{ mt: 3, mb: 2 }}

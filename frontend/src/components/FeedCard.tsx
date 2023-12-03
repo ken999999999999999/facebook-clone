@@ -96,6 +96,7 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 
   return post ? (
     <Card
+      style={{ marginBottom: "20px" }}
       footer={
         <>
           <Divider />
@@ -118,7 +119,6 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
                 <ThumbUp />
               </IconButton>
             </LightTooltip>
-
             <IconButton className="feed-button" onClick={openCommentModal}>
               <Comment />
             </IconButton>
