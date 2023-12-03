@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 import json
+from apps import webSocket
 from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
@@ -49,6 +50,12 @@ app.add_middleware(
 app.add_api_websocket_route(
     "/chatroom/{chatroom_id}", chat_endpoint, dependencies=[Depends(connect_chat_validator)])
 
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: webSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
