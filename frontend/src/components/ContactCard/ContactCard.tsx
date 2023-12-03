@@ -21,6 +21,7 @@ const ContactCard = ({ scroll }: IContactCard): JSX.Element => {
 
   const handleCreateChatroom = (chatroomId: string) => {
     setActiveTab("chatroom")
+    setCurrentChatroomId(chatroomId)
   }
 
   return !matches ? (
