@@ -9,17 +9,6 @@ from apps.webSocket.connectionManger import ConnectionManager
 manager = ConnectionManager()
 
 
-
-async def chat_test_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
-    try:
-        token = websocket.cookies.get("token")
-        while True:
-            data = await websocket.receive_text()
-            await manager.broadcast(f"{token} Message text was: {data}")
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-
 async def chat_endpoint(websocket: WebSocket, chatroom_id: str, db_context: db_context, current_ws_user: current_ws_user):
     await manager.connect(websocket)
     try:
