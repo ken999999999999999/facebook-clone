@@ -19,7 +19,7 @@ router = APIRouter(
 
 @router.get("/", dependencies=[Depends(get_reactions_validator)])
 async def get_reactions(db_context: db_context, post_id: Union[str, None] = None, comment_id: Union[str, None] = None):
-    filters = {"$or": [{"post_id": post_id}, {"comment_id": comment_id}]}
+    filters = {{"post_id": post_id}, {"comment_id": comment_id}}
     query = await db_context.reactions.aggregate([
         {"$match": filters},
         {"$lookup": {
