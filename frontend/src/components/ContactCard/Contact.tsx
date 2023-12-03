@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import List from "@mui/material/List"
 import {
   Alert,
+  Box,
   Button,
   FormControl,
   IconButton,
@@ -107,7 +108,10 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
 
   return !isLoading ? (
     <List>
-      <FormControl style={{ width: "100%" }} variant="outlined">
+      <FormControl
+        style={{ width: "100%", marginBottom: "10px" }}
+        variant="outlined"
+      >
         <InputLabel htmlFor="create-chatroom">Chat with friends</InputLabel>
         <OutlinedInput
           id="create-chatroom"
@@ -130,48 +134,49 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
           }
         />
       </FormControl>
-
-      {relationships?.map(({ id, receiver, creator, accepted_on }) => {
-        let currentUser = receiver.id !== user?.id ? receiver : creator
-        return (
-          <UserListItem
-            key={id}
-            displayName={currentUser.display_name}
-            firstName={currentUser.first_name}
-            lastName={currentUser.last_name}
-            secondary={
-              !accepted_on && !acceptedList[id]
-                ? "Pending Acceptation"
-                : undefined
-            }
-            selected={selectedUserIds.includes(currentUser.id)}
-            onClick={() => handleOnClick(currentUser.id)}
-            disabled={!accepted_on && !acceptedList[id]}
-            secondaryAction={
-              cancelledList[id] ? (
-                <Button disabled>Cancelled</Button>
-              ) : (
-                <Stack direction="row">
-                  {receiver.id === user?.id && !accepted_on && (
-                    <Button
-                      onClick={() => accept(id)}
-                      disabled={acceptedList[id]}
+      <Box style={{ overflowY: "auto", maxHeight: "60vh" }}>
+        {relationships?.map(({ id, receiver, creator, accepted_on }) => {
+          let currentUser = receiver.id !== user?.id ? receiver : creator
+          return (
+            <UserListItem
+              key={id}
+              displayName={currentUser.display_name}
+              firstName={currentUser.first_name}
+              lastName={currentUser.last_name}
+              secondary={
+                !accepted_on && !acceptedList[id]
+                  ? "Pending Acceptation"
+                  : undefined
+              }
+              selected={selectedUserIds.includes(currentUser.id)}
+              onClick={() => handleOnClick(currentUser.id)}
+              disabled={!accepted_on && !acceptedList[id]}
+              secondaryAction={
+                cancelledList[id] ? (
+                  <Button disabled>Cancelled</Button>
+                ) : (
+                  <Stack direction="row">
+                    {receiver.id === user?.id && !accepted_on && (
+                      <Button
+                        onClick={() => accept(id)}
+                        disabled={acceptedList[id]}
+                      >
+                        {acceptedList[id] ? "Accepted" : "Accept"}
+                      </Button>
+                    )}
+                    <IconButton
+                      onClick={() => deleteRelationship(id)}
+                      size="small"
                     >
-                      {acceptedList[id] ? "Accepted" : "Accept"}
-                    </Button>
-                  )}
-                  <IconButton
-                    onClick={() => deleteRelationship(id)}
-                    size="small"
-                  >
-                    <CancelIcon />
-                  </IconButton>
-                </Stack>
-              )
-            }
-          />
-        )
-      })}
+                      <CancelIcon />
+                    </IconButton>
+                  </Stack>
+                )
+              }
+            />
+          )
+        })}
+      </Box>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={isError}

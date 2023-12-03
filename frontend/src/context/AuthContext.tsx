@@ -3,6 +3,7 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   signOut as fbSignOut,
+  User,
 } from "firebase/auth"
 import { initializeApp } from "firebase/app"
 import { destroyCookie, setCookie } from "nookies"
@@ -28,6 +29,12 @@ export interface IUser {
   birthdate: string
 }
 
+const cookieConfig = {
+  maxAge: 30 * 24 * 60 * 60,
+  path: "/",
+  sameSite: "Strict",
+  secure: true,
+}
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
@@ -68,33 +75,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname()
 
   useEffect(() => {
+    const setUpUser = async (user: User) => {
+      setCookie(null, "token", await user.getIdToken(), cookieConfig)
+      const currentUser = await Fetcher.GET("/users/")
+      saveUserToSession(currentUser) // Save the user object to local storage
+      setUser(currentUser)
+    }
+
+    const cleanUpUser = async () => {
+      removeUserFromSession()
+      destroyCookie(null, "token")
+      router.replace("/login")
+    }
+
     auth.onAuthStateChanged((user) => {
-      if (!user && pathname === "/") {
-        window.alert("Login Session Expired!")
-        removeUserFromSession()
-        destroyCookie(null, "token")
-        router.push("/login")
+      if (!user && pathname === "/") cleanUpUser()
+
+      if (user) {
+        setUpUser(user)
+        if (pathname !== "/") router.replace("/")
       }
     })
   }, [router, pathname])
 
   const signIn = async (email: string, password: string): Promise<void> => {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    )
-    const token = await userCredential.user.getIdToken() // Get the token
-    setCookie(null, "token", token, {
-      maxAge: 30 * 24 * 60 * 60,
-      path: "/",
-      sameSite: "Strict",
-      secure: true,
-    })
-
-    const currentUser = await Fetcher.GET("/users/")
-    saveUserToSession(currentUser) // Save the user object to local storage
-    setUser(currentUser)
+    await signInWithEmailAndPassword(auth, email, password)
   }
 
   const signOut = async (): Promise<void> => {
