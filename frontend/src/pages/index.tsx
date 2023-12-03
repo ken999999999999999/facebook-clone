@@ -14,7 +14,7 @@ const PostFeedCard = dynamic(() => import("@/components/PostFeedCard"), {
 })
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [pageIndex, setPageIndex] = useState(0)
   const [isMore, setIsMore] = useState(true)
 
