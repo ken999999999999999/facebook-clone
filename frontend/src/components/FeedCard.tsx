@@ -10,7 +10,7 @@ import {
   Typography,
   TooltipProps,
   tooltipClasses,
-  Button,
+  CardHeader,
 } from "@mui/material"
 import { ThumbUp, Comment, Share } from "@mui/icons-material"
 import Divider from "@mui/material/Divider"
@@ -129,8 +129,9 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
         </>
       }
     >
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Stack spacing={1} direction="row" alignItems="center">
+      <CardHeader
+        sx={{ padding: "0" }}
+        avatar={
           <Avatar
             {...stringAvatar(
               `${post.creator?.first_name ?? ""} ${
@@ -139,21 +140,17 @@ const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
             )}
             sx={{ width: 32, height: 32 }}
           />
-
-          <Stack direction="column" alignItems="start">
-            {post.creator?.display_name + " " + post.creator?.last_name}
-            <Stack direction="row" alignItems="start">
-              <Typography
-                variant="caption"
-                sx={{ display: { xs: "none", sm: "block" } }}
-              >
-                {"just now"}
-              </Typography>
-              <span aria-hidden="true">· </span>
-              <PeopleIcon sx={{ width: 18, height: 18 }} />
-            </Stack>
+        }
+        title={post.creator?.display_name + " " + post.creator?.last_name}
+        subheader={
+          <Stack flexDirection={"row"} alignItems={"center"}>
+            {"just now"}
+            <span aria-hidden="true">· </span>
+            <PeopleIcon sx={{ width: 18, height: 18 }} />
           </Stack>
-        </Stack>
+        }
+      />
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Typography component="p" sx={{ display: { xs: "none", sm: "block" } }}>
           {post.description}
         </Typography>

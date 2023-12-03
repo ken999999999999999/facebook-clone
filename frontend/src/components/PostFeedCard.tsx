@@ -96,7 +96,7 @@ const PostFeedCard: React.FC<PostFeedCardProps> = ({
   }
 
   return user ? (
-    <Card footer={<PostFeedButtons />} style={{ marginBottom: "20px" }}>
+    <Card style={{ marginBottom: "20px" }}>
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Avatar {...stringAvatar(`${user?.first_name} ${user?.last_name}`)} />
         <Input

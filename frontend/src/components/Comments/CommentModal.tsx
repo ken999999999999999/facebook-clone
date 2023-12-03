@@ -36,7 +36,6 @@ interface Comment {
 interface CommentCardProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
   loading: boolean
   comment: Comment
-  refresh: () => void
 }
 
 const CommentCard: FC<CommentCardProps> = ({
@@ -103,9 +102,11 @@ const CommentModal: FC<CommentModalProps> = ({
   const [comments, setComments] = useState<Comment[]>([])
   const [pageIndex, setPageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [isInit, setIsInit] = useState(true)
 
   useEffect(() => {
     const getComments = async (post: Post) => {
+      setIsInit(true)
       try {
         const response = await Fetcher.GET(
           `/comments?post_id=${post.id}&page_index=${pageIndex}&page_size=20&order_by=_id&is_asc=true`
@@ -113,6 +114,8 @@ const CommentModal: FC<CommentModalProps> = ({
         setComments(response.records ?? [])
       } catch (err) {
         console.log(err)
+      } finally {
+        setIsInit(false)
       }
     }
     if (isShow) getComments(post)
@@ -138,7 +141,7 @@ const CommentModal: FC<CommentModalProps> = ({
       <DialogTitle id="scroll-dialog-title">Comments</DialogTitle>
       <DialogContent dividers sx={{ width: "34rem" }}>
         <DialogContentText>
-          {isLoading ? (
+          {isInit ? (
             <CommentSkeleton />
           ) : (
             <Stack spacing={2} direction="column-reverse" alignItems="start">
