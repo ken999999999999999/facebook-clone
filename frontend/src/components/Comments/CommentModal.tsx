@@ -8,16 +8,22 @@ import {
   Avatar,
   Box,
   Stack,
-  Typography,
   Container,
   DialogContent,
   DialogTitle,
   DialogContentText,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+  Divider,
+  List,
 } from "@mui/material"
 import { stringAvatar } from "../UserListItem"
 import CommentInput from "./CommentInput"
 import CommentSkeleton from "./CommentSkeleton"
-
+import moment from "moment"
+import useAuth from "@/hooks/useAuth"
 interface CommentModalProps {
   post: Post
   isShow: boolean
@@ -99,6 +105,7 @@ const CommentModal: FC<CommentModalProps> = ({
   isShow,
   onClose,
 }: CommentModalProps) => {
+  const { user } = useAuth()
   const [comments, setComments] = useState<Comment[]>([])
   const [pageIndex, setPageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -144,15 +151,55 @@ const CommentModal: FC<CommentModalProps> = ({
           {isInit ? (
             <CommentSkeleton />
           ) : (
-            <Stack spacing={2} direction="column-reverse" alignItems="start">
-              {comments.map((comment, index) => (
-                <CommentCard
-                  comment={comment}
-                  key={index}
-                  loading={isLoading}
-                />
-              ))}
-            </Stack>
+            <List>
+              <Stack spacing={2} direction="column-reverse" alignItems="start">
+                {comments?.map(({ id, description, created, creator }) => (
+                  <React.Fragment key={id}>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar
+                          {...stringAvatar(
+                            `${creator.first_name} ${creator.last_name}`
+                          )}
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <Typography
+                            color={
+                              creator.id === user?.id
+                                ? "primary"
+                                : "text.primary"
+                            }
+                          >
+                            {`${creator.display_name}${
+                              creator.id === user?.id ? " (You)" : ""
+                            }`}
+                          </Typography>
+                        }
+                        secondary={
+                          <>
+                            <Typography style={{ display: "inline" }}>
+                              {description}
+                            </Typography>
+                            <Typography
+                              style={{ display: "inline" }}
+                              component="span"
+                              variant="caption"
+                            >
+                              {` — ${moment(created).format(
+                                "YYYY-MM-DD hh:mm:ss"
+                              )}`}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                  </React.Fragment>
+                ))}
+              </Stack>
+            </List>
           )}
         </DialogContentText>
       </DialogContent>
