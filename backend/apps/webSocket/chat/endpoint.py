@@ -46,6 +46,6 @@ async def chat_endpoint(websocket: WebSocket, chatroom_id: str, db_context: db_c
 
             db_context.chats.insert_one(newChat.model_dump(exclude=["id"]))
 
-    except WebSocketDisconnect:
+    except:
         current_ws_user = None
         manager.disconnect(websocket)
