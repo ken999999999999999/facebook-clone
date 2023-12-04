@@ -13,8 +13,9 @@ class DBContextManager:
         self.relationships = self.db['relationships']
         self.comments = self.db['comments']
         self.reactions = self.db['reactions']
-        self.chatrooms = self.db['chatroom']
+        self.chatrooms = self.db['chatrooms']
         self.chats = self.db['chats']
+        self.tickets = self.db['tickets']
 
     def __enter__(self):
         return self

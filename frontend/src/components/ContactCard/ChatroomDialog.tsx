@@ -53,7 +53,6 @@ const ChatroomDialog = ({
   useEffect(() => {
     const startChat = async (id: string) => {
       try {
-        setIsLoading(true)
         const chatroom = await Fetcher.GET(`/chatrooms/${id}`)
         const chats = await Fetcher.GET(`/chats/?chatroom_id=${id}`)
         setChatroom(chatroom)
@@ -71,6 +70,7 @@ const ChatroomDialog = ({
       setIsError(false)
       setChats([])
       setChatroom(null)
+      setIsLoading(true)
     }
   }, [chatroomId])
 
