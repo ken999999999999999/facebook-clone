@@ -8,6 +8,7 @@ import { memo, useCallback, useEffect, useState } from "react"
 import SendIcon from "@mui/icons-material/Send"
 import { IUser } from "@/context/AuthContext"
 import { parseCookies } from "nookies"
+import { Fetcher } from "@/services/fetcher"
 
 interface IChatroomInput {
   chatroomId: string | null
@@ -31,18 +32,24 @@ const ChatroomInput = ({
   useEffect(() => {
     let ws: any = null
 
-    const connectWs = (id: string) => {
-      const cookies = parseCookies()
-      const token = cookies.token
-      ws = new WebSocket(`${process.env.NEXT_PUBLIC_CHATROOM_WEBSOCKET}${id}`)
+    const connectWs = async (id: string) => {
+      try {
+        const ticket = await Fetcher.POST("/tickets/", { chatroom_id: id })
+        const cookies = parseCookies()
+        const token = cookies.token
+        ws = new WebSocket(
+          `${process.env.NEXT_PUBLIC_CHATROOM_WEBSOCKET}${id}?token=${ticket}`
+        )
 
-      ws.onopen = () => {
-        ws?.send(token)
-      }
-      ws.onmessage = (e: any) => {
-        setChats((prev: IChat[]) => [...prev, JSON.parse(e.data)])
-      }
-      setWebSocket(ws)
+        ws.onopen = () => {
+          ws?.send(token)
+        }
+
+        ws.onmessage = (e: any) => {
+          setChats((prev: IChat[]) => [...prev, JSON.parse(e.data)])
+        }
+        setWebSocket(ws)
+      } catch (e) {}
     }
 
     if (chatroomId) connectWs(chatroomId)
