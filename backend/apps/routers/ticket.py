@@ -20,4 +20,4 @@ async def create_ticket_command(db_context:  db_context, current_user: current_u
     ticket = Ticket(ip_address=request.client.host,
                     chatroom_id=command.chatroom_id, owner=current_user.id).model_dump(exclude=['id'])
 
-    return str((await db_context.tickets.insert_one(ticket.model_dump())).inserted_id)
+    return str((await db_context.tickets.insert_one(ticket)).inserted_id)

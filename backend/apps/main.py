@@ -1,15 +1,16 @@
 from contextlib import asynccontextmanager
 import json
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from apps.config import settings
-from apps.routers import chat, chatroom, comment, posts, reaction, relationship, users
+from apps.routers import chat, chatroom, comment, posts, reaction, relationship, ticket, users
 import firebase_admin
 from firebase_admin import credentials
 from apps.webSocket.chat.endpoint import chat_endpoint, chat_test_endpoint
+from apps.webSocket.chat.validator import ticket_validator
 
 
 @asynccontextmanager
@@ -35,6 +36,7 @@ app.include_router(comment.router)
 app.include_router(reaction.router)
 app.include_router(chat.router)
 app.include_router(chatroom.router)
+app.include_router(ticket.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,7 +48,7 @@ app.add_middleware(
 )
 
 app.add_api_websocket_route(
-    "/chatroom/{chatroom_id}", chat_endpoint)
+    "/chatroom/{chatroom_id}", chat_endpoint, dependencies=[Depends(ticket_validator)])
 
 
 @app.exception_handler(RequestValidationError)
