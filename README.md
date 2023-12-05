@@ -14,7 +14,7 @@
   </p>
 </p>
 
-![Contributors](https://img.shields.io/github/contributors/ken999999999999999/facebook-clone?color=dark-green) ![Forks](https://img.shields.io/github/forks/ken999999999999999/facebook-clone?style=social) ![Stargazers](https://img.shields.io/github/stars/ken999999999999999/facebook-clone?style=social) ![Issues](https://img.shields.io/github/issues/ken999999999999999/facebook-clone) 
+![Contributors](https://img.shields.io/github/contributors/ken999999999999999/facebook-clone?color=dark-green) ![Forks](https://img.shields.io/github/forks/ken999999999999999/facebook-clone?style=social) ![Stargazers](https://img.shields.io/github/stars/ken999999999999999/facebook-clone?style=social) ![Issues](https://img.shields.io/github/issues/ken999999999999999/facebook-clone) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table Of Contents
 
