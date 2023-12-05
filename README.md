@@ -1,17 +1,5 @@
-<br/>
 <p align="center">
-  <h3 align="center">Facebook Clone</h3>
-
-  <p align="center">
-    <a href="https://github.com/ken999999999999999/facebook-clone"><strong>Explore the docs »</strong></a>
-    <br/>
-    <br/>
-    <a href="https://github.com/ken999999999999999/facebook-clone">View Demo</a>
-    .
-    <a href="https://github.com/ken999999999999999/facebook-clone/issues">Report Bug</a>
-    .
-    <a href="https://github.com/ken999999999999999/facebook-clone/issues">Request Feature</a>
-  </p>
+  <h1 align="center">Facebook Clone</h1>
 </p>
 
 ![Contributors](https://img.shields.io/github/contributors/ken999999999999999/facebook-clone?color=dark-green) ![Forks](https://img.shields.io/github/forks/ken999999999999999/facebook-clone?style=social) ![Stargazers](https://img.shields.io/github/stars/ken999999999999999/facebook-clone?style=social) ![Issues](https://img.shields.io/github/issues/ken999999999999999/facebook-clone) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
