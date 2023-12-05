@@ -27,23 +27,21 @@ Things you need to use the software and how to install them.
 - Docker Desktop
 - Follow https://support.google.com/appsheet/answer/10104995?hl=en to create a Firebase Account (Make sure you enable Email/Password Sign-in Method in your project)
 
-### How to run the project locally
+### Set up before running the project
 
-1. Launch Docker Desktop
+1. Go to Firebase projects page > Select your project > Click Project Settings > Click on the Service accounts tab > Generate new private key
 
-2. Go to Firebase projects page > Select your project > Click Project Settings > Click on the Service accounts tab > Generate new private key
+2. Name the downloaded file 'serviceAccountKey.json' and put the file in backend directory
 
-3. Name the downloaded file 'serviceAccountKey.json' and put the file in backend directory
-
-4. Clone / Fork the repo
+3. Clone / Fork the repo
 
 ```sh
 git clone https://github.com/ken999999999999999/facebook-clone.git
 ```
 
-5. Create .env files and copy it from the .env.template in root, frontend & backend directories
+4. Create .env files and copy it from the .env.template in root, frontend & backend directories
 
-6. Replace the following with your app's Firebase project configuration in frontend/.env
+5. Replace the following with your app's Firebase project configuration in frontend/.env
 
 ```sh
 NEXT_PUBLIC_FIREBASE_API_KEY=
@@ -54,15 +52,17 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 ```
 
-7. Open frontend/backend directory in VS code > press F1 and select
+### How to run the project locally
+
+1. Open frontend/backend directory in VS code > press F1 and select
 
 ```sh
 > Dev Containers: Rebuild and Reopen in Container
 ```
 
-8. Navigate `http://localhost:3000` in your browser
+2. Navigate `http://localhost:3000` in your browser
 
-9. Enjoy!
+3. Enjoy!
 
 See the [open issues](https://github.com/ken999999999999999/facebook-clone/issues) for a list of proposed features (and known issues).
 
