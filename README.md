@@ -74,6 +74,8 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 
 8. Navigate `http://localhost:3000` in your browser
 
+9. Enjoy!
+
 See the [open issues](https://github.com/ken999999999999999/facebook-clone/issues) for a list of proposed features (and known issues).
 
 ## Authors
