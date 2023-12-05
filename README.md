@@ -25,7 +25,7 @@ Things you need to use the software and how to install them.
 - Visual Studio Code
 - `Dev Containers: ms-vscode-remote.remote-containers` extension in Visual Studio Code
 - Docker Desktop
-- Firebase Account
+- Follow https://support.google.com/appsheet/answer/10104995?hl=en to create a Firebase Account (Make sure you enable Email/Password Sign-in Method in your project)
 
 ### How to run the project locally
 
