@@ -1,20 +1,8 @@
-<br/>
 <p align="center">
-  <h3 align="center">Facebook Clone</h3>
-
-  <p align="center">
-    <a href="https://github.com/ken999999999999999/facebook-clone"><strong>Explore the docs »</strong></a>
-    <br/>
-    <br/>
-    <a href="https://github.com/ken999999999999999/facebook-clone">View Demo</a>
-    .
-    <a href="https://github.com/ken999999999999999/facebook-clone/issues">Report Bug</a>
-    .
-    <a href="https://github.com/ken999999999999999/facebook-clone/issues">Request Feature</a>
-  </p>
+  <h1 align="center">Facebook Clone</h1>
 </p>
 
-![Contributors](https://img.shields.io/github/contributors/ken999999999999999/facebook-clone?color=dark-green) ![Forks](https://img.shields.io/github/forks/ken999999999999999/facebook-clone?style=social) ![Stargazers](https://img.shields.io/github/stars/ken999999999999999/facebook-clone?style=social) ![Issues](https://img.shields.io/github/issues/ken999999999999999/facebook-clone) ![License](https://img.shields.io/github/license/ken999999999999999/facebook-clone)
+![Contributors](https://img.shields.io/github/contributors/ken999999999999999/facebook-clone?color=dark-green) ![Forks](https://img.shields.io/github/forks/ken999999999999999/facebook-clone?style=social) ![Stargazers](https://img.shields.io/github/stars/ken999999999999999/facebook-clone?style=social) ![Issues](https://img.shields.io/github/issues/ken999999999999999/facebook-clone) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table Of Contents
 
@@ -25,10 +13,10 @@
 - [Authors](#authors)
 
 ## About The Project
+Introduction: https://docs.google.com/presentation/d/18l59u0hNWd3g6lJgNLsKxlMcukCjbKKA9eSortOCXck/edit?usp=sharing
 
 ![alt text](https://github.com/ken999999999999999/facebook-clone/blob/main/screenshot.png?raw=true)
 
-Introduction: https://docs.google.com/presentation/d/18l59u0hNWd3g6lJgNLsKxlMcukCjbKKA9eSortOCXck/edit?usp=sharing
 
 ### Prerequisites
 
@@ -37,25 +25,23 @@ Things you need to use the software and how to install them.
 - Visual Studio Code
 - `Dev Containers: ms-vscode-remote.remote-containers` extension in Visual Studio Code
 - Docker Desktop
-- Firebase Account
+- Follow https://support.google.com/appsheet/answer/10104995?hl=en to create a Firebase Account (Make sure you enable Email/Password Sign-in Method in your project)
 
-### How to run the project locally
+### Set up before running the project
 
-1. Launch Docker Desktop
+1. Go to Firebase projects page > Select your project > Click Project Settings > Click on the Service accounts tab > Generate new private key
 
-2. Go to Firebase projects page > Select your project > Click Project Settings > Click on the Service accounts tab > Generate new private key
+2. Name the downloaded file 'serviceAccountKey.json' and put the file in backend directory
 
-3. Name the downloaded file 'serviceAccountKey.json' and put the file in backend directory
-
-4. Clone / Fork the repo
+3. Clone / Fork the repo
 
 ```sh
 git clone https://github.com/ken999999999999999/facebook-clone.git
 ```
 
-5. Create .env files and copy it from the .env.template in root, frontend & backend directories
+4. Create .env files and copy it from the .env.template in root, frontend & backend directories
 
-6. Replace the following with your app's Firebase project configuration in frontend/.env
+5. Replace the following with your app's Firebase project configuration in frontend/.env
 
 ```sh
 NEXT_PUBLIC_FIREBASE_API_KEY=
@@ -66,13 +52,17 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 ```
 
-7. Open frontend/backend directory in VS code > press F1 and select
+### How to run the project locally
+
+1. Open frontend/backend directory in VS code > press F1 and select
 
 ```sh
 > Dev Containers: Rebuild and Reopen in Container
 ```
 
-8. Navigate `http://localhost:3000` in your browser
+2. Navigate `http://localhost:3000` in your browser
+
+3. Enjoy!
 
 See the [open issues](https://github.com/ken999999999999999/facebook-clone/issues) for a list of proposed features (and known issues).
 
