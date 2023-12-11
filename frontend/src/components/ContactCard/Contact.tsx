@@ -7,9 +7,11 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
+  ListItemButton,
   OutlinedInput,
   Snackbar,
   Stack,
+  Typography,
 } from "@mui/material"
 import { Fetcher } from "@/services/fetcher"
 import useAuth from "@/hooks/useAuth"
@@ -38,6 +40,7 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
   const [isCreating, setIsCreating] = useState(false)
   const [isError, setIsError] = useState(false)
   const [chatroomTitle, setChatroomTitle] = useState("")
+  const [isNotMore, setIsNotMore] = useState(false)
 
   const deleteRelationship = async (relationshipId: string) => {
     try {
@@ -87,11 +90,12 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
   const getRelationships = useCallback(() => {
     const callAPI = async () => {
       try {
-        pageIndex > 0 && setIsLoading(true)
+        pageIndex > 0
         const response = await Fetcher.GET(
           `/relationships/?page_index=${pageIndex}&page_size=50&order_by=_id&is_asc=true`
         )
         setRelationships((prev) => [...prev, ...response?.records])
+        if (response?.records.length < 50) setIsNotMore(true)
       } catch (err) {
       } finally {
         setIsLoading(false)
@@ -175,6 +179,14 @@ const Contact = ({ handleCreateChatroom }: IContact): JSX.Element => {
             />
           )
         })}
+        {!isNotMore && (
+          <ListItemButton
+            disabled={isLoading}
+            onClick={() => setPageIndex((prev) => prev + 1)}
+          >
+            <Typography color="primary">More</Typography>
+          </ListItemButton>
+        )}
       </Box>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
