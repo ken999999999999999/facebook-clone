@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Post } from "@/hooks/usePost"
 import Dialog from "@mui/material/Dialog"
 import { Fetcher } from "@/services/fetcher"
-import type { Component, FC } from "react"
+import type { FC } from "react"
 import { User } from "../FeedCard"
 import {
   Avatar,
@@ -37,67 +37,6 @@ interface Comment {
   creator: User
   created: string
   modified: string
-}
-
-interface CommentCardProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
-  loading: boolean
-  comment: Comment
-}
-
-const CommentCard: FC<CommentCardProps> = ({
-  loading,
-  comment,
-}: CommentCardProps) => {
-  return (
-    <>
-      {comment ? (
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Stack spacing={1} direction="row" alignItems="center">
-            <Avatar
-              {...stringAvatar(
-                `${comment?.creator?.first_name ?? ""} ${
-                  comment.creator?.last_name ?? ""
-                }`
-              )}
-              sx={{ width: 32, height: 32 }}
-            />
-
-            <Stack direction="column" alignItems="start">
-              <Typography
-                component="p"
-                sx={{ display: { xs: "none", sm: "block", color: "black" } }}
-              >
-                {comment.creator?.display_name +
-                  " " +
-                  comment.creator?.last_name}
-              </Typography>
-              <Stack direction="row" alignItems="start">
-                <Typography
-                  variant="caption"
-                  sx={{ display: { xs: "none", sm: "block" } }}
-                >
-                  {"just now"}
-                </Typography>
-              </Stack>
-            </Stack>
-          </Stack>
-          <Typography
-            component="p"
-            sx={{ display: { xs: "none", sm: "block", color: "black" } }}
-          >
-            {comment.description}
-          </Typography>
-          <Container
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          ></Container>
-        </Box>
-      ) : null}
-    </>
-  )
 }
 
 const CommentModal: FC<CommentModalProps> = ({

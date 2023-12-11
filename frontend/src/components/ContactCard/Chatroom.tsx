@@ -7,6 +7,7 @@ import {
   ListItemButton,
   ListItemText,
   IconButton,
+  Typography,
 } from "@mui/material"
 import Comment from "@mui/icons-material/Comment"
 import { IUser } from "@/context/AuthContext"
@@ -19,15 +20,17 @@ const Chatroom = ({ handleOnClick }: IChatroom): JSX.Element => {
   const [pageIndex, setPageIndex] = useState(0)
   const [chatrooms, setChatrooms] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isNotMore, setIsNotMore] = useState(false)
 
   const getChatrooms = useCallback(() => {
     const callAPI = async () => {
       try {
-        pageIndex > 0 && setIsLoading(true)
+        pageIndex > 0
         const response = await Fetcher.GET(
           `/chatrooms/?page_index=${pageIndex}&page_size=50&order_by=_id&is_asc=true`
         )
         setChatrooms((prev) => [...prev, ...response])
+        if (response.length < 50) setIsNotMore(true)
       } catch (err) {
       } finally {
         setIsLoading(false)
@@ -65,6 +68,14 @@ const Chatroom = ({ handleOnClick }: IChatroom): JSX.Element => {
           </ListItemButton>
         </ListItem>
       ))}
+      {!isNotMore && (
+        <ListItemButton
+          disabled={isLoading}
+          onClick={() => setPageIndex((prev) => prev + 1)}
+        >
+          <Typography color="primary">More</Typography>
+        </ListItemButton>
+      )}
     </List>
   ) : (
     <ListItemSkeleton showCircle={false} />
